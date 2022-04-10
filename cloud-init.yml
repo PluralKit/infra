@@ -1,0 +1,10 @@
+#cloud-config
+runcmd:
+  - "curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -"
+  - "apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\""
+  - "apt update && apt install -y nomad"
+  - "python3 -c \"import socket;s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);s.connect((\\\"10.0.0.2\\\", 80));print(f'data_dir = \\\"/opt/nomad/data\\\"\\nbind_addr = \\\"{s.getsockname()[0]}\\\"\\\\nclient {{\\\\n  enabled = true\\\\n  servers = [\\\"10.0.0.2\\\"]\\\\n}}');\" > /etc/nomad.d/nomad.hcl"
+  - "systemctl enable nomad"
+  - "systemctl start nomad"
+  - "curl https://get.docker.com | sh"
+# todo: install Netdata
