@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+  api:
+    image: ghcr.io/xske/pluralkit:version
+    command: ["bin/PluralKit.API.dll"]
+    volumes:
+      - "./pluralkit-api.conf:/app/pluralkit.conf:ro"
+    restart: unless-stopped
+
+  api-proxy:
+    image: ghcr.io/pluralkit/api-proxy
+    environment:
+      - "REMOTE_ADDR=http://api:5000"
+      - "REDIS_ADDR=10.0.1.3:6379"
+      - "TOKEN2=${API_TOKEN2}"
+    restart: unless-stopped
+
+  api-v1:
+    image: ghcr.io/xske/pluralkit:1e86c2d6c420f662731ec4ca6ac6dae45ee26b70 # last git commit with v1 API
+    environment:
+      - "PluralKit:Database=Host=10.0.1.2;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
+      - "PluralKit:ConsoleLogLevel=2"
+      - "PluralKit:FileLogLevel=5"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx
+    ports:
+      - 10.0.1.2:5000:5000
+    volumes:
+      - ./api.conf:/etc/nginx/conf.d/api.conf
+    restart: unless-stopped
+
+  scheduled_tasks:
+    image: ghcr.io/xske/pluralkit:version
+    environment:
+      - "PluralKit:Database=Host=10.0.1.2;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
+      - "PluralKit:InfluxUrl=http://10.0.0.2:8086"
+      - "PluralKit:RedisAddr=10.0.1.2:6379"
+      - "PluralKit:ConsoleLogLevel=2"
+      - "PluralKit:FileLogLevel=5"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    environment:
+      - "DATA_SOURCE_NAME=postgresql://pluralkit:${DATABASE_PASSWORD]@100.110.49.96:5432/pluralkit?sslmode=disable"
+    ports:
+      - 10.0.1.2:9187:9187
+    restart: unless-stopped
