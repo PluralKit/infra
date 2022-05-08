@@ -18,6 +18,7 @@ services:
 
   api-v1:
     image: ghcr.io/xske/pluralkit:1e86c2d6c420f662731ec4ca6ac6dae45ee26b70 # last git commit with v1 API
+    command: ["bin/PluralKit.API.dll"]
     environment:
       - "PluralKit:Database=Host=10.0.1.2;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
       - "PluralKit:ConsoleLogLevel=2"
@@ -34,6 +35,7 @@ services:
 
   scheduled_tasks:
     image: ghcr.io/xske/pluralkit:version
+    command: ["bin/PluralKit.ScheduledTasks.dll"]
     environment:
       - "PluralKit:Database=Host=10.0.1.2;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
       - "PluralKit:InfluxUrl=http://10.0.0.2:8086"
@@ -45,7 +47,7 @@ services:
   grafana:
     image: grafana/grafana
     ports:
-      - 3000:3000
+      - 10.0.1.2:3000:3000
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini
       - ./grafana-data:/var/lib/grafana
