@@ -39,8 +39,12 @@ job "pluralkit" {
     task "bot" {
       driver = "docker"
       config {
-        image = "ghcr.io/pluralkit/test:756859ebe6c9bdbf6024c7f7be91af99710f5909"
+        image = "ghcr.io/pluralkit/pluralkit:989a8b4453a50a634a69346fe6c1464235e4aca8"
         entrypoint = ["/app/scripts/run-clustered.sh"]
+      }
+
+      env {
+        MGMT = "http://10.0.0.2:8081"
       }
 
       # todo: add healthcheck
@@ -51,6 +55,4 @@ job "pluralkit" {
       }
     }
   }
-
-  # todo: add the api here
 }

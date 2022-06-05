@@ -1,8 +1,14 @@
 version: "3"
 
 services:
+  dashboard:
+    image: ghcr.io/pluralkit/dashboard:${version}
+    ports:
+      - 10.0.1.2:8088:8080
+    restart: always
+
   api:
-    image: ghcr.io/xske/pluralkit:version
+    image: ghcr.io/pluralkit/pluralkit:${version}
     command: ["bin/PluralKit.API.dll"]
     volumes:
       - "./pluralkit-api.conf:/app/pluralkit.conf:ro"
@@ -16,15 +22,6 @@ services:
       - "TOKEN2=${API_TOKEN2}"
     restart: unless-stopped
 
-  api-v1:
-    image: ghcr.io/xske/pluralkit:1e86c2d6c420f662731ec4ca6ac6dae45ee26b70 # last git commit with v1 API
-    command: ["bin/PluralKit.API.dll"]
-    environment:
-      - "PluralKit:Database=Host=10.0.1.2;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
-      - "PluralKit:ConsoleLogLevel=2"
-      - "PluralKit:FileLogLevel=5"
-    restart: unless-stopped
-
   nginx:
     image: nginx
     ports:
@@ -34,7 +31,7 @@ services:
     restart: unless-stopped
 
   scheduled_tasks:
-    image: ghcr.io/xske/pluralkit:version
+    image: ghcr.io/pluralkit/pluralkit:${version}
     command: ["bin/PluralKit.ScheduledTasks.dll"]
     environment:
       - "PluralKit:Database=Host=10.0.1.2;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
