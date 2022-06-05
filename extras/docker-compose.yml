@@ -53,7 +53,7 @@ services:
   postgres-exporter:
     image: quay.io/prometheuscommunity/postgres-exporter
     environment:
-      - "DATA_SOURCE_NAME=postgresql://pluralkit:${DATABASE_PASSWORD]@100.110.49.96:5432/pluralkit?sslmode=disable"
+      - "DATA_SOURCE_NAME=postgresql://pluralkit:${DATABASE_PASSWORD}@100.110.49.96:5432/pluralkit?sslmode=disable"
     ports:
       - 10.0.1.2:9187:9187
     restart: unless-stopped
