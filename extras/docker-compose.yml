@@ -34,9 +34,11 @@ services:
     image: ghcr.io/pluralkit/pluralkit:${version}
     command: ["bin/PluralKit.ScheduledTasks.dll"]
     environment:
-      - "PluralKit:Database=Host=10.0.1.2;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
-      - "PluralKit:InfluxUrl=http://10.0.0.2:8086"
-      - "PluralKit:RedisAddr=10.0.1.2:6379"
+      - "PluralKit:Database=Host=10.0.1.3;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
+      - "PluralKit:InfluxUrl=http://10.0.1.3:8086"
+      - "PluralKit:InfluxDb=pluralkit"
+      - "PluralKit:UseRedisMetrics=true"
+      - "PluralKit:RedisAddr=10.0.1.3:6379"
       - "PluralKit:ConsoleLogLevel=2"
       - "PluralKit:FileLogLevel=5"
     restart: unless-stopped
