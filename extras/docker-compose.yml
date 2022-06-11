@@ -20,14 +20,8 @@ services:
       - "REMOTE_ADDR=http://api:5000"
       - "REDIS_ADDR=10.0.1.3:6379"
       - "TOKEN2=${API_TOKEN2}"
-    restart: unless-stopped
-
-  nginx:
-    image: nginx
     ports:
-      - 10.0.1.2:5000:5000
-    volumes:
-      - ./api.conf:/etc/nginx/conf.d/api.conf
+      - 10.0.1.2:5000:8080
     restart: unless-stopped
 
   scheduled_tasks:
