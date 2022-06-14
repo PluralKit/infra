@@ -33,18 +33,55 @@ job "pluralkit" {
     healthy_deadline = "1m"
   }
 
+  vault {
+    policies = ["read-kv"]
+  }
+
   group "bot" {
-    count = 20
+    count = 24
 
     task "bot" {
       driver = "docker"
       config {
-        image = "ghcr.io/pluralkit/pluralkit:989a8b4453a50a634a69346fe6c1464235e4aca8"
-        entrypoint = ["/app/scripts/run-clustered.sh"]
+        image = "ghcr.io/pluralkit/pluralkit:13efdbee83173a775f211f08cd259b99a41cafae"
+      }
+
+      template {
+          data = <<EOD
+            {{ with secret "kv/pluralkit" }}
+            PluralKit__Bot__Token = "{{ .Data.discordToken }}"
+            PluralKit__DatabasePassword = "{{ .Data.databasePassword }}"
+            PluralKit__SentryUrl = "{{ .Data.sentryUrl }}"
+            {{ end }}
+          EOD
+          destination = "local/secret.env"
+          env = true
       }
 
       env {
-        MGMT = "http://10.0.0.2:8081"
+        PluralKit__Bot__ClientId = 466378653216014359
+        PluralKit__Bot__AdminRole = 913986523500777482
+        PluralKit__Bot__DiscordBaseUrl = "http://10.0.0.2:8001/api/v10"
+
+        PluralKit__Bot__MaxShardConcurrency = 16
+        PluralKit__Bot__UseRedisRatelimiter = true
+
+        PluralKit__Bot__Cluster__TotalShards = 384
+        PluralKit__Bot__Cluster__TotalNodes = 24
+        
+        PluralKit__Database = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=50;Minimum Pool Size = 50;Max Auto Prepare=50"
+        PluralKit__RedisAddr = "10.0.1.3:6379"
+        # PluralKit__ElasticUrl = "http://10.0.1.2:9200"
+        PluralKit__InfluxUrl = "http://10.0.1.3:8086"
+        PluralKit__InfluxDb = "pluralkit"
+        PluralKit__UseRedisMetrics = true
+
+        PluralKit__ConsoleLogLevel = 2
+        PluralKit__ElasticLogLevel = 2
+
+        # we can't outright disable file logging in config, but it's not useful at all (loses events often) and takes up way too much disk space
+        # so we only log "fatal" events (if the bot crashes)
+        PluralKit__FileLogLevel = 5
       }
 
       # todo: add healthcheck

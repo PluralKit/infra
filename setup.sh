@@ -7,6 +7,9 @@ curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 apt update && apt install -y nomad
 
+export NOMAD_ADDR=http://10.0.0.2:4646
+export VAULT_ADDR=http://10.0.0.2:8200
+
 curl https://get.docker.com | sh
 
 cat <<EOF
@@ -23,12 +26,39 @@ client {
 }
 EOF > /etc/nomad.d/nomad.hcl
 
-touch /root/pluralkit.conf # add the contents of the pluralkit.conf file here
+# set up Vault
+apt update && apt install -y vault
+cat <<EOF
+ui = true
 
-docker run -d --name mgmt-api \
-    -p 8081:8881 \
-    -v /root/pluralkit.conf:/pluralkit.conf
-    ghcr.io/pluralkit/mgmt-api
+storage "file" {
+  path = "/opt/vault/data"
+}
+
+listener "tcp" {
+  address = "10.0.0.2:8200"
+  tls_disable = 1
+}
+EOF > /etc/vault.d/vault.hcl
+
+vault operator init -key-shares=1 -key-threshold=1 # save secrets from this command
+vault operator unseal
+vault login
+
+vault secrets enable kv
+vault kv put kv/pluralkit discordToken=tokenhere databasePassword=passwordhere sentryUrl=https://secreturlhere@sentry.pluralkit.me/1
+
+echo 'path "kv/pluralkit" { capabilities = ["list", "read"] }' > policy.hcl
+vault policy write read-kv policy.hcl
+
+cat <<EOF
+
+vault {
+  enabled = true
+  address = "http://10.0.0.2:8200"
+  token = "<nomad server root token>"
+}
+EOF >> /etc/nomad.d/nomad.hcl
 
 ## Run the following on a "database" server (example IP: 10.0.0.3)
 docker run -d --name postgres \
