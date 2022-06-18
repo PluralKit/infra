@@ -37,13 +37,19 @@ job "pluralkit" {
     policies = ["read-kv"]
   }
 
+  constraint {
+    attribute = "${attr.unique.hostname}"
+    operator = "!="
+    value = "ubuntu-4gb-fsn1-1"
+  }
+
   group "bot" {
     count = 24
 
     task "bot" {
       driver = "docker"
       config {
-        image = "ghcr.io/pluralkit/pluralkit:13efdbee83173a775f211f08cd259b99a41cafae"
+        image = "ghcr.io/pluralkit/pluralkit:65e2bb02346cc7e36a350af31aa9ed24b472ef39"
       }
 
       template {
