@@ -77,7 +77,7 @@ job "pluralkit" {
         
         PluralKit__Database = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=50;Minimum Pool Size = 50;Max Auto Prepare=50"
         PluralKit__RedisAddr = "10.0.1.3:6379"
-        # PluralKit__ElasticUrl = "http://10.0.1.2:9200"
+        PluralKit__ElasticUrl = "http://10.0.1.3:9200"
         PluralKit__InfluxUrl = "http://10.0.1.3:8086"
         PluralKit__InfluxDb = "pluralkit"
         PluralKit__UseRedisMetrics = true
