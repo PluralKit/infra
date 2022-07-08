@@ -1,31 +1,9 @@
 version: "3"
 
+
 services:
-  dashboard:
-    image: ghcr.io/pluralkit/dashboard:${version}
-    ports:
-      - 10.0.1.2:8088:8080
-    restart: always
-
-  api:
-    image: ghcr.io/pluralkit/pluralkit:${version}
-    command: ["bin/PluralKit.API.dll"]
-    volumes:
-      - "./pluralkit-api.conf:/app/pluralkit.conf:ro"
-    restart: unless-stopped
-
-  api-proxy:
-    image: ghcr.io/pluralkit/api-proxy
-    environment:
-      - "REMOTE_ADDR=http://api:5000"
-      - "REDIS_ADDR=10.0.1.3:6379"
-      - "TOKEN2=${API_TOKEN2}"
-    ports:
-      - 10.0.1.2:5000:8080
-    restart: unless-stopped
-
   scheduled_tasks:
-    image: ghcr.io/pluralkit/pluralkit:${version}
+    image: ghcr.io/pluralkit/pluralkit:62c5c3865a77cc3becd3c1e8e36e91637741e15d
     command: ["bin/PluralKit.ScheduledTasks.dll"]
     environment:
       - "PluralKit:Database=Host=10.0.1.3;Port=5432;Username=pluralkit;Password=${DATABASE_PASSWORD};Database=pluralkit;Maximum Pool Size=10;Minimum Pool Size=10;Max Auto Prepare=10"
@@ -44,12 +22,4 @@ services:
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini
       - ./grafana-data:/var/lib/grafana
-    restart: unless-stopped
-
-  postgres-exporter:
-    image: quay.io/prometheuscommunity/postgres-exporter
-    environment:
-      - "DATA_SOURCE_NAME=postgresql://pluralkit:${DATABASE_PASSWORD}@100.110.49.96:5432/pluralkit?sslmode=disable"
-    ports:
-      - 10.0.1.2:9187:9187
     restart: unless-stopped
