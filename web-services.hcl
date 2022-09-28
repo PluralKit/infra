@@ -138,7 +138,7 @@ job "web-services" {
 			config {
 				image = "caddy"
 				ports = ["http", "https"]
-				entrypoint = ["/bin/sh", "-c", "caddy run -config /local/Caddyfile"]
+				entrypoint = ["/bin/sh", "-c", "caddy run --config /local/Caddyfile"]
 			}
 
 			template {
