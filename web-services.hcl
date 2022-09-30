@@ -115,73 +115,87 @@ job "web-services" {
 		}
 	}
 
-	group "caddy" {
-		volume "data" {
-			type = "host"
-			read_only = false
-			source = "caddy_data"
-		}
-
+	group "nginx" {
 		network {
 			port "http" {
-				static = 80
-				to = 80
-			}
-			port "https" {
-				static = 443
-				to = 443
+				static = 8080
+				to = 8080
+				host_network = "6pn"
 			}
 		}
 
-		task "caddy" {
+		task "nginx" {
 			driver = "docker"
 			config {
-				image = "caddy"
-				ports = ["http", "https"]
-				entrypoint = ["/bin/sh", "-c", "caddy run --config /local/Caddyfile"]
+				image = "nginx"
+				ports = ["http"]
+				entrypoint = ["/bin/sh", "-c", "nginx -c /local/nginx.conf"]
 			}
 
 			template {
 				data = <<EOH
-					"dash.pluralkit.me" {
-						reverse_proxy {{ range nomadService "dashboard" }} http://{{ .Address }}:{{ .Port }} {{ end }}
-					}
+worker_processes  1;
+daemon off;
 
-					"api.pluralkit.me" {
-						reverse_proxy {{ range nomadService "api" }} http://{{ .Address }}:{{ .Port }} {{ end }} {
-							header_up X-Real-IP {remote_host}
-						}
-					}
+events {
+	worker_connections 1024;
+}
 
-					"stats.pluralkit.me" {
-						reverse_proxy http://10.0.1.2:3000
-					}
+http {
+	access_log /dev/stdout;
+	error_log  /dev/stderr debug;
 
-					"sentry.pluralkit.me" {
-						reverse_proxy http://10.0.1.2:9000 {
-							header_up -Connection
-						}
-					}
+	set_real_ip_from 172.18.0.1/32;
+	real_ip_header Fly-Client-IP;
 
-					"plausible.pluralkit.me" {
-						reverse_proxy http://10.0.1.2:8000
-					}
+	upstream dashboard {
+		{{ range nomadService "dashboard" }} server {{ .Address }}:{{ .Port }}; {{ end }}
+	}
 
-					"pk-webs.spectralitree.com" {
-						redir https://dash.pluralkit.me{uri} permanent
-					}
+	upstream api {
+		{{ range nomadService "api" }} server {{ .Address }}:{{ .Port }}; {{ end }}
+	}
 
-					"pk-webs-beta.spectralitree.com" {
-						redir https://dash.pluralkit.me{uri} permanent
-					}
+	server {
+		listen 8080;
+		server_name _;
+
+		location / {
+			return 302 https://pluralkit.me;
+		}
+	}
+
+	server {
+		listen 8080;
+		server_name dash.pluralkit.me;
+
+		location / {
+			proxy_pass http://dashboard;
+		}
+	}
+
+	server {
+		listen 8080;
+		server_name api.pluralkit.me;
+
+		location / {
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_pass http://api;
+		}
+	}
+
+	server {
+		listen 8080;
+		server_name sentry.pluralkit.me;
+
+		location / {
+			proxy_pass http://10.0.1.2:9000;
+		}
+	}
+}
+
 				EOH
-			
-				destination = "local/Caddyfile"
-			}
-
-			volume_mount {
-				volume = "data"
-				destination = "/data/caddy"
+				destination = "local/nginx.conf"
 			}
 		}
 	}
