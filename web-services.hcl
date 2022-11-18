@@ -9,10 +9,6 @@ job "web-services" {
 	group "api" {
 		network {
 			port "port" {
-				to = 8080
-			}
-
-			port "inner" {
 				to = 5000
 			}
 		}
@@ -23,41 +19,12 @@ job "web-services" {
 			value = "ubuntu-4gb-fsn1-1"
 		}
 
-		task "proxy" {
-			driver = "docker"
-			config {
-				image = "ghcr.io/pluralkit/api-proxy"
-				ports = ["port"]
-			}
-
-			template {
-				data = <<EOH
-					REDIS_ADDR=10.0.1.3:6379
-					{{ with secret "kv/pluralkit" }}
-					TOKEN2={{ .Data.api_token2 }}
-					{{ end }}
-					{{ range nomadService "api-inner" }}
-					REMOTE_ADDR=http://{{ .Address }}:{{ .Port }}
-					{{ end }}
-				EOH
-
-				destination = "local/env"
-				env = true
-			}
-
-			service {
-				name = "api"
-				port = "port"
-				provider = "nomad"
-			}
-		}
-
 		task "api" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/pluralkit:62c5c3865a77cc3becd3c1e8e36e91637741e15d"
+				image = "ghcr.io/pluralkit/pluralkit:de0d27e514eb1529995b996236e85c5e8a2b2380"
 				entrypoint = ["dotnet", "bin/PluralKit.API.dll"]
-				ports = ["inner"]
+				ports = ["port"]
 			}
 
 			template {
@@ -86,8 +53,8 @@ job "web-services" {
 			}
 
 			service {
-				name = "api-inner"
-				port = "inner"
+				name = "api"
+				port = "port"
 				provider = "nomad"
 			}
 		}
