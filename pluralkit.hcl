@@ -49,7 +49,7 @@ job "pluralkit" {
     task "bot" {
       driver = "docker"
       config {
-        image = "ghcr.io/pluralkit/pluralkit:65e2bb02346cc7e36a350af31aa9ed24b472ef39"
+        image = "ghcr.io/pluralkit/pluralkit:version"
       }
 
       template {
@@ -75,15 +75,16 @@ job "pluralkit" {
         PluralKit__Bot__Cluster__TotalShards = 384
         PluralKit__Bot__Cluster__TotalNodes = 24
         
-        PluralKit__Database = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=50;Minimum Pool Size = 50;Max Auto Prepare=50"
+        PluralKit__Database = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
+        PluralKit__MessagesDatabase = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
         PluralKit__RedisAddr = "10.0.1.3:6379"
-        PluralKit__ElasticUrl = "http://10.0.1.3:9200"
         PluralKit__InfluxUrl = "http://10.0.1.3:8086"
         PluralKit__InfluxDb = "pluralkit"
         PluralKit__UseRedisMetrics = true
+        PluralKit__SeqLogUrl = "http://10.0.1.3:5341"
 
         PluralKit__ConsoleLogLevel = 2
-        PluralKit__ElasticLogLevel = 2
+        PluralKit__ElasticLogLevel = 1
 
         # we can't outright disable file logging in config, but it's not useful at all (loses events often) and takes up way too much disk space
         # so we only log "fatal" events (if the bot crashes)

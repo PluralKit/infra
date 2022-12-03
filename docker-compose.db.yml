@@ -1,0 +1,71 @@
+version: '3'
+
+# services that don't need to be hosted on bare metal
+
+services:
+  influx-stats:
+    image: influxdb:1.8
+    ports:
+      - '10.0.1.3:8086:8086'
+    volumes:
+      - '/srv/influxdb:/var/lib/influxdb'
+    restart: unless-stopped
+
+  timescale-stats:
+    image: timescale/timescaledb:latest-pg14
+    ports:
+      - '10.0.1.3:5433:5432'
+    volumes:
+      - '/srv/stats:/var/lib/postgresql/data'
+    restart: unless-stopped
+
+  prom-stats:
+    image: prom/prometheus
+    ports:
+      - '10.0.1.3:9090:9090'
+    volumes:
+      - '/mnt/prometheus:/prometheus'
+      - '/mnt/prometheus.yml:/etc/prometheus/prometheus.yml'
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    ports:
+      - 10.0.1.3:9187:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://pluralkit:${DATABASE_PASSWORD}@10.0.1.3:5432/pluralkit?sslmode=disable
+    restart: unless-stopped
+
+  postgres-stats-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    ports:
+      - 10.0.1.3:9188:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://postgres:${DATABASE_PASSWORD}@10.0.1.3:5433/stats?sslmode=disable
+    restart: unless-stopped
+
+#  postgres-messages-exporter:
+#    image: quay.io/prometheuscommunity/postgres-exporter
+#    ports:
+#      - 10.0.1.3:9189:9187
+#    environment:
+#      - DATA_SOURCE_NAME=postgresql://postgres:${DATABASE_PASSWORD}@10.0.1.3:5434/stats?sslmode=disable
+#    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 10.0.1.3:3000:3000
+    volumes:
+      - /srv/grafana.ini:/etc/grafana/grafana.ini
+      - /srv/grafana:/var/lib/grafana
+    restart: unless-stopped
+
+  seq-logs:
+    image: datalust/seq
+    ports:
+      - 10.0.1.3:8010:80
+      - 10.0.1.3:5341:5341
+    volumes:
+      - /srv/seq-logs:/data
+    restart: unless-stopped

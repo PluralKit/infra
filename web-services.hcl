@@ -22,7 +22,7 @@ job "web-services" {
 		task "api" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/pluralkit:de0d27e514eb1529995b996236e85c5e8a2b2380"
+				image = "ghcr.io/pluralkit/pluralkit:version"
 				entrypoint = ["dotnet", "bin/PluralKit.API.dll"]
 				ports = ["port"]
 			}
@@ -43,9 +43,10 @@ job "web-services" {
 			env {
 				PluralKit__Api__ClientId = 466378653216014359
 
-				PluralKit__Database = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=300;Minimum Pool Size = 100;Max Auto Prepare=100"
+				PluralKit__Database = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+				PluralKit__MessagesDatabase = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
 				PluralKit__RedisAddr = "10.0.1.3:6379"
-				PluralKit__ElasticUrl = "http://10.0.1.3:9200"
+				PluralKit__SeqLogUrl = "http://10.0.1.3:5341"
 				PluralKit__InfluxUrl = "http://10.0.1.3:8086"
 				PluralKit__InfluxDb = "pluralkit"
 
@@ -72,7 +73,7 @@ job "web-services" {
 		task "dashboard" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/dashboard:371d677af1fe7377e70f1a22066c9ccd174f318e"
+				image = "ghcr.io/pluralkit/dashboard:version"
 				ports = ["port"]
 			}
 
