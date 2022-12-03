@@ -10,13 +10,15 @@ job "extras" {
 		task "scheduled_tasks" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/scheduled_tasks:0bd9f757fdda57dbb1927f1aaf7fef66b36cfdbb"
+				image = "ghcr.io/pluralkit/scheduled_tasks:98b6e726e7c9ced491cbbd20968310084beb5698"
 			}
 
 			template {
 				data = <<EOD
 					{{ with secret "kv/pluralkit" }}
+					SENTRY_DSN={{ .Data.scheduledTasksSentryUrl }}
 					DATA_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5432/pluralkit
+					MESSAGES_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5432/pluralkit
 					STATS_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5433/stats
 					REDIS_ADDR=10.0.1.3:6379
 					{{ end }}
