@@ -21,6 +21,7 @@ job "extras" {
 					MESSAGES_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5432/pluralkit
 					STATS_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5433/stats
 					REDIS_ADDR=10.0.1.3:6379
+					SET_GUILD_COUNT=true
 					{{ end }}
 				EOD
 				destination = "local/secret.env"
