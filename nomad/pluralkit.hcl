@@ -37,12 +37,6 @@ job "pluralkit" {
     policies = ["read-kv"]
   }
 
-  constraint {
-    attribute = "${attr.unique.hostname}"
-    operator = "!="
-    value = "ubuntu-4gb-fsn1-1"
-  }
-
   group "bot" {
     count = 32
 
