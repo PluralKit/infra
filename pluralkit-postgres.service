@@ -1,0 +1,16 @@
+# in prod, pluralkit-data-postgres and pluralkit-messages-postgres, with different ports
+
+[Unit]
+Description=postgresql database service
+After=pluralkit-setup-network.target
+
+[Service]
+Type=simple
+User=postgres
+Group=postgres
+Environment="PGDATA=/mnt/folder"
+ExecStart=/usr/local/pgsql/bin/postgres -h 10.0.1.3 -p 5432
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
