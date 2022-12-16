@@ -1,0 +1,13 @@
+#!/bin/sh
+
+AWS_ACCESS_KEY_ID=secret \
+AWS_SECRET_ACCESS_KEY=secret \
+WALG_S3_PREFIX=s3://pk-message-backups/messages \
+AWS_ENDPOINT=https://s3.eu-central-003.backblazeb2.com \
+WALG_LIBSODIUM_KEY=secret \
+WALG_STATSD_ADDRESS=10.0.1.3:9125 \
+PGHOST=/tmp \
+PGPORT=5434 \
+PGUSER=postgres \
+PGDATABASE=messages \
+/usr/src/wal-g/main/pg/wal-g $@
