@@ -31,6 +31,21 @@
     "liveNow": false,
     "panels": [
       {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 19,
+        "panels": [],
+        "repeat": "instance",
+        "repeatDirection": "h",
+        "title": "$instance",
+        "type": "row"
+      },
+      {
         "datasource": {
           "type": "prometheus",
           "uid": "lpw8G_OVk"
@@ -74,7 +89,7 @@
           "h": 7,
           "w": 7,
           "x": 0,
-          "y": 0
+          "y": 1
         },
         "id": 11,
         "links": [],
@@ -101,7 +116,8 @@
               "uid": "lpw8G_OVk"
             },
             "dsType": "prometheus",
-            "expr": "sum(irate(pg_stat_database_xact_commit{datname=~\"$database\",instance=~\"$instance\"}[5m])) + sum(irate(pg_stat_database_xact_rollback{datname=~\"$database\",instance=~\"$instance\"}[5m]))",
+            "editorMode": "code",
+            "expr": "sum(irate(pg_stat_database_xact_commit{instance=~\"$instance\"}[5m])) + sum(irate(pg_stat_database_xact_rollback{instance=~\"$instance\"}[5m]))",
             "format": "time_series",
             "groupBy": [
               {
@@ -120,6 +136,7 @@
             "intervalFactor": 2,
             "measurement": "postgresql",
             "policy": "default",
+            "range": true,
             "refId": "A",
             "resultFormat": "time_series",
             "select": [
@@ -195,7 +212,7 @@
           "h": 7,
           "w": 4,
           "x": 8,
-          "y": 0
+          "y": 1
         },
         "id": 15,
         "options": {
@@ -218,7 +235,7 @@
               "uid": "lpw8G_OVk"
             },
             "editorMode": "code",
-            "expr": "sum(pg_stat_database_numbackends)/max(pg_settings_max_connections)",
+            "expr": "sum(pg_stat_database_numbackends{instance=~\"$instance\"})/max(pg_settings_max_connections{instance=~\"$instance\"})",
             "legendFormat": "__auto",
             "range": true,
             "refId": "A"
@@ -301,7 +318,7 @@
           "h": 10,
           "w": 11,
           "x": 12,
-          "y": 0
+          "y": 1
         },
         "id": 17,
         "options": {
@@ -325,7 +342,7 @@
               "uid": "lpw8G_OVk"
             },
             "editorMode": "code",
-            "expr": "sum ((rate(pg_stat_database_xact_commit[1m])))",
+            "expr": "sum ((rate(pg_stat_database_xact_commit{instance=~\"$instance\"}[1m])))",
             "interval": "",
             "legendFormat": "committed",
             "range": true,
@@ -337,7 +354,7 @@
               "uid": "lpw8G_OVk"
             },
             "editorMode": "code",
-            "expr": "sum ((rate(pg_stat_database_xact_rollback[30s])))",
+            "expr": "sum ((rate(pg_stat_database_xact_rollback{instance=~\"$instance\"}[30s])))",
             "hide": false,
             "interval": "",
             "legendFormat": "rollback",
@@ -367,7 +384,7 @@
           "h": 8,
           "w": 12,
           "x": 0,
-          "y": 7
+          "y": 8
         },
         "hiddenSeries": false,
         "id": 13,
@@ -404,7 +421,7 @@
               "uid": "lpw8G_OVk"
             },
             "editorMode": "code",
-            "expr": "pg_stat_database_numbackends{datname=\"pluralkit\"}",
+            "expr": "pg_stat_database_numbackends{instance=~\"$instance\"}",
             "format": "time_series",
             "intervalFactor": 2,
             "legendFormat": "{{__name__}}",
@@ -466,7 +483,7 @@
           "h": 7,
           "w": 12,
           "x": 12,
-          "y": 10
+          "y": 11
         },
         "hiddenSeries": false,
         "id": 2,
@@ -508,7 +525,7 @@
             },
             "dsType": "prometheus",
             "editorMode": "code",
-            "expr": "irate(pg_stat_bgwriter_buffers_alloc_total[5m])",
+            "expr": "irate(pg_stat_bgwriter_buffers_alloc_total{instance=~\"$instance\"}[5m])",
             "format": "time_series",
             "groupBy": [
               {
@@ -566,7 +583,7 @@
             },
             "dsType": "prometheus",
             "editorMode": "code",
-            "expr": "irate(pg_stat_bgwriter_buffers_backend_fsync_total[5m])",
+            "expr": "irate(pg_stat_bgwriter_buffers_backend_fsync_total{instance=~\"$instance\"}[5m])",
             "format": "time_series",
             "groupBy": [
               {
@@ -844,7 +861,7 @@
           "h": 9,
           "w": 12,
           "x": 0,
-          "y": 15
+          "y": 16
         },
         "hiddenSeries": false,
         "id": 12,
@@ -880,10 +897,12 @@
               "type": "prometheus",
               "uid": "lpw8G_OVk"
             },
-            "expr": "sum(pg_stat_database_blks_hit{datname=~\"$database\",instance=~\"$instance\"}) / (sum(pg_stat_database_blks_hit{datname=~\"$database\",instance=~\"$instance\"}) + sum(pg_stat_database_blks_read{datname=~\"$database\",instance=~\"$instance\"}))",
+            "editorMode": "code",
+            "expr": "sum(pg_stat_database_blks_hit{instance=~\"$instance\"}) / (sum(pg_stat_database_blks_hit{instance=~\"$instance\"}) + sum(pg_stat_database_blks_read{instance=~\"$instance\"}))",
             "format": "time_series",
             "intervalFactor": 2,
             "legendFormat": "cache hit rate",
+            "range": true,
             "refId": "A",
             "step": 240
           }
@@ -937,7 +956,7 @@
           "h": 7,
           "w": 12,
           "x": 12,
-          "y": 17
+          "y": 18
         },
         "hiddenSeries": false,
         "id": 1,
@@ -977,7 +996,8 @@
               "uid": "lpw8G_OVk"
             },
             "dsType": "prometheus",
-            "expr": "sum(irate(pg_stat_database_tup_fetched{datname=~\"$database\",instance=~\"$instance\"}[5m]))",
+            "editorMode": "code",
+            "expr": "sum(irate(pg_stat_database_tup_fetched{instance=~\"$instance\"}[5m]))",
             "format": "time_series",
             "groupBy": [
               {
@@ -997,6 +1017,7 @@
             "legendFormat": "fetched",
             "measurement": "postgresql",
             "policy": "default",
+            "range": true,
             "refId": "A",
             "resultFormat": "time_series",
             "select": [
@@ -1035,7 +1056,8 @@
               "uid": "lpw8G_OVk"
             },
             "dsType": "prometheus",
-            "expr": "sum(irate(pg_stat_database_tup_returned{datname=~\"$database\",instance=~\"$instance\"}[5m]))",
+            "editorMode": "code",
+            "expr": "sum(irate(pg_stat_database_tup_returned{instance=~\"$instance\"}[5m]))",
             "format": "time_series",
             "groupBy": [
               {
@@ -1055,6 +1077,7 @@
             "legendFormat": "returned",
             "measurement": "postgresql",
             "policy": "default",
+            "range": true,
             "refId": "B",
             "resultFormat": "time_series",
             "select": [
@@ -1310,7 +1333,7 @@
           "h": 7,
           "w": 12,
           "x": 12,
-          "y": 24
+          "y": 25
         },
         "hiddenSeries": false,
         "id": 3,
@@ -1348,7 +1371,8 @@
               "uid": "lpw8G_OVk"
             },
             "dsType": "prometheus",
-            "expr": "sum(rate(pg_stat_database_deadlocks{datname=~\"$database\",instance=~\"$instance\"}[5m]))",
+            "editorMode": "code",
+            "expr": "sum(rate(pg_stat_database_deadlocks{instance=~\"$instance\"}[5m]))",
             "format": "time_series",
             "groupBy": [
               {
@@ -1368,6 +1392,7 @@
             "legendFormat": "deadlocks",
             "measurement": "postgresql",
             "policy": "default",
+            "range": true,
             "refId": "A",
             "resultFormat": "time_series",
             "select": [
@@ -1404,7 +1429,8 @@
               "uid": "lpw8G_OVk"
             },
             "dsType": "prometheus",
-            "expr": "sum(rate(pg_stat_database_conflicts{datname=~\"$database\",instance=~\"$instance\"}[5m]))",
+            "editorMode": "code",
+            "expr": "sum(rate(pg_stat_database_conflicts{instance=~\"$instance\"}[5m]))",
             "format": "time_series",
             "groupBy": [
               {
@@ -1424,6 +1450,7 @@
             "legendFormat": "conflicts",
             "measurement": "postgresql",
             "policy": "default",
+            "range": true,
             "refId": "B",
             "resultFormat": "time_series",
             "select": [
@@ -1496,70 +1523,35 @@
     "templating": {
       "list": [
         {
-          "allValue": ".*",
           "current": {
-            "selected": false,
-            "text": "All",
-            "value": "$__all"
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
-          "datasource": {
-            "type": "prometheus",
-            "uid": "lpw8G_OVk"
-          },
-          "definition": "",
+          "definition": "label_values(instance)",
           "hide": 0,
           "includeAll": true,
-          "multi": false,
+          "multi": true,
           "name": "instance",
           "options": [],
           "query": {
-            "query": "label_values(up{job=~\"postgres.*\"},instance)",
-            "refId": "prometheus pluralkit-instance-Variable-Query"
+            "query": "label_values(instance)",
+            "refId": "StandardVariableQuery"
           },
           "refresh": 1,
-          "regex": "",
+          "regex": "10\\.0\\.1\\.3.*",
           "skipUrlSync": false,
           "sort": 0,
-          "tagValuesQuery": "",
-          "tagsQuery": "",
-          "type": "query",
-          "useTags": false
-        },
-        {
-          "allValue": ".*",
-          "current": {
-            "selected": false,
-            "text": "All",
-            "value": "$__all"
-          },
-          "datasource": {
-            "type": "prometheus",
-            "uid": "lpw8G_OVk"
-          },
-          "definition": "label_values(pg_stat_database_tup_fetched{instance=~\"$instance\",datname!~\"template.*|postgres\"},datname)",
-          "hide": 0,
-          "includeAll": true,
-          "label": "database",
-          "multi": false,
-          "name": "database",
-          "options": [],
-          "query": {
-            "query": "label_values(pg_stat_database_tup_fetched{instance=~\"$instance\",datname!~\"template.*|postgres\"},datname)",
-            "refId": "prometheus pluralkit-database-Variable-Query"
-          },
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "sort": 0,
-          "tagValuesQuery": "",
-          "tagsQuery": "",
-          "type": "query",
-          "useTags": false
+          "type": "query"
         }
       ]
     },
     "time": {
-      "from": "now-1h",
+      "from": "now-24h",
       "to": "now"
     },
     "timepicker": {
@@ -1590,6 +1582,6 @@
     "timezone": "browser",
     "title": "Postgres",
     "uid": "wGgaPlciz",
-    "version": 9,
+    "version": 15,
     "weekStart": ""
-  }
+}
