@@ -52,6 +52,14 @@ services:
      - DATA_SOURCE_NAME=postgresql://postgres:${DATABASE_PASSWORD}@10.0.1.3:5434/messages?sslmode=disable
    restart: unless-stopped
 
+  redis-exporter:
+    image: oliver006/redis_exporter
+    ports:
+      - 10.0.1.3:9190:9121
+    environment:
+      - REDIS_ADDR=redis://10.0.1.3:6379
+    restart: unless-stopped
+
   grafana:
     image: grafana/grafana
     ports:
