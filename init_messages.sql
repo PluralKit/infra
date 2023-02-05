@@ -1,5 +1,3 @@
-create extension timescaledb;
-
 create table messages (
     mid bigint not null primary key,
     channel bigint not null,
@@ -8,5 +6,3 @@ create table messages (
     original_mid bigint,
     guild bigint
 );
-
-select create_hypertable('messages', 'mid', chunk_time_interval => 362387865600000);
