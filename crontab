@@ -1,0 +1,2 @@
+0 * * * * /opt/run_data_backup >> /tmp/cron_logs
+0 0 * * 0 /opt/run_messages_backup >> /tmp/cron_logs

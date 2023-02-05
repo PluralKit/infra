@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# ???
+export PATH=/usr/local/pgsql/bin:$PATH
+
+export webhook=
+
+#curl -H content-type:application/json $webhook -d '{"content": "running data-db backup job"}' || true
+
+/root/.local/bin/borgmatic -c /root/backup/config.yaml create --stats 2>&1 || curl -H content-type:application/json $webhook -d '{"content": "data-db backup job FAILED, check /tmp/cron_logs for details"}' && exit 0
+
+#curl -H content-type:application/json $webhook -d '{"content": "data-db backup job completed, check /tmp/cron_logs for details"}'

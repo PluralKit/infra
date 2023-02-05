@@ -1,0 +1,9 @@
+#!/bin/sh
+
+export webhook=
+
+curl -H content-type:application/json $webhook -d '{"content": "running messages base_backup job"}' || true
+
+/opt/wal-g backup-push 2>&1 >> /tmp/backup-logs || curl -H content-type:application/json $webhook -d '{"content": "messages base_backup job FAILED, check /tmp/cron_logs for details"}' && exit 0
+
+curl -H content-type:application/json $webhook -d '{"content": "base_backup job completed. check /tmp/cron_logs for details"}'
