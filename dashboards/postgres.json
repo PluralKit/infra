@@ -101,7 +101,7 @@
           "orientation": "horizontal",
           "reduceOptions": {
             "calcs": [
-              "mean"
+              "last"
             ],
             "fields": "",
             "values": false
