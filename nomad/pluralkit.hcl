@@ -67,6 +67,7 @@ job "pluralkit" {
         PluralKit__Bot__ClientId = 466378653216014359
         PluralKit__Bot__AdminRole = 913986523500777482
         PluralKit__Bot__DiscordBaseUrl = "http://10.0.0.2:8001/api/v10"
+        PluralKit__Bot__AvatarServiceUrl = "http://10.0.0.2:3000"
 
         PluralKit__Bot__MaxShardConcurrency = 16
         PluralKit__Bot__UseRedisRatelimiter = true
@@ -93,7 +94,7 @@ job "pluralkit" {
       # todo: add healthcheck
 
       resources {
-        cpu    = 500
+        cpu    = 501
         memory = 1200
       }
     }
