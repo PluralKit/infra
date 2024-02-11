@@ -13,10 +13,14 @@ job "api" {
 
 	group "api" {
 		network {
-			port "port" {
+			port "external" {
 				static = 5000
 				to = 5000
-				host_network = "6pn"
+				host_network = "lo"
+			}
+
+			port "inner" {
+				to = 5000
 			}
 		}
 
@@ -25,7 +29,7 @@ job "api" {
 			config {
 				image = "ghcr.io/pluralkit/pluralkit:version"
 				entrypoint = ["dotnet", "bin/PluralKit.API.dll"]
-				ports = ["port"]
+				ports = ["inner"]
 			}
 
 			template {
@@ -54,6 +58,46 @@ job "api" {
 				PluralKit__ConsoleLogLevel = 2
 				PluralKit__ElasticLogLevel = 2
 				PluralKit__FileLogLevel = 5
+			}
+
+			service {
+				name = "api-inner"
+				port = "inner"
+				provider = "nomad"
+			}
+		}
+
+		task "proxy" {
+			driver = "docker"
+			config {
+				image = "ghcr.io/pluralkit/api:version"
+				ports = ["external"]
+			}
+
+			template {
+				data = <<EOH
+
+				pluralkit__api__ratelimit_redis_addr=redis://10.0.1.3:6379
+				{{ with secret "kv/pluralkit" }}
+				pluralkit__api__temp_token2={{ .Data.api_token2 }}
+				{{ end }}
+
+				{{ range nomadService "api-inner" }}
+				pluralkit__api__remote_url=http://{{ .Address }}:{{ .Port }}
+				{{ end }}
+				EOH
+
+				destination = "local/env"
+				env = true
+			}
+
+			env {
+				RUST_LOG="info"
+
+				pluralkit__discord__bot_token=1
+				pluralkit__discord__client_id=1
+				pluralkit__discord__client_secret=1
+				pluralkit__run_metrics_server=false
 			}
 		}
 	}
