@@ -2,6 +2,11 @@ job "dashboard" {
 	name = "dashboard"
 	datacenters = ["dc1"]
 
+	constraint {
+		attribute = "${attr.unique.hostname}"
+		value = "ubuntu-4gb-fsn1-1"
+	}
+
 	group "dashboard" {
 		network {
 			port "port" {

@@ -2,6 +2,11 @@ job "pluralkit" {
   name = "pluralkit"
   datacenters = ["dc1"]
 
+  constraint {
+    attribute = "${attr.unique.hostname}"
+    value = "compute02"
+  }
+
   # The "update" stanza specifies the update strategy of task groups. The update
   # strategy is used to control things like rolling upgrades, canaries, and
   # blue/green deployments.
@@ -38,7 +43,7 @@ job "pluralkit" {
   }
 
   group "bot" {
-    count = 32
+    count = 48
 
     task "bot" {
       driver = "docker"
@@ -66,8 +71,8 @@ job "pluralkit" {
         PluralKit__Bot__MaxShardConcurrency = 16
         PluralKit__Bot__UseRedisRatelimiter = true
 
-        PluralKit__Bot__Cluster__TotalShards = 512
-        PluralKit__Bot__Cluster__TotalNodes = 32
+        PluralKit__Bot__Cluster__TotalShards = 768
+        PluralKit__Bot__Cluster__TotalNodes = 48
         
         PluralKit__Database = "Host=10.0.1.3;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
         PluralKit__MessagesDatabase = "Host=10.0.1.3;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"

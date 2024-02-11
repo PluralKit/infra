@@ -2,6 +2,11 @@ job "api" {
 	name = "api"
 	datacenters = ["dc1"]
 
+	constraint {
+		attribute = "${attr.unique.hostname}"
+		value = "ubuntu-4gb-fsn1-1"
+	}
+
 	vault {
 		policies = ["read-kv"]
 	}
