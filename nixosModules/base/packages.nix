@@ -8,6 +8,7 @@
   environment.systemPackages = with pkgs; [
     tmux
     htop
+    git
 
     # editors
     vim
