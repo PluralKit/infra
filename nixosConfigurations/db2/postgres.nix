@@ -45,6 +45,7 @@ let
           log_destination = "stderr";
           hba_file = "${authFile}";
           max_connections = 2000;
+          log_min_duration_statement = 1000;
         } // extraSettings;
 
       in
@@ -103,6 +104,8 @@ in
     5434
   ];
 
+  environment.systemPackages = with pkgs; [ borgmatic wal-g ];
+
   systemd.services =
     let
       listenAddresses = "127.0.0.1, 10.0.1.6";
@@ -122,6 +125,13 @@ in
         extraSettings = {
           listen_addresses = listenAddresses;
           max_locks_per_transaction = 256;
+          shared_buffers = "12GB";
+          effective_cache_size = "4GB";
+          max_wal_size = "1GB";
+          min_wal_size = "80MB";
+          archive_mode = "yes";
+          archive_command = "/opt/wal-g wal-push %p";
+          archive_timeout = 60;
         };
       };
 
@@ -132,6 +142,10 @@ in
         authentication = extraPgHba;
         extraSettings = {
           listen_addresses = listenAddresses;
+          shared_buffers = "20GB";
+          effective_cache_size = "10GB";
+          min_wal_size = "80MB";
+          max_wal_size = "1GB";
         };
       };
 
