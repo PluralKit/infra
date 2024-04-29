@@ -81,7 +81,7 @@ job "pluralkit" {
         PluralKit__InfluxUrl = "http://10.0.1.3:8086"
         PluralKit__InfluxDb = "pluralkit"
         PluralKit__UseRedisMetrics = true
-        PluralKit__SeqLogUrl = "http://10.0.1.3:5341"
+        PluralKit__SeqLogUrl = "http://10.0.1.6:5341"
 
         PluralKit__ConsoleLogLevel = 2
         PluralKit__ElasticLogLevel = 1
