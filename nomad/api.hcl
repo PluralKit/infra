@@ -32,6 +32,10 @@ job "api" {
 				ports = ["inner"]
 			}
 
+			resources {
+				memory = 600
+			}
+
 			template {
 				data = <<EOH
 					{{ with secret "kv/pluralkit" }}
