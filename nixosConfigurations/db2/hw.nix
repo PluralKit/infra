@@ -24,7 +24,7 @@
     fsType = "vfat";
   };
 
-  fileSystems."/srv" = {
+  fileSystems."/srv/data1" = {
     device = "/dev/disk/by-uuid/70754f40-5670-4fee-8a38-da8714252783";
     fsType = "xfs";
   };

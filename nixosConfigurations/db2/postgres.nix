@@ -137,7 +137,7 @@ in
 
       pluralkit-db-data = mkPostgresService "pluralkit-db-data" {
         package = pkgs.postgresql_14;
-        dataDir = "/srv/pg-data";
+        dataDir = "/srv/data1/pg-data";
         listenPort = 5432;
         authentication = extraPgHba;
         extraSettings = {
@@ -151,7 +151,7 @@ in
 
       pluralkit-db-stats = mkPostgresService "pluralkit-db-stats" {
         package = pkgs.postgresql_14.withPackages (f: with f; [ timescaledb ]);
-        dataDir = "/srv/pg-stats";
+        dataDir = "/srv/data1/pg-stats";
         listenPort = 5433;
         authentication = extraPgHba;
         extraSettings = {
