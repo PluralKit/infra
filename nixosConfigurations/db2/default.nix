@@ -39,5 +39,18 @@
     };
   };
 
+  virtualisation.oci-containers = {
+    backend = "docker";
+    containers.seq-logs = {
+      image = "datalust/seq";
+      ports = [
+        "10.0.1.6:8010:80"
+        "10.0.1.6:5341:5341"
+      ];
+      volumes = [ "/srv/data1/seq-logs:/data" ];
+      environment.ACCEPT_EULA = "y";
+    };
+  };
+
   system.stateVersion = "23.11";
 }
