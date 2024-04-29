@@ -30,7 +30,7 @@ job "avatars" {
 			template {
 				data = <<EOH
 					{{ with secret "kv/pluralkit" }}
-					PK_AVATAR__DB = "postgres://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5432/pluralkit"
+					PK_AVATAR__DB = "postgres://pluralkit:{{ .Data.databasePassword }}@10.0.1.6:5432/pluralkit"
 					PK_AVATAR__BASE_URL = "https://cdn.pluralkit.me"
 					PK_AVATAR__S3__BUCKET = "pluralkit-avatars"
 					PK_AVATAR__S3__ENDPOINT = "https://s3.eu-central-003.backblazeb2.com"

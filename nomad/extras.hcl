@@ -17,10 +17,10 @@ job "extras" {
 				data = <<EOD
 					{{ with secret "kv/pluralkit" }}
 					SENTRY_DSN={{ .Data.scheduledTasksSentryUrl }}
-					DATA_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5432/pluralkit
-					MESSAGES_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5434/messages
-					STATS_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.3:5433/stats
-					REDIS_ADDR=10.0.1.3:6379
+					DATA_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.6:5432/pluralkit
+					MESSAGES_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.6:5434/messages
+					STATS_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@10.0.1.6:5433/stats
+					REDIS_ADDR=10.0.1.6:6379
 					SET_GUILD_COUNT=true
 					{{ end }}
 				EOD
