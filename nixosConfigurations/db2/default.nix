@@ -9,6 +9,7 @@
     ./hw.nix
     ./redis.nix
     ./postgres.nix
+    ./metrics.nix
   ];
 
   boot.kernel.sysctl = {

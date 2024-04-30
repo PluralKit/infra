@@ -102,6 +102,7 @@ in
     5432
     5433
     5434
+    3000
   ];
 
   environment.systemPackages = with pkgs; [ borgmatic wal-g ];
