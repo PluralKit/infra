@@ -160,5 +160,24 @@ in
           shared_preload_libraries = "timescaledb";
         };
       };
+
+      data-db-borgmatic = {
+        script = ''
+          export PATH=/run/current-system/sw/bin:$PATH
+          exec /opt/run_data_backup
+        '';
+        serviceConfig = {
+          Type = "oneshot";
+          User = "root";
+        };
+      };
+  };
+
+  systemd.timers."data-db-borgmatic" = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "hourly";
+      Unit = "data-db-borgmatic.service";
+    };
   };
 }
