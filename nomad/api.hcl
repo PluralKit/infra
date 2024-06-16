@@ -4,7 +4,7 @@ job "api" {
 
 	constraint {
 		attribute = "${attr.unique.hostname}"
-		value = "ubuntu-4gb-fsn1-1"
+		value = "compute02"
 	}
 
 	vault {
@@ -16,11 +16,13 @@ job "api" {
 			port "external" {
 				static = 5000
 				to = 5000
-				host_network = "lo"
+				host_network = "internal"
 			}
 
 			port "inner" {
+				static = 5002
 				to = 5000
+				host_network = "internal"
 			}
 		}
 
@@ -65,9 +67,9 @@ job "api" {
 			}
 
 			service {
-				name = "api-inner"
+				name = "pluralkit-dotnet-api"
 				port = "inner"
-				provider = "nomad"
+				provider = "consul"
 			}
 		}
 
@@ -78,17 +80,22 @@ job "api" {
 				ports = ["external"]
 			}
 
+			service {
+				name = "pluralkit-api"
+				port = "external"
+				provider = "consul"
+			}
+
 			template {
 				data = <<EOH
 
 				pluralkit__api__ratelimit_redis_addr=redis://10.0.1.6:6379
 				{{ with secret "kv/pluralkit" }}
 				pluralkit__api__temp_token2={{ .Data.api_token2 }}
+				pluralkit__db__db_password={{ .Data.databasePassword }}
 				{{ end }}
 
-				{{ range nomadService "api-inner" }}
-				pluralkit__api__remote_url=http://{{ .Address }}:{{ .Port }}
-				{{ end }}
+				pluralkit__api__remote_url=http://pluralkit-dotnet-api.service.consul:5002
 				EOH
 
 				destination = "local/env"
@@ -96,7 +103,10 @@ job "api" {
 			}
 
 			env {
-				RUST_LOG="info"
+				RUST_LOG="debug"
+
+				pluralkit__db__data_db_uri="postgresql://pluralkit@10.0.1.6:5432/pluralkit"
+				pluralkit__db__data_redis_addr="redis://10.0.1.6:6379"
 
 				pluralkit__discord__bot_token=1
 				pluralkit__discord__client_id=1
