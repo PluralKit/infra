@@ -6,6 +6,11 @@
         ./nixosConfigurations
         ./nixosModules
       ];
+
+      flake.overlays.default = import ./packages/overlay.nix { inherit inputs; };
+      perSystem = { pkgs, ... }: {
+        packages = import ./packages { inherit inputs; } pkgs;
+      };
     };
 
   inputs = {
