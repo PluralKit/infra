@@ -65,7 +65,8 @@ let
               initdb -U postgres ${concatStringsSep " " initDbArgs}
             fi
 
-            ln -sfn "${configFile}/postgresql.conf" "${dataDir}/postgresql.conf"
+            rm -f ${dataDir}/postgresql.conf
+            cp "${configFile}/postgresql.conf" "${dataDir}/postgresql.conf"
           '';
 
         serviceConfig = {
