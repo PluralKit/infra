@@ -34,6 +34,7 @@ let
 
             # default authentication values
             local all all peer
+            local replication all peer
             host all all 127.0.0.1/32 md5
             host all all ::1/128 md5
           '';
@@ -112,6 +113,7 @@ in
     let
       listenAddresses = "127.0.0.1, 10.0.1.6";
       extraPgHba = ''
+        local all all peer
         host all all 10.0.0.0/24 md5
         host all all 10.0.1.0/24 md5
         host replication pkrepluser 10.0.1.3/32 md5
@@ -172,6 +174,17 @@ in
           User = "root";
         };
       };
+
+      messages-db-base-backup = {
+        script = ''
+          export PATH=/run/current-system/sw/bin:$PATH
+          exec /opt/run_base_backup
+        '';
+        serviceConfig = {
+          Type = "oneshot";
+          User = "postgres";
+        };
+      };
   };
 
   systemd.timers."data-db-borgmatic" = {
@@ -179,6 +192,14 @@ in
     timerConfig = {
       OnCalendar = "hourly";
       Unit = "data-db-borgmatic.service";
+    };
+  };
+
+  systemd.timers."messages-db-base-backup" = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "*-*-1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31 00:00:00";
+      Unit = "messages-db-base-backup.service";
     };
   };
 }
