@@ -30,5 +30,6 @@ in
 {
   flake.nixosConfigurations = {
     db2 = mkSystem "db2" "x86_64-linux" {};
+    compute03 = mkSystem "compute03" "x86_64-linux" {};
   };
 }
