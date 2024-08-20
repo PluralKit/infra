@@ -4,7 +4,7 @@ job "api" {
 
 	constraint {
 		attribute = "${attr.unique.hostname}"
-		value = "compute02"
+		value = "compute03"
 	}
 
 	vault {
@@ -14,15 +14,11 @@ job "api" {
 	group "api" {
 		network {
 			port "external" {
-				static = 5000
 				to = 5000
-				host_network = "internal"
 			}
 
 			port "inner" {
-				static = 5002
 				to = 5000
-				host_network = "internal"
 			}
 		}
 
@@ -31,7 +27,6 @@ job "api" {
 			config {
 				image = "ghcr.io/pluralkit/pluralkit:version"
 				entrypoint = ["dotnet", "bin/PluralKit.API.dll"]
-				ports = ["inner"]
 			}
 
 			resources {
@@ -69,6 +64,7 @@ job "api" {
 
 			service {
 				name = "pluralkit-dotnet-api"
+				address_mode = "driver"
 				port = "inner"
 				provider = "consul"
 			}
@@ -83,20 +79,18 @@ job "api" {
 
 			service {
 				name = "pluralkit-api"
+				address_mode = "driver"
 				port = "external"
 				provider = "consul"
 			}
 
 			template {
 				data = <<EOH
-
-				pluralkit__api__ratelimit_redis_addr=redis://10.0.1.6:6379
 				{{ with secret "kv/pluralkit" }}
 				pluralkit__api__temp_token2={{ .Data.api_token2 }}
 				pluralkit__db__db_password={{ .Data.databasePassword }}
 				{{ end }}
 
-				pluralkit__api__remote_url=http://pluralkit-dotnet-api.service.consul:5002
 				EOH
 
 				destination = "local/env"
@@ -108,6 +102,9 @@ job "api" {
 
 				pluralkit__db__data_db_uri="postgresql://pluralkit@10.0.1.6:5432/pluralkit"
 				pluralkit__db__data_redis_addr="redis://10.0.1.6:6379"
+				pluralkit__api__ratelimit_redis_addr="redis://10.0.1.6:6379"
+
+				pluralkit__api__remote_url="http://pluralkit-dotnet-api.service.consul:5000"
 
 				pluralkit__discord__bot_token=1
 				pluralkit__discord__client_id=1

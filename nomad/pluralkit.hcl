@@ -4,7 +4,7 @@ job "pluralkit" {
 
   constraint {
     attribute = "${attr.unique.hostname}"
-    value = "compute02"
+    value = "compute03"
   }
 
   # The "update" stanza specifies the update strategy of task groups. The update
@@ -66,8 +66,8 @@ job "pluralkit" {
       env {
         PluralKit__Bot__ClientId = 466378653216014359
         PluralKit__Bot__AdminRole = 913986523500777482
-        PluralKit__Bot__DiscordBaseUrl = "http://10.0.0.2:8001/api/v10"
-        PluralKit__Bot__AvatarServiceUrl = "http://10.0.0.2:3000"
+        PluralKit__Bot__DiscordBaseUrl = "http://100.99.134.112:8001/api/v10"
+        PluralKit__Bot__AvatarServiceUrl = "http://pluralkit-avatars.service.consul:3000"
 
         PluralKit__Bot__MaxShardConcurrency = 16
         PluralKit__Bot__UseRedisRatelimiter = true

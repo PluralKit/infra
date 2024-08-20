@@ -4,15 +4,13 @@ job "dashboard" {
 
 	constraint {
 		attribute = "${attr.unique.hostname}"
-		value = "ubuntu-4gb-fsn1-1"
+		value = "compute03"
 	}
 
 	group "dashboard" {
 		network {
 			port "port" {
-				static = 8080
 				to = 8080
-				host_network = "6pn"
 			}
 		}
 
@@ -21,6 +19,13 @@ job "dashboard" {
 			config {
 				image = "ghcr.io/pluralkit/dashboard:version"
 				ports = ["port"]
+			}
+
+			service {
+				name = "pluralkit-dashboard"
+				address_mode = "driver"
+				port = "port"
+				provider = "consul"
 			}
 		}
 	}

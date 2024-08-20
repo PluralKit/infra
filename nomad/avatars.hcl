@@ -4,7 +4,7 @@ job "avatars" {
 
 	constraint {
 		attribute = "${attr.unique.hostname}"
-		value = "ubuntu-4gb-fsn1-1"
+		value = "compute03"
 	}
 
 	vault {
@@ -14,9 +14,7 @@ job "avatars" {
 	group "avatars" {
 		network {
 			port "port" {
-				static = 3000
 				to = 3000
-				host_network = "internal"
 			}
 		}
 
@@ -41,6 +39,13 @@ job "avatars" {
 
 				destination = "local/env"
 				env = true
+			}
+
+			service {
+				name = "pluralkit-avatars"
+				address_mode = "driver"
+				port = "port"
+				provider = "consul"
 			}
 		}
 	}
