@@ -53,5 +53,14 @@
     };
   };
 
+  networking.firewall.interfaces."internal".allowedTCPPorts = [ 9000 9200 ];
+
+  services.opensearch = {
+    enable = true;
+    settings."network.host" = "10.0.1.6";
+    dataDir = "/srv/data2/elasticsearch";
+    extraJavaOptions = [ "-Xmx32g"   "-Djava.net.preferIPv4Stack=true" ];
+  };
+
   system.stateVersion = "23.11";
 }
