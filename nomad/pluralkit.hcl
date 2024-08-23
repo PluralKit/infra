@@ -57,6 +57,7 @@ job "pluralkit" {
             PluralKit__Bot__Token = "{{ .Data.discordToken }}"
             PluralKit__DatabasePassword = "{{ .Data.databasePassword }}"
             PluralKit__SentryUrl = "{{ .Data.sentryUrl }}"
+            PluralKit__DispatchProxyToken = {{ .Data.dispatchToken }}
             {{ end }}
           EOD
           destination = "local/secret.env"
@@ -82,6 +83,7 @@ job "pluralkit" {
         PluralKit__InfluxDb = "pluralkit"
         PluralKit__UseRedisMetrics = true
         PluralKit__SeqLogUrl = "http://10.0.1.6:5341"
+        PluralKit__DispatchProxyUrl = "http://dispatch.svc.pluralkit.net"
 
         PluralKit__ConsoleLogLevel = 2
         PluralKit__ElasticLogLevel = 1
