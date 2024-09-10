@@ -66,6 +66,7 @@
     };
   };
 
+  systemd.services.consul.serviceConfig.AmbientCapabilities = "cap_net_bind_service";
   services.consul = {
     enable = true;
     extraConfig = {
