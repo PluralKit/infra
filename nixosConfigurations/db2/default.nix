@@ -19,6 +19,7 @@
 
   networking.hostId = "09a9f4ac";
   systemd.network = {
+    wait-online.enable = false;
     netdevs."internal" = {
       netdevConfig = { Name = "internal"; Kind = "vlan"; };
       vlanConfig = { Id = 4000; };

@@ -15,6 +15,7 @@
 
   networking.hostId = "858a0900";
   systemd.network = {
+    wait-online.enable = false;
     netdevs."internal" = {
       netdevConfig = { Name = "internal"; Kind = "vlan"; };
       vlanConfig = { Id = 4000; };
@@ -42,6 +43,10 @@
   };
 
   virtualisation.docker.daemon.settings = {
+    experimental = true;
+    ip6tables = true;
+    ipv6 = true;
+    fixed-cidr-v6 = "fd00::/80";
     default-address-pools = [{ base = "172.17.1.0/24"; size = 24; }];
   };
 
@@ -77,6 +82,31 @@
       retry_join = ["100.99.134.112"];
     };
   };
+
+  services.vector = {
+    enable = true;
+    settings = {
+      sources.docker = {
+        type = "docker_logs";
+        include_containers = ["gateway-"];
+      };
+      sinks.opensearch = {
+        type = "elasticsearch";
+        inputs = ["json"];
+        bulk.index = "pluralkit";
+        api_version = "v8";
+        endpoints = ["http://10.0.1.6:9200"];
+      };
+      transforms.json = {
+        type = "remap";
+        inputs = ["docker"];
+        source = ''
+        .data = parse_json(.message) ?? {}
+        '';
+      };
+    };
+  };
+  systemd.services.vector.serviceConfig.Group = "docker";
 
   networking.nameservers = [ "100.100.100.100" ];
 
