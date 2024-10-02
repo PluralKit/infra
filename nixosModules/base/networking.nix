@@ -20,6 +20,15 @@
     fallbackDns = [ "1.1.1.1" "1.0.0.1" ];
   };
 
+  systemd.network = {
+    wait-online.enable = false;
+
+    networks."lo" = {
+      matchConfig = { Name = "lo"; };
+      address = [ "127.0.0.1/8" "[::1]/128" "169.254.169.254" ];
+    };
+  };
+
   services.tailscale = {
     enable = true;
     extraUpFlags = [ "--ssh" ];
