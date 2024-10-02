@@ -1,0 +1,12 @@
+app = "pluralkit-dispatch"
+primary_region = "ams"
+
+build.image = "ghcr.io/pluralkit/dispatch:version"
+http_service.internal_port = 5000
+env.RUST_LOG = "debug"
+env.DNS_UPSTREAM = "[fdaa::3]:53"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
