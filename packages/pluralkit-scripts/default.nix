@@ -22,6 +22,7 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/bin
     cp ${./messagedump.py} $out/bin/pk-messagedump && chmod +x $out/bin/pk-messagedump
+    cp ${./dispatchtest.py} $out/bin/pk-dispatchtest && chmod +x $out/bin/pk-dispatchtest
 
     for fn in $out/bin/*
     do
