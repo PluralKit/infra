@@ -1,10 +1,10 @@
-# PluralKit NixOS infrastructure
+# PluralKit Production infrastructure
 
 ## Quick command list
 
-* Updating configs on an existing machine: `nixos-rebuild switch --flake .#`
+- Updating configs on an existing machine: `nixos-rebuild switch --flake .#hostname --target-host you@hostname.pluralkit.net --build-host you@hostname.pluralkit.net --use-remote-sudo`
 
-## System configuration
+## NixOS System configuration
 
 Each system gets a directory in `nixosConfigurations`. `default.nix` in
 each directory is the equivalent of `/etc/nixos/configuration.nix`,
