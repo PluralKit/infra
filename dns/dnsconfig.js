@@ -19,7 +19,7 @@ D("pluralkit.net", REG_NONE, DnsProvider(DNS_HE),
 
 	/// hashi
 	A("hashi.svc.pluralkit.net.", "100.86.170.19"), // manage-tmp
-	A("hashi.svc.pluralkit.net.", "100.99.134.112"), // manage-tmp2
+	A("hashi.svc.pluralkit.net.", "100.82.64.16"), // manage-tmp2
 
 	/// misc
 	AAAA("dispatch.svc.pluralkit.net.", "fdaa:9:e856:0:1::2"),
