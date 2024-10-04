@@ -49,11 +49,11 @@ Add the server to `hashi.svc.pluralkit.net` DNS.
 
 ## Compute server
 
-todo: abstract out compute server stuff
-
-Add `nixosModules/compute.nix` to imports in the new server's configuration and rebuild.
+Add `nixosModules/worker.nix` to imports in the new server's configuration and rebuild.
 
 Choose an unused subnet for container IPs (172.17.xxx.0/24).
+\nSet it as `pkWorkerSubnet` in the config, and add a tailscale route for it: `tailscale set --advertise-routes <subnet>`.
+\nApprove the route in the Tailscale dashboard.
 
 Set the server to eligible in Nomad, and you're done.
 
