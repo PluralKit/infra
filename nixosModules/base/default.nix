@@ -11,6 +11,7 @@
     ./users.nix
     ./packages.nix
     ./networking.nix
+    ../../packages/server-checks/configuration.nix
   ];
 
   time.timeZone = "Etc/UTC";
@@ -51,4 +52,11 @@
   networking.nameservers = if config.pkTailscaleIp == ""
     then [ "1.1.1.1" "1.0.0.1" ] # tailscale has not been set up yet
     else [ "100.100.100.100" ];
+
+  # global checks
+  pkServerChecks = [
+    { type = "systemd_no_failing_services"; }
+    { type = "systemd_service_running"; value = "tailscaled"; }
+    { type = "systemd_service_running"; value = "consul"; }
+  ];
 }

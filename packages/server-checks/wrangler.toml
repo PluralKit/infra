@@ -1,0 +1,7 @@
+name = "pluralkit-server-checks"
+main = "worker.ts"
+compatibility_date = "2024-09-25"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+crons = ["* * * * *"]

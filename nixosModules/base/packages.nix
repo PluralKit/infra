@@ -25,5 +25,6 @@
     postgresql_15
 
     (pkgs.callPackage ../../packages/pluralkit-scripts/default.nix {})
+    (pkgs.callPackage ../../packages/server-checks/default.nix {})
   ];
 }
