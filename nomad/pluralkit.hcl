@@ -38,7 +38,7 @@ job "pluralkit" {
   }
 
   group "bot" {
-    count = 48
+    count = 54
 
     task "bot" {
       driver = "docker"
@@ -69,8 +69,8 @@ job "pluralkit" {
         PluralKit__Bot__MaxShardConcurrency = 16
         PluralKit__Bot__UseRedisRatelimiter = true
 
-        PluralKit__Bot__Cluster__TotalShards = 768
-        PluralKit__Bot__Cluster__TotalNodes = 48
+        PluralKit__Bot__Cluster__TotalShards = 864
+        PluralKit__Bot__Cluster__TotalNodes = 54
         
         PluralKit__Database = "Host=10.0.1.6;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
         PluralKit__MessagesDatabase = "Host=10.0.1.6;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"

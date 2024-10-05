@@ -43,7 +43,7 @@ job "gateway" {
 	}
 
 	group "gateway" {
-		count = 48
+		count = 54
 	  network {
 	    port "port" {
 	      to = 5000
@@ -84,8 +84,8 @@ job "gateway" {
 
         pluralkit__discord__client_id=466378653216014359
 
-        pluralkit__discord__cluster__total_shards=768
-        pluralkit__discord__cluster__total_nodes=48
+        pluralkit__discord__cluster__total_shards=864
+        pluralkit__discord__cluster__total_nodes=54
         pluralkit__discord__max_concurrency=16
 
 				pluralkit__db__data_db_uri="postgresql://pluralkit@10.0.1.6:5432/pluralkit"
