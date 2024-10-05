@@ -31,6 +31,7 @@ in
   flake.nixosConfigurations = {
     db2 = mkSystem "db2" "x86_64-linux" {};
     compute03 = mkSystem "compute03" "x86_64-linux" {};
+    vps = mkSystem "vps" "x86_64-linux" {};
     manage-tmp = mkSystem "manage-tmp" "x86_64-linux" {};
     manage-tmp2 = mkSystem "manage-tmp2" "x86_64-linux" {};
   };
