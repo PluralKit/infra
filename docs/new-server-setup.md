@@ -21,9 +21,11 @@ Now you have a blank NixOS server, ready for configuration to be applied.
 
 Continue to one of the machine-type-specific sections below.
 
-### Note about DNS
+### Final steps
 
-Remember to add the new server's public and VPN (Tailscale) IPs to DNS in `dns/dnsconfig.js`.
+Add the new server's public and VPN (Tailscale) IPs to DNS in `dns/dnsconfig.js`.
+
+Add the server to the server-checks worker script in `packages/server-checks/worker.ts`.
 
 ## Management server
 
@@ -43,7 +45,7 @@ $ vault operator unseal
 $ nomad server join hashi.svc.pluralkit.net
 ```
 
-Try not to break the Raft clusters, they're picky (consul/vault should automatically join their raft clusters)
+Try not to break the Raft clusters, they're picky (consul should automatically join the raft cluster)
 
 Add the server to `hashi.svc.pluralkit.net` DNS.
 
