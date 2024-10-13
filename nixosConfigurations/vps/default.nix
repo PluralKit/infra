@@ -55,7 +55,7 @@ sentry.pluralkit.me {
 
 grafana.pluralkit.me {
         reverse_proxy /* {
-                to http://10.0.1.6:3000
+                to http://100.83.67.99:3000
                 header_down -X-Frame-Options
                 header_down +Content-Security-Policy "frame-ancestors stats.pluralkit.me"
         }

@@ -25,6 +25,6 @@
     enable = true;
     dataDir = "/srv/data1/grafana/";
     settings.server.domain = "grafana.pluralkit.me";
-    settings.server.http_addr = "10.0.1.6";
+    settings.server.http_addr = "100.83.67.99";
   };
 }
