@@ -10,7 +10,13 @@
     ./redis.nix
     ./postgres.nix
     ./metrics.nix
+    ../../nixosModules/worker.nix
   ];
+
+  pkTailscaleIp = "100.83.67.99";
+  pkWorkerSubnet = "172.17.2.0/24";
+
+  networking.firewall.trustedInterfaces = [ "docker0" ];
 
   boot.kernel.sysctl = {
     "net.ipv4.tcp_max_syn_backlog" = 8192;
