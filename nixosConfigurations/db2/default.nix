@@ -1,6 +1,7 @@
 { inputs
 , pkgs
 , lib
+, config
 , ...
 }:
 
@@ -56,6 +57,12 @@
       ];
       volumes = [ "/srv/data1/seq-logs:/data" ];
       environment.ACCEPT_EULA = "y";
+    };
+    containers.opensearch-dashboards = {
+      image = "opensearchproject/opensearch-dashboards:2.11.1";
+      ports = [ "${config.pkTailscaleIp}:5601:5601" ];
+      environment.OPENSEARCH_HOSTS = "[\"http://10.0.1.6:9200\"]";
+      environment.DISABLE_SECURITY_DASHBOARDS_PLUGIN = "true";
     };
   };
 
