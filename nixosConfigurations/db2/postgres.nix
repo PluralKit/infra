@@ -1,5 +1,6 @@
 { pkgs
 , lib
+, config
 , ...
 }:
 
@@ -112,13 +113,12 @@ in
 
   systemd.services =
     let
-      listenAddresses = "127.0.0.1, 10.0.1.6";
+      listenAddresses = "127.0.0.1, ${config.pkTailscaleIp}";
       extraPgHba = ''
         local all all peer
         host all all 10.0.0.0/24 md5
-        host all all 10.0.1.0/24 md5
+        host all all 100.64.0.0/10 md5
         host all all 172.17.0.0/16 md5
-        host replication pkrepluser 10.0.1.3/32 md5
       '';
 
     in

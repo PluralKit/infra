@@ -2,11 +2,6 @@ job "avatars" {
 	name = "avatars"
 	datacenters = ["dc1"]
 
-	constraint {
-		attribute = "${attr.unique.hostname}"
-		value = "compute03"
-	}
-
 	vault {
 		policies = ["read-kv"]
 	}
@@ -29,7 +24,7 @@ job "avatars" {
 			template {
 				data = <<EOH
 					{{ with secret "kv/pluralkit" }}
-					PK_AVATAR__DB = "postgres://pluralkit:{{ .Data.databasePassword }}@10.0.1.6:5432/pluralkit"
+					PK_AVATAR__DB = "postgres://pluralkit:{{ .Data.databasePassword }}@db.svc.pluralkit.net:5432/pluralkit"
 					PK_AVATAR__BASE_URL = "https://cdn.pluralkit.me/"
 					PK_AVATAR__S3__BUCKET = "pluralkit-avatars"
 					PK_AVATAR__S3__ENDPOINT = "https://s3.eu-central-003.backblazeb2.com"

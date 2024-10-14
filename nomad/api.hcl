@@ -45,11 +45,11 @@ job "api" {
 				PluralKit__Api__ClientId = 466378653216014359
 				PluralKit__Api__TrustAuth = true
 
-				PluralKit__Database = "Host=10.0.1.6;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
-				PluralKit__MessagesDatabase = "Host=10.0.1.6;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
-				PluralKit__RedisAddr = "10.0.1.6:6379,abortConnect=false"
-				PluralKit__ElasticUrl = "http://10.0.1.6:9200/dotnet"
-				PluralKit__InfluxUrl = "http://10.0.1.6:8086"
+				PluralKit__Database = "Host=db.svc.pluralkit.net;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+				PluralKit__MessagesDatabase = "Host=db.svc.pluralkit.net;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+				PluralKit__RedisAddr = "db.svc.pluralkit.net:6379,abortConnect=false"
+				PluralKit__SeqLogUrl = "http://db.svc.pluralkit.net:5341"
+				PluralKit__InfluxUrl = "http://db.svc.pluralkit.net:8086"
 				PluralKit__InfluxDb = "pluralkit"
 
 				PluralKit__ConsoleLogLevel = 2
@@ -95,9 +95,9 @@ job "api" {
 			env {
 				RUST_LOG="debug"
 
-				pluralkit__db__data_db_uri="postgresql://pluralkit@10.0.1.6:5432/pluralkit"
-				pluralkit__db__data_redis_addr="redis://10.0.1.6:6379"
-				pluralkit__api__ratelimit_redis_addr="redis://10.0.1.6:6379"
+				pluralkit__db__data_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5432/pluralkit"
+				pluralkit__db__data_redis_addr="redis://db.svc.pluralkit.net:6379"
+				pluralkit__api__ratelimit_redis_addr="redis://db.svc.pluralkit.net:6379"
 
 				pluralkit__api__remote_url="http://pluralkit-dotnet-api.service.consul:5000"
 

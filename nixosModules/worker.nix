@@ -63,7 +63,7 @@
           inputs = ["json"];
           bulk.index = "pluralkit";
           api_version = "v8";
-          endpoints = ["http://10.0.1.6:9200"];
+          endpoints = ["http://db.svc.pluralkit.net:9200"];
         };
         transforms.json = {
           type = "remap";

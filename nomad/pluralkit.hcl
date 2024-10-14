@@ -72,13 +72,13 @@ job "pluralkit" {
         PluralKit__Bot__Cluster__TotalShards = 864
         PluralKit__Bot__Cluster__TotalNodes = 54
         
-        PluralKit__Database = "Host=10.0.1.6;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
-        PluralKit__MessagesDatabase = "Host=10.0.1.6;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
-        PluralKit__RedisAddr = "10.0.1.6:6379,abortConnect=false"
-        PluralKit__InfluxUrl = "http://10.0.1.6:8086"
+        PluralKit__Database = "Host=db.svc.pluralkit.net;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
+        PluralKit__MessagesDatabase = "Host=db.svc.pluralkit.net;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
+        PluralKit__RedisAddr = "db.svc.pluralkit.net:6379,abortConnect=false"
+        PluralKit__InfluxUrl = "http://db.svc.pluralkit.net:8086"
         PluralKit__InfluxDb = "pluralkit"
         PluralKit__UseRedisMetrics = true
-        PluralKit__SeqLogUrl = "http://10.0.1.6:5341"
+        PluralKit__SeqLogUrl = "http://db.svc.pluralkit.net:5341"
         PluralKit__DispatchProxyUrl = "http://dispatch.svc.pluralkit.net"
 
         PluralKit__ConsoleLogLevel = 2

@@ -33,14 +33,6 @@
       gateway = [ "116.202.146.129" ];
       vlan = [ "internal" ];
     };
-
-    networks."internal" = {
-      matchConfig = { Name = "internal"; };
-      address = [ "10.0.1.7/24" ];
-      routes = [
-        { routeConfig = { Destination = "10.0.0.0/24"; Gateway = "10.0.1.1"; }; }
-      ];
-    };
   };
 
   system.stateVersion = "24.04";

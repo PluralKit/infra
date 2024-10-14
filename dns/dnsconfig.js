@@ -13,8 +13,9 @@ D("pluralkit.net", REG_NONE, DnsProvider(DNS_HE),
 	A("vps.vpn.pluralkit.net.", "100.77.37.109"),
 	// todo: add beta
 
-	/// hashi
+	/// services
 	A("hashi.svc.pluralkit.net.", "100.77.37.109"), // vps
+	A("db.svc.pluralkit.net.", "100.83.67.99"), // db2
 
 	/// misc
 	AAAA("dispatch.svc.pluralkit.net.", "fdaa:9:e856:0:1::2"),

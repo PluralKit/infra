@@ -37,14 +37,6 @@
       gateway = [ "148.251.178.1" ];
       vlan = [ "internal" ];
     };
-
-    networks."internal" = {
-      matchConfig = { Name = "internal"; };
-      address = [ "10.0.1.6/24" ];
-      routes = [
-        { routeConfig = { Destination = "10.0.0.0/24"; Gateway = "10.0.1.1"; }; }
-      ];
-    };
   };
 
   virtualisation.oci-containers = {
@@ -52,8 +44,8 @@
     containers.seq-logs = {
       image = "datalust/seq";
       ports = [
-        "10.0.1.6:8010:80"
-        "10.0.1.6:5341:5341"
+        "${config.pkTailscaleIp}:8010:80"
+        "${config.pkTailscaleIp}:5341:5341"
       ];
       volumes = [ "/srv/data1/seq-logs:/data" ];
       environment.ACCEPT_EULA = "y";
@@ -61,7 +53,7 @@
     containers.opensearch-dashboards = {
       image = "opensearchproject/opensearch-dashboards:2.11.1";
       ports = [ "${config.pkTailscaleIp}:5601:5601" ];
-      environment.OPENSEARCH_HOSTS = "[\"http://10.0.1.6:9200\"]";
+      environment.OPENSEARCH_HOSTS = "[\"http://db.svc.pluralkit.net:9200\"]";
       environment.DISABLE_SECURITY_DASHBOARDS_PLUGIN = "true";
     };
   };
@@ -70,7 +62,7 @@
 
   services.opensearch = {
     enable = true;
-    settings."network.host" = "10.0.1.6";
+    settings."network.host" = "${config.pkTailscaleIp}";
     dataDir = "/srv/data2/elasticsearch";
     extraJavaOptions = [ "-Xmx32g"   "-Djava.net.preferIPv4Stack=true" ];
   };
