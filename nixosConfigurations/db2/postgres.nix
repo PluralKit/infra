@@ -117,6 +117,7 @@ in
         local all all peer
         host all all 10.0.0.0/24 md5
         host all all 10.0.1.0/24 md5
+        host all all 172.17.0.0/16 md5
         host replication pkrepluser 10.0.1.3/32 md5
       '';
 
