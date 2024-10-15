@@ -47,9 +47,9 @@ dash.pluralkit.me {
         }
 }
 
-sentry.pluralkit.me {
+gt.pluralkit.me {
         reverse_proxy /* {
-                to http://100.100.251.99:9000
+                to http://100.100.251.99:8000
         }
 }
 
