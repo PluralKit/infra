@@ -11,6 +11,7 @@
     ./users.nix
     ./packages.nix
     ./networking.nix
+    ./metrics.nix
     ../../packages/server-checks/configuration.nix
   ];
 

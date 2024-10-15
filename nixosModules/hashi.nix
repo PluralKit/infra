@@ -84,9 +84,11 @@ in {
     # needs to be _local_ agent
     postStart = ''
       CONSUL_HTTP_ADDR=http://${pkTailscaleIp}:8500 consul services register -name=nirn-proxy -id=nirn-proxy-${hostname} -port=8081
+      CONSUL_HTTP_ADDR=http://${pkTailscaleIp}:8500 consul services register -name=metrics -id=metrics-nirn-proxy-${hostname} -port=9002
     '';
     postStop = ''
       CONSUL_HTTP_ADDR=http://${pkTailscaleIp}:8500 consul services deregister -id=nirn-proxy-${hostname}
+      CONSUL_HTTP_ADDR=http://${pkTailscaleIp}:8500 consul services deregister -id=metrics-nirn-proxy-${hostname}
     '';
 
     environment = {
@@ -106,4 +108,7 @@ in {
   environment.systemPackages = [
     pkgs.vault-bin # ???
   ];
-}
+
+  # hashi hosts listen on pkTailscaleIp for metrics, so override consul-template config
+  services.consul-template.instances.metrics.settings.consul.address = "${config.pkTailscaleIp}";
+ }

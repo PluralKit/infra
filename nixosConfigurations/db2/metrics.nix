@@ -11,9 +11,7 @@
   };
   services.prometheus = {
     enable = true;
-    scrapeConfigs = [
-      { job_name = "http-proxy"; static_configs = [{ targets = [ "10.0.0.2:9000" ]; }];  }
-    ];
+    extraFlags = [ "--web.enable-remote-write-receiver" ];
   };
 
   services.influxdb = {
