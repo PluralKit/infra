@@ -5,3 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [triggers]
 crons = ["* * * * *"]
+
+[[kv_namespaces]]
+binding = "kv"
+id = "4fd4893d94354dac96da55a68c5df4fc"
