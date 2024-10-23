@@ -52,6 +52,8 @@ job "api" {
 				PluralKit__InfluxUrl = "http://db.svc.pluralkit.net:8086"
 				PluralKit__InfluxDb = "pluralkit"
 
+        PluralKit__DispatchProxyUrl = "http://dispatch.svc.pluralkit.net"
+
 				PluralKit__ConsoleLogLevel = 2
 				PluralKit__ElasticLogLevel = 2
 				PluralKit__FileLogLevel = 5
