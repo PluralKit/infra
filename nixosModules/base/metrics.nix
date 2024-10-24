@@ -8,9 +8,15 @@
       source = (pkgs.writeTextFile {
         name = "vector-metrics.tpl";
         text = ''
-[sources.node]
+[sources.node-exporter]
 type = "prometheus_scrape"
-endpoints = [ "http://127.0.0.1:9100/metrics" ]
+endpoints = [ "http://${config.pkTailscaleIp}:9100/metrics" ]
+instance_tag = "host"
+
+[transforms.node-exporter-tagged]
+type = "remap"
+inputs = ["node-exporter"]
+source = ".tags.job = \"node-exporter\""
 
 {{ $lnode := node }}
 
@@ -27,7 +33,7 @@ endpoints = [ "http://{{ $lnode.Node.Address }}:{{ .Port }}/metrics" ]
 [sinks.prometheus]
 type = "prometheus_remote_write"
 inputs = [
-        "node",
+        "node-exporter-tagged",
 {{ range $srv := service "metrics" }}
     {{ if eq .Address $lnode.Node.Address }}
         "{{ .ID }}",
@@ -44,7 +50,7 @@ healthcheck.enabled = false
 
   services.prometheus.exporters.node = {
     enable = true;
-    listenAddress = "127.0.0.1";
+    listenAddress = "${config.pkTailscaleIp}";
   };
 
   systemd.services.vector-metrics = {

@@ -11,7 +11,7 @@
   };
   services.prometheus = {
     enable = true;
-    extraFlags = [ "--web.enable-remote-write-receiver" ];
+    extraFlags = [ "--web.enable-remote-write-receiver" "--web.enable-admin-api" ];
   };
 
   services.influxdb = {
