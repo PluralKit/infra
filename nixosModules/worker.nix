@@ -51,30 +51,50 @@
       };
     };
 
-    services.vector = {
-      enable = true;
-      settings = {
-        sources.docker = {
-          type = "docker_logs";
-          include_containers = ["gateway-"];
-        };
-        sinks.opensearch = {
-          type = "elasticsearch";
-          inputs = ["json"];
-          bulk.index = "pluralkit";
-          api_version = "v8";
-          endpoints = ["http://db.svc.pluralkit.net:9200"];
-        };
-        transforms.json = {
-          type = "remap";
-          inputs = ["docker"];
-          source = ''
-          .data = parse_json(.message) ?? {}
-          '';
-        };
+    systemd.services.vector = let
+      make_rs_svc_config = name: ''
+        [sources.docker-rust-${name}]
+        type = "docker_logs"
+        include_containers = ["${name}-"]
+
+        [transforms.tf-docker-rust-${name}]
+        type = "remap"
+        inputs = ["docker-rust-${name}"]
+        source = ".data = parse_json(.message) ?? {}"
+
+        [sinks.opensearch-docker-rust-${name}]
+        type = "elasticsearch"
+        api_version = "v8"
+        inputs = ["tf-docker-rust-${name}"]
+        bulk.index = "pluralkit-${name}"
+        endpoints = ["http://db.svc.pluralkit.net:9200"]
+      '';
+      serviceConfig = ''
+        ${make_rs_svc_config "api"}
+        ${make_rs_svc_config "avatars"}
+        ${make_rs_svc_config "gateway"}
+      '';
+    in {
+      description = "Vector.dev (logs)";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
+      requires = [ "network-online.target" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.vector}/bin/vector --config ${pkgs.writeTextFile {
+          name = "vector.conf";
+          text = serviceConfig;
+        }}";
+        DynamicUser = true;
+        Group = "docker";
+        Restart = "always";
+        StateDirectory = "vector";
+        ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
+      };
+      unitConfig = {
+        StartLimitIntervalSec = 10;
+        StartLimitBurst = 5;
       };
     };
-    systemd.services.vector.serviceConfig.Group = "docker";
 
     pkServerChecks = [
       { type = "systemd_service_running"; value = "nomad"; }
