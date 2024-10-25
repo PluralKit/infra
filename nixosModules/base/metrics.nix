@@ -18,14 +18,12 @@ type = "remap"
 inputs = ["node-exporter"]
 source = ".tags.job = \"node-exporter\""
 
-{{ $lnode := node }}
-
 {{ range service "metrics" }}
-  {{ if eq .Address $lnode.Node.Address }}
+  {{ if eq .Node "${config.networking.hostName}" }}
 
 [sources.{{ .ID }}]
 type = "prometheus_scrape"
-endpoints = [ "http://{{ $lnode.Node.Address }}:{{ .Port }}/metrics" ]
+endpoints = [ "http://{{ .Address }}:{{ .Port }}/metrics" ]
 
   {{ end }}
 {{ end }}
@@ -35,7 +33,7 @@ type = "prometheus_remote_write"
 inputs = [
         "node-exporter-tagged",
 {{ range $srv := service "metrics" }}
-    {{ if eq .Address $lnode.Node.Address }}
+    {{ if eq .Node "${config.networking.hostName}" }}
         "{{ .ID }}",
     {{ end }}
 {{ end }}

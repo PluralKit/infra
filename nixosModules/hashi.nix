@@ -110,5 +110,5 @@ in {
   ];
 
   # hashi hosts listen on pkTailscaleIp for metrics, so override consul-template config
-  services.consul-template.instances.metrics.settings.consul.address = lib.mkForce "${config.pkTailscaleIp}";
+  services.consul-template.instances.metrics.settings.consul.address = lib.mkForce "http://${config.pkTailscaleIp}:8500";
  }
