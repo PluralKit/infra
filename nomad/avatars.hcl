@@ -23,18 +23,29 @@ job "avatars" {
 
 			template {
 				data = <<EOH
-					{{ with secret "kv/pluralkit" }}
-					PK_AVATAR__DB = "postgres://pluralkit:{{ .Data.databasePassword }}@db.svc.pluralkit.net:5432/pluralkit"
-					PK_AVATAR__BASE_URL = "https://cdn.pluralkit.me/"
-					PK_AVATAR__S3__BUCKET = "pluralkit-avatars"
-					PK_AVATAR__S3__ENDPOINT = "https://s3.eu-central-003.backblazeb2.com"
-					PK_AVATAR__S3__APPLICATION_ID = "0031de9bd0a26160000000005"
-					PK_AVATAR__S3__APPLICATION_KEY = "{{ .Data.avatarsB2ApplicationKey }}"
-					{{ end }}
+				{{ with secret "kv/pluralkit" }}
+				pluralkit__db__db_password={{ .Data.databasePassword }}
+
+				pluralkit__avatars__s3__application_key={{ .Data.avatarsB2ApplicationKey }}
+				{{ end }}
+
 				EOH
 
 				destination = "local/env"
 				env = true
+			}
+
+			env {
+				RUST_LOG="info"
+				pluralkit__json_log=true
+
+				pluralkit__db__data_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5432/pluralkit"
+				pluralkit__avatars__cdn_url="https://cdn.pluralkit.me/"
+				pluralkit__avatars__s3__bucket="pluralkit-avatars"
+				pluralkit__avatars__s3__endpoint="https://s3.eu-central-003.backblazeb2.com"
+				pluralkit__avatars__s3__application_id="0031de9bd0a26160000000005"
+
+				pluralkit__db__data_redis_addr=1
 			}
 
 			service {

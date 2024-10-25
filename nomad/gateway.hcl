@@ -79,7 +79,7 @@ job "gateway" {
 			}
 
 			env {
-				RUST_LOG="debug"
+				RUST_LOG="info"
 				pluralkit__json_log=true
 
         pluralkit__discord__client_id=466378653216014359

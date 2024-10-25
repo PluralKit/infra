@@ -29,6 +29,12 @@ job "extras" {
 				env = true
 			}
 
+			service {
+				name = "metrics"
+				address_mode = "driver"
+				port = 9000
+			}
+
 			env {
 				CONSUL_URL = "http://hashi.svc.pluralkit.net:8500"
 			}
