@@ -35,7 +35,7 @@
 
   environment.variables = {
     NOMAD_ADDR = "http://hashi.svc.pluralkit.net:4646";
-    CONSUL_HTTP_ADDR = "http://hashi.svc.pluralkit.net:8500";
+    CONSUL_HTTP_ADDR = "127.0.0.1:8500";
     VAULT_ADDR = "http://hashi.svc.pluralkit.net:8200";
   };
 
