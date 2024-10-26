@@ -72,6 +72,7 @@
       serviceConfig = ''
         ${make_rs_svc_config "api"}
         ${make_rs_svc_config "avatars"}
+        ${make_rs_svc_config "avatar_cleanup"}
         ${make_rs_svc_config "gateway"}
       '';
     in {
