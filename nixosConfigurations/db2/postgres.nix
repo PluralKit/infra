@@ -37,6 +37,7 @@ let
             local all all peer
             local replication all peer
             host all all 127.0.0.1/32 md5
+            host all all fdaa:9:e856::/48 md5
             host all all ::1/128 md5
           '';
 
@@ -113,7 +114,7 @@ in
 
   systemd.services =
     let
-      listenAddresses = "127.0.0.1, ${config.pkTailscaleIp}";
+      listenAddresses = "127.0.0.1, ${config.pkTailscaleIp}, fdaa:9:e856:a7b:16a9:0:a:2";
       extraPgHba = ''
         local all all peer
         host all all 10.0.0.0/24 md5

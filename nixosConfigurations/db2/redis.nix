@@ -7,7 +7,7 @@
 {
   services.redis.servers."pluralkit" = {
     enable = true;
-    bind = "127.0.0.1 ${config.pkTailscaleIp}";
+    bind = "127.0.0.1 ${config.pkTailscaleIp} fdaa:9:e856:a7b:16a9:0:a:2";
     port = 6379;
     openFirewall = lib.mkForce false;
     settings = {

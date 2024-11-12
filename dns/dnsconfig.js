@@ -16,7 +16,8 @@ D("pluralkit.net", REG_NONE, DnsProvider(DNS_HE),
 	/// services
 	A("hashi.svc.pluralkit.net.", "100.77.37.109"), // vps
 	A("db.svc.pluralkit.net.", "100.83.67.99"), // db2
+	AAAA("6pndb.svc.pluralkit.net.", "fdaa:9:e856:a7b:16a9:0:a:2"), // db2 on 6pn
 
 	/// misc
-	AAAA("dispatch.svc.pluralkit.net.", "fdaa:9:e856:0:1::2"),
+	AAAA("dispatch.svc.pluralkit.net.", "fdaa:9:e856:0:1::3"),
 END);
