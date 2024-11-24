@@ -44,32 +44,46 @@ curl -H "Authorization: Bearer $(fly auth token)" https://api.machines.dev/v1/ap
 fly secrets set -a pluralkit-gateway \
   pluralkit__discord__bot_token=secret
 
+fly m list -a pluralkit-gateway > /tmp/data
 for idx in $(seq 2 $CLUSTER_COUNT); do
-  fly m run -a pluralkit-gateway \
-    -r ams \
-    --vm-size shared-cpu-8x \
-    -m fly_process_group=cluster$idx \
-    -e pluralkit__discord__cluster__node_id=$idx \
-                                                 \
-    -e RUST_LOG=info -e pluralkit__json_log=true \
-    -e pluralkit__discord__cache_api_addr="[::]:5000" -e todo=1 \
-                                                 \
-    -e pluralkit__discord__client_id=466378653216014359 \
-                                                 \
-    -e pluralkit__discord__cluster__total_shards=864 \
-    -e pluralkit__discord__cluster__total_nodes=54 \
-    -e pluralkit__discord__max_concurrency=16 \
-    -e pluralkit__discord__api_base_url="http://pluralkit-nirn-proxy.internal:8002/api/v10" \
-                                                 \
-		-e pluralkit__db__data_redis_addr="redis://6pndb.svc.pluralkit.net:6379" \
-                                                 \
-		-e pluralkit__api__temp_token2=1             \
-		-e pluralkit__api__remote_url=1              \
-		-e pluralkit__api__ratelimit_redis_addr=1    \
-    -e pluralkit__discord__client_secret=1       \
-		-e pluralkit__db__data_db_uri=1 \
-                                                 \
-    ghcr.io/pluralkit/gateway:cfd6a9fb969eb416ef45437905314c1867b97ff9
+  curl \
+    -H "Authorization: Bearer $(fly auth token)" \
+    https://api.machines.dev/v1/apps/pluralkit-gateway/machines/$(grep "cluster$idx " /tmp/data | awk '{print $1}') \
+    --json '{"config": {
+            "env": {
+                "RUST_LOG": "info",
+                "pluralkit__api__ratelimit_redis_addr": "1",
+                "pluralkit__api__remote_url": "1",
+                "pluralkit__api__temp_token2": "1",
+                "pluralkit__db__data_db_uri": "1",
+                "pluralkit__db__data_redis_addr": "redis://6pndb.svc.pluralkit.net:6379",
+                "pluralkit__discord__api_base_url": "http://pluralkit-nirn-proxy.internal:8002/api/v10",
+                "pluralkit__discord__cache_api_addr": "[::]:5000",
+                "pluralkit__discord__client_id": "466378653216014359",
+                "pluralkit__discord__client_secret": "1",
+                "pluralkit__discord__cluster__node_id": "'"$idx"'",
+                "pluralkit__discord__cluster__total_nodes": "54",
+                "pluralkit__discord__cluster__total_shards": "864",
+                "pluralkit__discord__max_concurrency": "16",
+                "pluralkit__json_log": "true",
+                "pluralkit__run_metrics_server": "true"
+            },
+            "init": {},
+            "guest": {
+                "cpu_kind": "shared",
+                "cpus": 8,
+                "memory_mb": 2048
+            },
+            "metadata": {
+                "fly_process_group": "cluster'"$idx"'"
+            },
+            "image": "ghcr.io/pluralkit/gateway:1c9b7fae99102029817b7d307f7380675fece6b0",
+            "metrics": {
+              "path": "/metrics",
+              "port": 9000,
+              "https": false
+            }
+        }}' -v
 done
 
 # launch avatars

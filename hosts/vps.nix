@@ -2,7 +2,8 @@
 
 {
 	imports = [
-		../../nixosModules/hashi.nix
+		../nixosModules/hashi.nix
+    ../nixosModules/seaweedfs.nix
 		(modulesPath + "/profiles/qemu-guest.nix")
 	];
 
@@ -11,7 +12,7 @@
 	boot.initrd.kernelModules = [ "nvme" ];
 	fileSystems."/" = { device = "/dev/sda1"; fsType = "ext4"; };
 
-	networking.hostId = "d0069ff0";
+	networking.hostId = lib.mkForce "d0069ff0";
 	systemd.network.networks."eth0" = {
 		matchConfig = { Name = "eth0"; };
 		address = [ "162.55.174.253/32" "2a01:4f8:1c17:f925::1/64" ];
@@ -22,6 +23,8 @@
 	};
 
   pkTailscaleIp = "100.77.37.109";
+
+  seaweedMaster = true;
 
   services.caddy = {
     enable = true;
@@ -49,13 +52,13 @@ dash.pluralkit.me {
 
 gt.pluralkit.me {
         reverse_proxy /* {
-                to http://100.100.251.99:8000
+                to http://glitchtip.service.consul:8000
         }
 }
 
 grafana.pluralkit.me {
         reverse_proxy /* {
-                to http://100.83.67.99:3000
+                to http://grafana.service.consul:3000
                 header_down -X-Frame-Options
                 header_down +Content-Security-Policy "frame-ancestors stats.pluralkit.me"
         }

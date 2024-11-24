@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../nixosModules/worker.nix
+    ../nixosModules/worker.nix
   ];
 
   hardware.cpu.amd.updateMicrocode = true;
@@ -17,22 +17,12 @@
     "/boot" = { device = "/dev/disk/by-label/boot"; fsType = "vfat"; };
   };
 
-  pkTailscaleIp = "100.100.251.99";
-  pkWorkerSubnet = "172.17.1.0/24";
+  pkTailscaleIp = "100.125.28.89";
 
-  networking.hostId = "858a0900";
-  systemd.network = {
-    netdevs."internal" = {
-      netdevConfig = { Name = "internal"; Kind = "vlan"; };
-      vlanConfig = { Id = 4000; };
-    };
-
-    networks."eth0" = {
-      matchConfig = { Name = "eth0"; };
-      address = [ "116.202.146.157/26" ];
-      gateway = [ "116.202.146.129" ];
-      vlan = [ "internal" ];
-    };
+  systemd.network.networks."eth0" = {
+    matchConfig = { Name = "eth0"; };
+    address = [ "65.21.83.253/26" ];
+    gateway = [ "65.21.83.193" ];
   };
 
   system.stateVersion = "24.04";

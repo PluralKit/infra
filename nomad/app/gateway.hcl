@@ -1,11 +1,5 @@
-job "gateway" {
-	name = "gateway"
+job "app_gateway" {
 	datacenters = ["dc1"]
-
-#	constraint {
-#	  attribute = "${attr.unique.hostname}"
-#	  value = "compute03"
-#	}
 
   # The "update" stanza specifies the update strategy of task groups. The update
   # strategy is used to control things like rolling upgrades, canaries, and
@@ -15,22 +9,15 @@ job "gateway" {
     min_healthy_time = "10s"
     healthy_deadline = "1m"
 
-    # The "progress_deadline" parameter specifies the deadline in which an
-    # allocation must be marked as healthy. The deadline begins when the first
-    # allocation for the deployment is created and is reset whenever an allocation
-    # as part of the deployment transitions to a healthy state. If no allocation
-    # transitions to the healthy state before the progress deadline, the
-    # deployment is marked as failed.
+    # deadline to mark allocations as healthy
+    # todo: this is probably way too high
     progress_deadline = "10m"
 
-    # The "auto_revert" parameter specifies if the job should auto-revert to the
-    # last stable job on deployment failure. A job is marked as stable if all the
-    # allocations as part of its deployment were marked healthy.
+    # whether the job should auto-revert to the last stable job on deployment failure
     auto_revert = false
   }
 
-  # The migrate stanza specifies the group's strategy for migrating off of
-  # draining nodes.
+  # same as above, but for migrating off of draining nodes
   migrate {
     max_parallel = 1
     health_check = "task_states"
@@ -41,6 +28,11 @@ job "gateway" {
 	vault {
 	  policies = ["read-kv"]
 	}
+
+  constraint {
+    attribute = "${node.class}"
+    value = "compute"
+  }
 
 	group "gateway" {
 		count = 54
@@ -53,7 +45,9 @@ job "gateway" {
 	  task "gateway" {
 	    driver = "docker"
 	    config {
-	      image = "ghcr.io/pluralkit/gateway:version"
+	      image = "ghcr.io/pluralkit/gateway:701bafdf97349fef13ee2ba4651fe5b3a5fc80cc"
+				labels = { pluralkit_rust = "true" }
+        advertise_ipv6_address = true
 	    }
 
 			template {

@@ -10,7 +10,6 @@ let
   userList = [
     { name = "iris"; uid = 1001; }
     { name = "astrid"; uid = 1002; }
-    { name = "fulmine"; uid = 1003; }
     { name = "alyssa"; uid = 1004; }
   ];
 

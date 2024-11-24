@@ -1,5 +1,4 @@
-job "pluralkit" {
-  name = "pluralkit"
+job "app_dotnet-bot" {
   datacenters = ["dc1"]
 
   # The "update" stanza specifies the update strategy of task groups. The update
@@ -10,22 +9,15 @@ job "pluralkit" {
     min_healthy_time = "10s"
     healthy_deadline = "1m"
 
-    # The "progress_deadline" parameter specifies the deadline in which an
-    # allocation must be marked as healthy. The deadline begins when the first
-    # allocation for the deployment is created and is reset whenever an allocation
-    # as part of the deployment transitions to a healthy state. If no allocation
-    # transitions to the healthy state before the progress deadline, the
-    # deployment is marked as failed.
+    # deadline to mark allocations as healthy
+    # todo: this is probably way too high
     progress_deadline = "10m"
 
-    # The "auto_revert" parameter specifies if the job should auto-revert to the
-    # last stable job on deployment failure. A job is marked as stable if all the
-    # allocations as part of its deployment were marked healthy.
+    # whether the job should auto-revert to the last stable job on deployment failure
     auto_revert = false
   }
 
-  # The migrate stanza specifies the group's strategy for migrating off of
-  # draining nodes.
+  # same as above, but for migrating off of draining nodes
   migrate {
     max_parallel = 1
     health_check = "task_states"
@@ -37,13 +29,18 @@ job "pluralkit" {
     policies = ["read-kv"]
   }
 
+  constraint {
+    attribute = "${node.class}"
+    value = "compute"
+  }
+
   group "bot" {
     count = 54
 
     task "bot" {
       driver = "docker"
       config {
-        image = "ghcr.io/pluralkit/pluralkit:version"
+        image = "ghcr.io/pluralkit/pluralkit:f3e006034b19ef8bc5c45bc45d13e37ac0d812c2"
       }
 
       template {
@@ -63,7 +60,8 @@ job "pluralkit" {
         PluralKit__Bot__ClientId = 466378653216014359
         PluralKit__Bot__AdminRole = 913986523500777482
         PluralKit__Bot__DiscordBaseUrl = "http://nirn-proxy.service.consul:8002/api/v10"
-        #PluralKit__Bot__HttpCacheUrl = "http://pluralkit-gateway.service.consul:5000"
+        PluralKit__Bot__HttpCacheUrl = "http://pluralkit-gateway.service.consul:5000"
+        PluralKit__Bot__HttpUseInnerCache = true
         PluralKit__Bot__AvatarServiceUrl = "http://pluralkit-avatars.service.consul:3000"
 
         PluralKit__Bot__MaxShardConcurrency = 16
@@ -71,14 +69,13 @@ job "pluralkit" {
 
         PluralKit__Bot__Cluster__TotalShards = 864
         PluralKit__Bot__Cluster__TotalNodes = 54
-        
+
         PluralKit__Database = "Host=db.svc.pluralkit.net;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
         PluralKit__MessagesDatabase = "Host=db.svc.pluralkit.net;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
         PluralKit__RedisAddr = "db.svc.pluralkit.net:6379,abortConnect=false"
-        PluralKit__InfluxUrl = "http://db.svc.pluralkit.net:8086"
+        PluralKit__InfluxUrl = "http://influxdb.service.consul:8086"
         PluralKit__InfluxDb = "pluralkit"
-        PluralKit__UseRedisMetrics = true
-        PluralKit__SeqLogUrl = "http://db.svc.pluralkit.net:5341"
+				PluralKit__ElasticUrl = "http://observability.svc.pluralkit.net:9200"
         PluralKit__DispatchProxyUrl = "http://dispatch.svc.pluralkit.net"
 
         PluralKit__ConsoleLogLevel = 2

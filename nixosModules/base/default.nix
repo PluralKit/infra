@@ -50,6 +50,32 @@
     };
   };
 
+  systemd.services.consul = let
+    check-interface-ready = pkgs.callPackage ../../packages/check-interface-ready {};
+  in {
+    serviceConfig = {
+      AmbientCapabilities = "cap_net_bind_service";
+      ReadWritePaths = "/opt/consul";
+      Restart = lib.mkForce "always";
+      RestartMode = "quick";
+      RestartSec = 5;
+      ExecStartPre = [
+        "+${check-interface-ready}/bin/check-interface-ready tailscale0"
+      ];
+    };
+    unitConfig.StartLimitIntervalSec = 0;
+  };
+  services.consul = {
+    enable = config.pkTailscaleIp != "";
+    extraConfig = {
+      data_dir = "/opt/consul";
+      bind_addr = "${config.pkTailscaleIp}";
+      addresses.dns = "169.254.169.254";
+      ports.dns = 53;
+      retry_join = ["hashi.svc.pluralkit.net"]; # todo: is this correct for a client?
+    };
+  };
+
   networking.nameservers = if config.pkTailscaleIp == ""
     then [ "1.1.1.1" "1.0.0.1" ] # tailscale has not been set up yet
     else [ "100.100.100.100" ];
@@ -59,5 +85,6 @@
     { type = "systemd_no_failing_services"; }
     { type = "systemd_service_running"; value = "tailscaled"; }
     { type = "systemd_service_running"; value = "consul"; }
+    { type = "systemd_service_running"; value = "sshd"; }
   ];
 }

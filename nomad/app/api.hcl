@@ -1,27 +1,22 @@
-job "api" {
-	name = "api"
+job "app_api" {
 	datacenters = ["dc1"]
 
 	vault {
 		policies = ["read-kv"]
 	}
 
-	group "api" {
-		network {
-			port "external" {
-				to = 5000
-			}
+  constraint {
+    attribute = "${node.class}"
+    value = "compute"
+  }
 
-			port "inner" {
-				to = 5000
-			}
-		}
-
+	group "pluralkit-api" {
 		task "api" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/pluralkit:version"
+				image = "ghcr.io/pluralkit/pluralkit:f3e006034b19ef8bc5c45bc45d13e37ac0d812c2"
 				entrypoint = ["dotnet", "bin/PluralKit.API.dll"]
+        advertise_ipv6_address = true
 			}
 
 			resources {
@@ -48,12 +43,11 @@ job "api" {
 				PluralKit__Database = "Host=db.svc.pluralkit.net;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
 				PluralKit__MessagesDatabase = "Host=db.svc.pluralkit.net;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
 				PluralKit__RedisAddr = "db.svc.pluralkit.net:6379,abortConnect=false"
-				PluralKit__SeqLogUrl = "http://db.svc.pluralkit.net:5341"
-				PluralKit__InfluxUrl = "http://db.svc.pluralkit.net:8086"
+				PluralKit__InfluxUrl = "http://influxdb.service.consul:8086"
 				PluralKit__InfluxDb = "pluralkit"
+				PluralKit__ElasticUrl = "http://observability.svc.pluralkit.net:9200"
 
         PluralKit__DispatchProxyUrl = "http://dispatch.svc.pluralkit.net"
-
 				PluralKit__ConsoleLogLevel = 2
 				PluralKit__ElasticLogLevel = 2
 				PluralKit__FileLogLevel = 5
@@ -62,23 +56,16 @@ job "api" {
 			service {
 				name = "pluralkit-dotnet-api"
 				address_mode = "driver"
-				port = "inner"
 				provider = "consul"
 			}
 		}
 
-		task "proxy" {
+		task "pluralkit-api-proxy" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/api:version"
-				ports = ["external"]
-			}
-
-			service {
-				name = "pluralkit-api"
-				address_mode = "driver"
-				port = "external"
-				provider = "consul"
+				image = "ghcr.io/pluralkit/api:701bafdf97349fef13ee2ba4651fe5b3a5fc80cc"
+				labels = { pluralkit_rust = "true" }
+        advertise_ipv6_address = true
 			}
 
 			template {
@@ -87,7 +74,6 @@ job "api" {
 				pluralkit__api__temp_token2={{ .Data.api_token2 }}
 				pluralkit__db__db_password={{ .Data.databasePassword }}
 				{{ end }}
-
 				EOH
 
 				destination = "local/env"
@@ -95,18 +81,29 @@ job "api" {
 			}
 
 			env {
-				RUST_LOG="debug"
+				RUST_LOG="info"
+				pluralkit__json_log=true
 
 				pluralkit__db__data_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5432/pluralkit"
 				pluralkit__db__data_redis_addr="redis://db.svc.pluralkit.net:6379"
 				pluralkit__api__ratelimit_redis_addr="redis://db.svc.pluralkit.net:6379"
 
+				pluralkit__api__addr="[::]:5000"
 				pluralkit__api__remote_url="http://pluralkit-dotnet-api.service.consul:5000"
 
-				pluralkit__discord__bot_token=1
-				pluralkit__discord__client_id=1
-				pluralkit__discord__client_secret=1
-				pluralkit__run_metrics_server=false
+				pluralkit__run_metrics_server=true
+			}
+
+			service {
+				name = "pluralkit-api"
+				address_mode = "driver"
+				provider = "consul"
+			}
+
+			service {
+				name = "metrics"
+				address_mode = "driver"
+				provider = "consul"
 			}
 		}
 	}

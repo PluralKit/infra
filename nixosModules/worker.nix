@@ -1,106 +1,85 @@
 { inputs, pkgs, lib, config, ... }:
 
-{
-	# for now, needs 10.0.0.0/16 for db
-
-  # todo: allow for subnets larger than /24
-  # todo: also put this in tailscale daemon settings
-  options.pkWorkerSubnet = lib.mkOption {
-    default = "";
+let
+  pkWorkerSubnet = let
+    pt1 = builtins.substring 0 4 config.networking.hostId;
+    pt2 = builtins.substring 4 8 config.networking.hostId;
+  in "fdef:${pt1}:${pt2}::/80";
+in {
+  virtualisation.docker.daemon.settings = {
+    experimental = true;
+    ip6tables = true;
+    ipv6 = true;
+    fixed-cidr-v6 = pkWorkerSubnet;
   };
 
-  config = {
-    virtualisation.docker.daemon.settings = {
-      experimental = true;
-      ip6tables = true;
-      ipv6 = true;
-      fixed-cidr-v6 = "fd00::/80";
-      default-address-pools = [{ base = config.pkWorkerSubnet; size = 24; }];
-    };
+  services.tailscale.extraSetFlags = [ "--advertise-routes=${pkWorkerSubnet}" ];
 
-    nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-      "nomad"
-    ];
-
-    services.nomad = {
-      enable = true;
-      dropPrivileges = false;
-      settings = {
-        bind_addr = "${config.pkTailscaleIp}";
-        client = {
-          enabled = true;
-          servers = ["hashi.svc.pluralkit.net"];
-          node_class = "compute";
-        };
-        vault = {
-          enabled = true;
-          address = "http://active.vault.service.consul:8200";
-        };
-      };
-    };
-
-    systemd.services.consul.serviceConfig.AmbientCapabilities = "cap_net_bind_service";
-    services.consul = {
-      enable = true;
-      extraConfig = {
-        data_dir = "/opt/consul";
-        bind_addr = "${config.pkTailscaleIp}";
-        addresses.dns = "169.254.169.254";
-        ports.dns = 53;
-        retry_join = ["hashi.svc.pluralkit.net"]; # todo: is this correct for a client?
-      };
-    };
-
-    systemd.services.vector = let
-      make_rs_svc_config = name: ''
-        [sources.docker-rust-${name}]
-        type = "docker_logs"
-        include_containers = ["${name}-"]
-
-        [transforms.tf-docker-rust-${name}]
-        type = "remap"
-        inputs = ["docker-rust-${name}"]
-        source = ".data = parse_json(.message) ?? {}"
-
-        [sinks.opensearch-docker-rust-${name}]
-        type = "elasticsearch"
-        api_version = "v8"
-        inputs = ["tf-docker-rust-${name}"]
-        bulk.index = "pluralkit-${name}"
-        endpoints = ["http://db.svc.pluralkit.net:9200"]
-      '';
-      serviceConfig = ''
-        ${make_rs_svc_config "api"}
-        ${make_rs_svc_config "avatars"}
-        ${make_rs_svc_config "avatar_cleanup"}
-        ${make_rs_svc_config "gateway"}
-      '';
-    in {
-      description = "Vector.dev (logs)";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ];
-      requires = [ "network-online.target" ];
-      serviceConfig = {
-        ExecStart = "${pkgs.vector}/bin/vector --config ${pkgs.writeTextFile {
-          name = "vector.conf";
-          text = serviceConfig;
-        }}";
-        DynamicUser = true;
-        Group = "docker";
-        Restart = "always";
-        StateDirectory = "vector";
-        ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
-      };
-      unitConfig = {
-        StartLimitIntervalSec = 10;
-        StartLimitBurst = 5;
-      };
-    };
-
-    pkServerChecks = [
-      { type = "systemd_service_running"; value = "nomad"; }
-      { type = "systemd_service_running"; value = "docker"; }
-      { type = "systemd_service_running"; value = "vector"; }
-    ];
+  systemd.services.nomad = {
+    after = [ "consul.service" ];
+    requires = [ "consul.service" ];
+    serviceConfig.Restart = lib.mkForce "always";
+    unitConfig.StartLimitIntervalSec = lib.mkForce 0;
   };
+  services.nomad = {
+    enable = true;
+    dropPrivileges = false;
+    settings = {
+      bind_addr = "${config.pkTailscaleIp}";
+      client = {
+        enabled = true;
+        servers = ["hashi.svc.pluralkit.net"];
+        node_class = "compute";
+      };
+      vault = {
+        enabled = true;
+        address = "http://active.vault.service.consul:8200";
+      };
+      plugin.docker.config.allow_privileged = true;
+    };
+  };
+
+  systemd.services.vector = {
+    description = "Vector.dev (logs)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" "consul.service" ];
+    requires = [ "network-online.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.vector}/bin/vector --config ${pkgs.writeTextFile {
+        name = "vector.conf";
+        text = ''
+          [sources.docker-rust]
+          type = "docker_logs"
+          include_labels = ["pluralkit_rust=true"]
+
+          [transforms.tf-docker-rust]
+          type = "remap"
+          inputs = ["docker-rust"]
+          source = ".data = parse_json(.message) ?? {}"
+
+          [sinks.opensearch]
+          type = "elasticsearch"
+          api_version = "v8"
+          inputs = ["tf-docker-rust"]
+          bulk.index = "pluralkit-rust"
+          endpoints = ["http://observability.svc.pluralkit.net:9200"]
+        '';
+      }}";
+      DynamicUser = true;
+      Group = "docker";
+      Restart = "always";
+      StateDirectory = "vector";
+      ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
+    };
+    unitConfig = {
+      StartLimitIntervalSec = 10;
+      StartLimitBurst = 5;
+    };
+  };
+
+  pkServerChecks = [
+    { type = "systemd_service_running"; value = "nomad"; }
+    { type = "systemd_service_running"; value = "docker"; }
+    { type = "systemd_service_running"; value = "vector"; }
+  ];
 }

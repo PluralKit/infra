@@ -1,6 +1,11 @@
 const notify = (env, msg) => fetch(env.webhookUrl+"?wait=true", { method: "POST", body: JSON.stringify({ content: msg }), headers: { "content-type": "application/json" } });
 
-const machinesToCheck = [ "compute03", "db2", "vps" ];
+const machinesToCheck = [
+	"vps",
+	"database-hrhel1-b959773f",
+	"compute-hrhel1-3c45e932",
+	"compute-hrhel1-70e1bd12",
+];
 
 async function processMachine(env, m, silences, notifRole) {
 	let mdata;

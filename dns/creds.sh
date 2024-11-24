@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo '{"hedns":{"TYPE":"HEDNS","username":"'"$(op item get he.net --field username)"'","password":"'"$(op item get he.net --field password)"'"}}'
+echo '{"cloudflare":{"TYPE":"CLOUDFLAREAPI","accountid":"'"$(op item get --vault=pluralkit --field=account_id cloudflare)"'","apitoken":"'"$(op item get --vault=pluralkit --field=dnscontrol_auth_token cloudflare)"'"}}'

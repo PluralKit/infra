@@ -1,5 +1,4 @@
-job "avatars" {
-	name = "avatars"
+job "app_avatars" {
 	datacenters = ["dc1"]
 
 	vault {
@@ -8,17 +7,13 @@ job "avatars" {
 
 	group "avatars" {
 		count = 2
-		network {
-			port "port" {
-				to = 3000
-			}
-		}
 
 		task "avatars" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/avatars:version"
-				ports = ["port"]
+				image = "ghcr.io/pluralkit/avatars:701bafdf97349fef13ee2ba4651fe5b3a5fc80cc"
+				labels = { pluralkit_rust = "true" }
+        advertise_ipv6_address = true
 			}
 
 			template {
@@ -39,6 +34,9 @@ job "avatars" {
 				RUST_LOG="info"
 				pluralkit__json_log=true
 
+				# i don't want to restart bot to update the url
+				pluralkit__avatars__bind_addr="[::]:3000"
+
 				pluralkit__db__data_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5432/pluralkit"
 				pluralkit__avatars__cdn_url="https://cdn.pluralkit.me/"
 				pluralkit__avatars__s3__bucket="pluralkit-avatars"
@@ -51,7 +49,6 @@ job "avatars" {
 			service {
 				name = "pluralkit-avatars"
 				address_mode = "driver"
-				port = "port"
 				provider = "consul"
 			}
 		}
@@ -62,8 +59,9 @@ job "avatars" {
 		task "avatar_cleanup" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/avatars:image"
+				image = "ghcr.io/pluralkit/avatars:701bafdf97349fef13ee2ba4651fe5b3a5fc80cc"
 				command = "/bin/avatar_cleanup"
+				labels = { pluralkit_rust = "true" }
 			}
 
 			template {

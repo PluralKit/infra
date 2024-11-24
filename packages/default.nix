@@ -7,6 +7,5 @@ let
 in
 {
   pluralkit-scripts = pkgs.callPackage ./pluralkit-scripts {};
-  nirn-proxy = pkgs.callPackage ./nirn-proxy.nix {};
   server-checks = pkgs.callPackage ./server-checks {};
 }

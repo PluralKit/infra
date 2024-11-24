@@ -31,6 +31,6 @@
 
   services.tailscale = {
     enable = true;
-    extraUpFlags = [ "--ssh" ];
+    extraSetFlags = [ "--accept-routes" ];
   };
 }

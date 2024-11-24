@@ -1,10 +1,17 @@
 { pkgs
+, pkgs-unstable
 , lib
 , inputs
 , ...
 }:
 
 {
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "nomad" "consul" "vault-bin"
+  ];
+
+  services.nomad.package = pkgs-unstable.pkgs.nomad;
+
   environment.systemPackages = with pkgs; [
     tmux
     htop

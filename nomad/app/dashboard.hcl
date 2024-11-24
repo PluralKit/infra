@@ -1,30 +1,23 @@
-job "dashboard" {
+job "app_dashboard" {
 	name = "dashboard"
 	datacenters = ["dc1"]
 
 	constraint {
-		attribute = "${attr.unique.hostname}"
-		value = "compute03"
+		attribute = "${node.class}"
+		value = "compute"
 	}
 
 	group "dashboard" {
-		network {
-			port "port" {
-				to = 8080
-			}
-		}
-
 		task "dashboard" {
 			driver = "docker"
 			config {
 				image = "ghcr.io/pluralkit/dashboard:version"
-				ports = ["port"]
+				advertise_ipv6_address = true
 			}
 
 			service {
 				name = "pluralkit-dashboard"
 				address_mode = "driver"
-				port = "port"
 				provider = "consul"
 			}
 		}

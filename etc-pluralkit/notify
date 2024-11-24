@@ -1,0 +1,12 @@
+#!/bin/sh
+
+notify_webhook=https://discord.com/api/webhooks/redacted/redacted
+infra_role=1291763746657669211
+
+pk_notify() {
+        curl $notify_webhook --json "{\"username\":\"$(hostname)\",\"content\":\"$@\"}" || true
+}
+
+pk_alert() {
+        curl $notify_webhook --json "{\"username\":\"$(hostname)\",\"content\":\"<$(hostname)> <@&$role>, $@\"}" || true
+}
