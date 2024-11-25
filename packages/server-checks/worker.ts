@@ -18,7 +18,10 @@ async function processMachine(env, m, silences, notifRole) {
 	notifRole = notifRole ?? "<@&1291763746657669211>";
 
 	try {
-		mdata = await fetch(`http://${m}.pluralkit.net:19999/checks`);
+		let hostname = `${m}.prod.pluralkit.net`;
+		// hacky
+		if (m == "vps") hostname = `${m}.pluralkit.net`;
+		mdata = await fetch(`http://${hostname}:19999/checks`);
 		mdata = await mdata.json();
 	} catch(e) {
 		await notify(env, `${notifRole}, on ${m}: failed to query checks status: ${e}`);

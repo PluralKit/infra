@@ -7,6 +7,7 @@ import (
 	"time"
 	"log"
 	"strings"
+	"os/exec"
 
 	"github.com/coreos/go-systemd/v22/dbus"
 )
@@ -115,7 +116,20 @@ func do_check_run(units []dbus.UnitStatus, c check) string {
 			return "could not find service"
 		}
 	case "script":
-		break
+		scriptName := c.Value
+		cmd := exec.Command("/run/wrappers/bin/sudo", "-u", "nobody", scriptName)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			if exitError, ok := err.(*exec.ExitError); ok {
+				code := exitError.ExitCode()
+				return fmt.Sprintf("script exited with code %v", code)
+			} else {
+				return fmt.Sprintf("failed to run script: %v", err)
+			}
+		} else {
+			log.Printf("successfully ran script %s", scriptName)
+		}
 	default:
 		return fmt.Sprintf("unknown check type %v", c.Type)
 	}
