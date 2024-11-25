@@ -15,6 +15,7 @@ job "app_scheduled-tasks" {
 			driver = "docker"
 			config {
 				image = "ghcr.io/pluralkit/scheduled_tasks:1c9b7fae99102029817b7d307f7380675fece6b0"
+				advertise_ipv6_address = true
 			}
 
 			template {
@@ -31,8 +32,10 @@ job "app_scheduled-tasks" {
 			}
 
 			env {
-				REDIS_ADDR = "db.svc.pluralkit.net"
-				SET_GUILD_COUNT = "false" # todo update this
+				REDIS_ADDR = "db.svc.pluralkit.net:6379"
+				SET_GUILD_COUNT = "true"
+				HTTP_CACHE_URL = "pluralkit-gateway.service.consul"
+				CLUSTER_COUNT = "54"
 			}
 
 			service {

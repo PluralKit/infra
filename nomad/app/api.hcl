@@ -103,6 +103,7 @@ job "app_api" {
 			service {
 				name = "metrics"
 				address_mode = "driver"
+				port = 9000
 				provider = "consul"
 			}
 		}

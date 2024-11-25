@@ -72,6 +72,13 @@ job "app_gateway" {
 				 provider = "consul"
 			}
 
+			service {
+				name = "metrics"
+				address_mode = "driver"
+				port = 9000
+				provider = "consul"
+			}
+
 			env {
 				RUST_LOG="info"
 				pluralkit__json_log=true
