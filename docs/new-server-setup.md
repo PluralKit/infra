@@ -2,11 +2,11 @@
 
 (this document assumes you have basic knowledge of Nix and NixOS configuration)
 
-PluralKit uses Hetzner cloud instances for management (hashistack, nirn-proxy) and dedicated servers for database/compute. Hetzner doesn't offer NixOS as a boot option, so it has to be installed manually.
+PluralKit uses Hetzner cloud instances for management (hashistack, seaweedfs master) and dedicated servers for database/compute. Hetzner doesn't offer NixOS as a boot option, so it has to be installed manually.
 
-For cloud instances: install Debian and use [nixos-infect](https://github.com/elitak/nixos-infect/).
+For cloud instances: install Debian and use [nixos-infect](https://github.com/elitak/nixos-infect/) through `cloud-init`.
 
-For dedicated servers: boot to rescue, install the Nix daemon and run `nix-env -iA nixos-install-tools`. From there, install the same way as from NixOS live install media.
+For dedicated servers: boot to rescue, install the Nix daemon and run `nix-shell -p nixos-install-tools`. From there, install the same way as from NixOS live install media.
 
 Now you have a blank NixOS server, ready for configuration to be applied.
 - Create a new directory under `nixosConfigurations`, and add a `default.nix` file with the base machine configuration (hardware, IPs, generate hostId, stateVersion).
@@ -29,12 +29,7 @@ Add the server to the server-checks worker script in `packages/server-checks/wor
 
 ## Management server
 
-Copy `/opt/nomad-vault-token.hcl` from an existing management server.
-
-```sh
-$ sudo mkdir /opt/consul
-$ sudo chown -R consul /opt/consul`
-```
+Copy `/etc/pluralkit/nomad-vault-token.hcl` from an existing management server.
 
 Add `nixosModules/hashi.nix` to imports in the new server's configuration and rebuild.
 
@@ -58,8 +53,6 @@ Choose an unused subnet for container IPs (172.17.xxx.0/24).
 \nApprove the route in the Tailscale dashboard.
 
 Set the server to eligible in Nomad, and you're done.
-
-When decommissioning the old compute server, **remember to move Sentry manually** as it's not managed through NixOS. Data is stored in `/opt/sentry` and `/opt/sentry-data`.
 
 ## Database/other
 

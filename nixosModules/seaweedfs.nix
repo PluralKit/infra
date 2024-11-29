@@ -33,7 +33,19 @@
 				after = [ "tailscaled.service" ];
 				requires = [ "tailscaled.service" ];
 				serviceConfig = {
-					ExecStart = "${pkgs.seaweedfs}/bin/weed master -mdir=/opt/seaweedfs-master -ip=${config.pkTailscaleIp}";
+					ExecStart = (pkgs.writeShellScript "run-seaweedfs-master"
+						''
+							#!/bin/sh
+							mkdir -p /opt/seaweedfs-master
+							mkdir -p /opt/seaweedfs-filer
+							ips=($(${pkgs.dnsutils}/bin/dig +short hashi.svc.pluralkit.net))
+							addresses=()
+							for ip in "${"$"+"{ips[@]}"}"; do addresses+=("$ip:9333"); done
+							IFS=','
+							peerstr="${"$"+"{addresses[*]}"}"
+							echo "starting seaweedfs master with peers=$peerstr"
+							exec ${pkgs.seaweedfs}/bin/weed master -mdir=/opt/seaweedfs-master -ip=${config.pkTailscaleIp} -peers=$peerstr
+						'');
 					Restart = "always";
 				};
 			};

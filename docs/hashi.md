@@ -2,7 +2,7 @@
 
 "HashiStack" refers to a set of Hashicorp software used together to manage infrastructure. PluralKit uses **Nomad** (container orchestration), **Consul** (service discovery) and **Vault** (secrets management). Usually, HashiStack also includes Terraform, but we don't use that.
 
-For lack of a better place to put it, our Hashistack nodes also include [Nirn Discord ratelimit proxy](https://github.com/germanoeich/nirn-proxy).
+For lack of a better place to put them, our Hashistack nodes also include the SeaweedFS master/filer daemons.
 
 Below are some notes on operating Hashistack. todo: add more things
 

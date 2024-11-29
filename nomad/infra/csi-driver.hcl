@@ -30,7 +30,7 @@ job "infra_seaweedfs-csi" {
 
         args = [
           "--endpoint=unix://csi/csi.sock",
-          "--filer=vps.vpn.pluralkit.net:8888",
+          "--filer=hashi.svc.pluralkit.net:8888",
           "--nodeid=${node.unique.name}",
           "--cacheCapacityMB=256",
           "--cacheDir=${NOMAD_TASK_DIR}/cache_dir",

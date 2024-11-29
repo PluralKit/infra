@@ -13,10 +13,17 @@ var hosts = {
 	"compute-hrhel1-3c45e932": [ "65.21.83.253", "100.125.28.89" ],
 	"compute-hrhel1-70e1bd12": [ "65.108.12.49", "100.77.98.43" ],
 	"database-hrhel1-b959773f": [ "95.217.79.59", "100.96.216.62" ],
+	"hashi-hchel1-5fd89a52": [ "95.216.154.82", "100.120.65.72" ],
+	"hashi-hchel1-5fd9b1fe": [ "95.217.177.254", "100.114.8.65" ],
+	"hashi-hchel1-251b08ea": [ "37.27.8.234", "100.113.220.49" ],
 };
 
 var serviceHostMap = {
-	"hashi": ["vps"],
+	"hashi": [
+		"hashi-hchel1-5fd89a52",
+		"hashi-hchel1-5fd9b1fe",
+		"hashi-hchel1-251b08ea",
+	],
 	"db": ["database-hrhel1-b959773f"],
 	"observability": ["database-hrhel1-b959773f"],
 };
@@ -44,10 +51,16 @@ D.apply(null, Array.prototype.concat(
 	// services
 	Array.prototype.concat(Object.keys(serviceHostMap).map(function (svc) {
 		return serviceHostMap[svc].map(function (target) {
-			if (!target.endsWith(".")) {
-				target = target+".vpn.pluralkit.net.";
+			var type;
+			var value;
+			if (target.endsWith(".")) {
+				type = CNAME;
+				value = target;
+			} else {
+				type = A;
+				value = hosts[target][1];
 			}
-			return CNAME(svc+".svc.pluralkit.net.", target);
+			return type(svc+".svc.pluralkit.net.", value);
 		})
 	})),
 

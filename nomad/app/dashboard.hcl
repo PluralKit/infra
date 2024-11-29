@@ -1,5 +1,4 @@
 job "app_dashboard" {
-	name = "dashboard"
 	datacenters = ["dc1"]
 
 	constraint {

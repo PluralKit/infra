@@ -55,7 +55,6 @@
   in {
     serviceConfig = {
       AmbientCapabilities = "cap_net_bind_service";
-      ReadWritePaths = "/opt/consul";
       Restart = lib.mkForce "always";
       RestartMode = "quick";
       RestartSec = 5;
@@ -68,7 +67,6 @@
   services.consul = {
     enable = config.pkTailscaleIp != "";
     extraConfig = {
-      data_dir = "/opt/consul";
       bind_addr = "${config.pkTailscaleIp}";
       addresses.dns = "169.254.169.254";
       ports.dns = 53;
