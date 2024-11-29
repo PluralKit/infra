@@ -93,6 +93,7 @@ D("pluralkit.me", REG_NONE, DnsProvider(DNS_CLOUDFLARE),
 	AAAA("beta.pluralkit.me.", "2a01:4f8:1c17:e154::1"),
 	A("*.beta.pluralkit.me.", "168.119.255.71"),
 	AAAA("*.beta.pluralkit.me.", "2a01:4f8:1c17:e154::1"),
+	CNAME("beta.dash.pluralkit.me.", "beta.pluralkit.me."),
 
 	// email
 	MX("@", 10, "in1-smtp.messagingengine.com."),
