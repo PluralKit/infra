@@ -60,8 +60,8 @@ func main() {
 func runAgent() {
 	log.Println("starting server-checks agent")
 	go runAgentWebserver()
-	wait_until_next_minute()
-	doforever(time.Minute, withtime("server-checks", task_main))
+	wait_until_next_10s()
+	doforever(time.Second * 10, withtime("server-checks", task_main))
 }
 
 func runAgentWebserver() {
@@ -77,9 +77,15 @@ func runAgentWebserver() {
 	log.Fatal(http.ListenAndServe(":19999", nil))
 }
 
-func wait_until_next_minute() {
-	now := time.Now().UTC().Add(time.Minute)
-	after := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), 0, 0, time.UTC)
+func wait_until_next_10s() {
+	now := time.Now().UTC()
+	minute := now.Minute()
+	second := (now.Second() - (now.Second() % 10)) + 10
+	if second == 60 {
+		minute += 1
+		second = 0
+	}
+	after := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), minute, second, 0, time.UTC)
 	time.Sleep(after.Sub(time.Now().UTC()))
 }
 
