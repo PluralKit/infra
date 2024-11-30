@@ -6,6 +6,8 @@ let
     pt2 = builtins.substring 4 8 config.networking.hostId;
   in "fdef:${pt1}:${pt2}::/80";
 in {
+  imports = [ ./nomad-client.nix ];
+
   virtualisation.docker.daemon.settings = {
     experimental = true;
     ip6tables = true;
@@ -15,29 +17,7 @@ in {
 
   services.tailscale.extraSetFlags = [ "--advertise-routes=${pkWorkerSubnet}" ];
 
-  systemd.services.nomad = {
-    after = [ "consul.service" ];
-    requires = [ "consul.service" ];
-    serviceConfig.Restart = lib.mkForce "always";
-    unitConfig.StartLimitIntervalSec = lib.mkForce 0;
-  };
-  services.nomad = {
-    enable = true;
-    dropPrivileges = false;
-    settings = {
-      bind_addr = "${config.pkTailscaleIp}";
-      client = {
-        enabled = true;
-        servers = ["hashi.svc.pluralkit.net"];
-        node_class = "compute";
-      };
-      vault = {
-        enabled = true;
-        address = "http://active.vault.service.consul:8200";
-      };
-      plugin.docker.config.allow_privileged = true;
-    };
-  };
+  services.nomad.settings.client.node_class = "compute";
 
   systemd.services.vector = {
     description = "Vector.dev (logs)";

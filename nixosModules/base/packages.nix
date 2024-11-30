@@ -10,7 +10,7 @@
     "nomad" "consul" "vault-bin"
   ];
 
-  services.nomad.package = pkgs-unstable.pkgs.nomad;
+  services.nomad.package = (pkgs.callPackage ../../packages/nomad.nix {});
 
   environment.systemPackages = with pkgs; [
     tmux
