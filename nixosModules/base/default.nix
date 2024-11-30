@@ -68,7 +68,7 @@
     enable = config.pkTailscaleIp != "";
     extraConfig = {
       bind_addr = "${config.pkTailscaleIp}";
-      addresses.dns = "169.254.169.254";
+      addresses.dns = "169.254.254.169";
       ports.dns = 53;
       retry_join = ["hashi.svc.pluralkit.net"]; # todo: is this correct for a client?
     };
