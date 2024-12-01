@@ -40,7 +40,7 @@ job "app_dotnet-bot" {
     task "bot" {
       driver = "docker"
       config {
-        image = "ghcr.io/pluralkit/pluralkit:version"
+        image = "ghcr.io/pluralkit/pluralkit:f3e006034b19ef8bc5c45bc45d13e37ac0d812c2"
       }
 
       template {
@@ -73,7 +73,7 @@ job "app_dotnet-bot" {
         PluralKit__Database = "Host=db.svc.pluralkit.net;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
         PluralKit__MessagesDatabase = "Host=db.svc.pluralkit.net;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=25;Minimum Pool Size = 25;Max Auto Prepare=25"
         PluralKit__RedisAddr = "db.svc.pluralkit.net:6379,abortConnect=false"
-        PluralKit__InfluxUrl = "http://influxdb.service.consul:8086"
+        PluralKit__InfluxUrl = "http://observability.svc.pluralkit.net:9090"
         PluralKit__InfluxDb = "pluralkit"
 				PluralKit__ElasticUrl = "http://observability.svc.pluralkit.net:9200"
         PluralKit__DispatchProxyUrl = "http://dispatch.svc.pluralkit.net"
