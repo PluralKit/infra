@@ -6,6 +6,21 @@ PluralKit uses Hetzner cloud instances for management (hashistack, seaweedfs mas
 
 For cloud instances: install Debian and use [nixos-infect](https://github.com/elitak/nixos-infect/) through `cloud-init`.
 
+::: warning
+
+  VMs with small RAM (<4G) need a swapfile. Do something like this:
+
+  ```
+  fallocate -l 8G /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  ```
+  and add to config:
+  ```nix
+  swapDevices = [ { device = "/swapfile"; } ];
+  ```
+:::
+
 For dedicated servers: boot to rescue, install the Nix daemon and run `nix-shell -p nixos-install-tools`. From there, install the same way as from NixOS live install media.
 
 Now you have a blank NixOS server, ready for configuration to be applied.
