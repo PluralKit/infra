@@ -45,7 +45,7 @@ job "app_gateway" {
 	  task "gateway" {
 	    driver = "docker"
 	    config {
-	      image = "ghcr.io/pluralkit/gateway:701bafdf97349fef13ee2ba4651fe5b3a5fc80cc"
+	      image = "ghcr.io/pluralkit/gateway:version"
 				labels = { pluralkit_rust = "true" }
         advertise_ipv6_address = true
 	    }
@@ -64,21 +64,6 @@ job "app_gateway" {
 				env = true
 			}
 
-			service {
-				 name = "pluralkit-gateway"
-				 tags = ["cluster${NOMAD_ALLOC_INDEX}"]
-				 address_mode = "driver"
-				 port = "port"
-				 provider = "consul"
-			}
-
-			service {
-				name = "metrics"
-				address_mode = "driver"
-				port = 9000
-				provider = "consul"
-			}
-
 			env {
 				RUST_LOG="info"
 				pluralkit__json_log=true
@@ -93,12 +78,27 @@ job "app_gateway" {
 				pluralkit__db__data_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5432/pluralkit"
 				pluralkit__db__data_redis_addr="redis://db.svc.pluralkit.net:6379"
 
-				pluralkit__run_metrics_server=false
+				pluralkit__run_metrics_server=true
 
 				pluralkit__api__temp_token2=1
 				pluralkit__api__remote_url=1
 				pluralkit__api__ratelimit_redis_addr=1
         pluralkit__discord__client_secret=1
+			}
+
+			service {
+				 name = "pluralkit-gateway"
+				 tags = ["cluster${NOMAD_ALLOC_INDEX}"]
+				 address_mode = "driver"
+				 port = "port"
+				 provider = "consul"
+			}
+
+			service {
+				name = "metrics"
+				address_mode = "driver"
+				port = 9000
+				provider = "consul"
 			}
 
 			resources {

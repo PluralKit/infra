@@ -13,7 +13,7 @@ job "service_nirn-proxy" {
       driver = "docker"
 
       config {
-        image = "ghcr.io/pluralkit/nirn-proxy:8718412d2f67359fd52ea991260ec372d1d7efa5"
+        image = "ghcr.io/pluralkit/nirn-proxy:version"
         advertise_ipv6_address = true
         hostname = "nirn"
       }

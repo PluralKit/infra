@@ -14,7 +14,7 @@ job "app_scheduled-tasks" {
 		task "scheduled_tasks" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/scheduled_tasks:1c9b7fae99102029817b7d307f7380675fece6b0"
+				image = "ghcr.io/pluralkit/scheduled_tasks:version"
 				advertise_ipv6_address = true
 			}
 

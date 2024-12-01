@@ -11,7 +11,7 @@ job "app_avatars" {
 		task "avatars" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/avatars:701bafdf97349fef13ee2ba4651fe5b3a5fc80cc"
+				image = "ghcr.io/pluralkit/avatars:version"
 				labels = { pluralkit_rust = "true" }
         advertise_ipv6_address = true
 			}
@@ -59,7 +59,7 @@ job "app_avatars" {
 		task "avatar_cleanup" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/avatars:701bafdf97349fef13ee2ba4651fe5b3a5fc80cc"
+				image = "ghcr.io/pluralkit/avatars:version"
 				command = "/bin/avatar_cleanup"
 				labels = { pluralkit_rust = "true" }
 			}

@@ -40,7 +40,7 @@ job "app_dotnet-bot" {
     task "bot" {
       driver = "docker"
       config {
-        image = "ghcr.io/pluralkit/pluralkit:f3e006034b19ef8bc5c45bc45d13e37ac0d812c2"
+        image = "ghcr.io/pluralkit/pluralkit:version"
       }
 
       template {
@@ -61,7 +61,7 @@ job "app_dotnet-bot" {
         PluralKit__Bot__AdminRole = 913986523500777482
         PluralKit__Bot__DiscordBaseUrl = "http://nirn-proxy.service.consul:8002/api/v10"
         PluralKit__Bot__HttpCacheUrl = "http://pluralkit-gateway.service.consul:5000"
-        PluralKit__Bot__HttpUseInnerCache = true
+        # PluralKit__Bot__HttpUseInnerCache = true
         PluralKit__Bot__AvatarServiceUrl = "http://pluralkit-avatars.service.consul:3000"
 
         PluralKit__Bot__MaxShardConcurrency = 16

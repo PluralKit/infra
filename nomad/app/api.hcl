@@ -14,7 +14,7 @@ job "app_api" {
 		task "api" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/pluralkit:f3e006034b19ef8bc5c45bc45d13e37ac0d812c2"
+				image = "ghcr.io/pluralkit/pluralkit:version"
 				entrypoint = ["dotnet", "bin/PluralKit.API.dll"]
         advertise_ipv6_address = true
 			}
@@ -63,7 +63,7 @@ job "app_api" {
 		task "pluralkit-api-proxy" {
 			driver = "docker"
 			config {
-				image = "ghcr.io/pluralkit/api:701bafdf97349fef13ee2ba4651fe5b3a5fc80cc"
+				image = "ghcr.io/pluralkit/api:version"
 				labels = { pluralkit_rust = "true" }
         advertise_ipv6_address = true
 			}
