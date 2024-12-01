@@ -1,0 +1,54 @@
+{
+  acme_dns cloudflare {env.CF_API_TOKEN}
+  storage consul {
+	address hashi.svc.pluralkit.net:8500
+	prefix "caddytls"
+	tls_enabled false
+  }
+}
+
+:80, anycast.pluralkit.net:443 {
+  file_server / {
+	root /etc/caddy/
+    index anycast.html
+  }
+}
+
+www.pluralkit.me {
+	redir https://pluralkit.me{uri}
+}
+
+stats.pluralkit.me {
+  file_server / {
+	root /etc/caddy/
+    index stats.html
+  }
+}
+
+api.pluralkit.me {
+        reverse_proxy /* {
+                to http://pluralkit-api.service.consul:5000
+                header_up X-PluralKit-Client-IP {remote_host}
+                header_up -x-pluralkit-systemid
+        }
+}
+
+dash.pluralkit.me {
+        reverse_proxy /* {
+                to http://pluralkit-dashboard.service.consul:8080
+        }
+}
+
+gt.pluralkit.me {
+        reverse_proxy /* {
+                to http://glitchtip.service.consul:8000
+        }
+}
+
+grafana.pluralkit.me {
+        reverse_proxy /* {
+                to http://grafana.service.consul:3000
+                header_down -X-Frame-Options
+                header_down +Content-Security-Policy "frame-ancestors stats.pluralkit.me"
+        }
+}

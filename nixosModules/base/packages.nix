@@ -11,6 +11,7 @@
   ];
 
   services.nomad.package = (pkgs.callPackage ../../packages/nomad.nix {});
+  services.caddy.package = (pkgs.callPackage ../../packages/caddy.nix {});
 
   environment.systemPackages = with pkgs; [
     tmux

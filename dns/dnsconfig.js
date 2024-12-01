@@ -13,6 +13,7 @@ var hosts = {
 	"compute-hrhel1-3c45e932": [ "65.21.83.253", "100.125.28.89" ],
 	"compute-hrhel1-70e1bd12": [ "65.108.12.49", "100.77.98.43" ],
 	"database-hrhel1-b959773f": [ "95.217.79.59", "100.96.216.62" ],
+	"edge-vlsto-4622d8e3": [ "70.34.216.227", "100.120.109.26" ],
 	"hashi-hchel1-5fd89a52": [ "95.216.154.82", "100.120.65.72" ],
 	"hashi-hchel1-5fd9b1fe": [ "95.217.177.254", "100.114.8.65" ],
 	"hashi-hchel1-251b08ea": [ "37.27.8.234", "100.113.220.49" ],
@@ -66,13 +67,16 @@ D.apply(null, Array.prototype.concat(
 
 	// manual records
 	[
+		A("anycast.pluralkit.net.", "70.34.215.108"),
+		AAAA("anycast.pluralkit.net.", "2a05:f480:2000:2894::"),
+
 		// legacy
 		A("db2.pluralkit.net.", "148.251.178.57"),
 		A("db2.vpn.pluralkit.net.", "100.83.67.99"),
 		A("vps.pluralkit.net.", "162.55.174.253"),
 		A("vps.vpn.pluralkit.net.", "100.77.37.109"),
 
-		// todo: add beta
+		CNAME("packages.pluralkit.net.", "public.r2.dev.", CF_PROXY_ON),
 
 		/// services
 		AAAA("dispatch.svc.pluralkit.net.", "fdaa:9:e856:0:1::3"),
@@ -80,13 +84,23 @@ D.apply(null, Array.prototype.concat(
 	[END]
 ));
 
+var anycastSubdomains = [
+	"www",
+	"api",
+	"dash",
+	"grafana",
+	"gt",
+	"stats",
+];
+
 D("pluralkit.me", REG_NONE, DnsProvider(DNS_CLOUDFLARE),
 	// web
 	ALIAS("@", "apex-loadbalancer.netlify.com."),
-	CNAME("www", "apex-loadbalancer.netlify.com."),
 	CNAME("cdn", "f003.backblazeb2.com.", CF_PROXY_ON),
-	A("*", "162.55.174.253"),
-	AAAA("*", "2a01:4f8:1c17:f925::1"),
+
+	anycastSubdomains.map(function (t) { return [
+		CNAME(t+".pluralkit.me.", "anycast.pluralkit.net.")
+	] }),
 
 	// beta
 	A("beta.pluralkit.me.", "168.119.255.71"),
