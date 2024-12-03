@@ -22,8 +22,6 @@ async function processMachine(env, m, silences, notifRole) {
 
 	try {
 		let hostname = `${m}.prod.pluralkit.net`;
-		// hacky
-		if (m == "vps") hostname = `${m}.pluralkit.net`;
 		mdata = await fetch(`http://${hostname}:19999/checks`);
 		mdata = await mdata.json();
 	} catch(e) {

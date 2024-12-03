@@ -70,12 +70,6 @@ D.apply(null, Array.prototype.concat(
 		A("anycast.pluralkit.net.", "70.34.215.108"),
 		AAAA("anycast.pluralkit.net.", "2a05:f480:2000:2894::"),
 
-		// legacy
-		A("db2.pluralkit.net.", "148.251.178.57"),
-		A("db2.vpn.pluralkit.net.", "100.83.67.99"),
-		A("vps.pluralkit.net.", "162.55.174.253"),
-		A("vps.vpn.pluralkit.net.", "100.77.37.109"),
-
 		CNAME("packages.pluralkit.net.", "public.r2.dev.", CF_PROXY_ON),
 
 		/// services
