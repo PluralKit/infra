@@ -11,7 +11,7 @@ import subprocess
 import sys
 import urllib.request
 
-DEFAULT_POSTGRES_URI = 'postgres://:5432/pluralkit'
+DEFAULT_POSTGRES_URI = 'postgres://pluralkit:@db.svc.pluralkit.net:5432/pluralkit'
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
