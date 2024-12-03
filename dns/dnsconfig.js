@@ -94,6 +94,8 @@ var anycastSubdomains = [
 ];
 
 D("pluralkit.me", REG_NONE, DnsProvider(DNS_CLOUDFLARE),
+	TXT("@", "google-site-verification=LaVKTs1MvdA4MLaHV_3hUlR1aOVKqfjWzaBWNlGVblE"),
+
 	// web
 	ALIAS("@", "apex-loadbalancer.netlify.com."),
 	CNAME("cdn", "f003.backblazeb2.com.", CF_PROXY_ON),
