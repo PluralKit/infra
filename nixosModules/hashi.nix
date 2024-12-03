@@ -69,16 +69,16 @@ in {
   pkServerChecks = [
     { type = "systemd_service_running"; value = "nomad"; }
     { type = "systemd_service_running"; value = "vault"; }
-    { type = "script"; value = (pkgs.writeShellScript "check-vault-unsealed" ''
-      #!/bin/sh
-      export PATH=/run/current-system/sw/bin/:$PATH
-      export VAULT_ADDR=http://${config.pkTailscaleIp}:8200
-      export VAULT_TOKEN=$(cat /etc/pluralkit/nomad-vault-token.hcl | grep token | awk '{print $3}' | jq -r)
+    # { type = "script"; value = (pkgs.writeShellScript "check-vault-unsealed" ''
+    #   #!/bin/sh
+    #   export PATH=/run/current-system/sw/bin/:$PATH
+    #   export VAULT_ADDR=http://${config.pkTailscaleIp}:8200
+    #   export VAULT_TOKEN=$(cat /etc/pluralkit/nomad-vault-token.hcl | grep token | awk '{print $3}' | jq -r)
 
-      # exits 2 if vault is sealed
-      # 0 if unsealed
-      vault operator key-status
-    ''); }
+    #   # exits 2 if vault is sealed
+    #   # 0 if unsealed
+    #   vault operator key-status
+    # ''); }
   ];
 
   environment.systemPackages = [
