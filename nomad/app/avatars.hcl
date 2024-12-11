@@ -1,9 +1,15 @@
 job "app_avatars" {
 	datacenters = ["dc1"]
+	type = "system"
 
 	vault {
 		policies = ["read-kv"]
 	}
+
+  constraint {
+    attribute = "${node.class}"
+    value = "edge"
+  }
 
 	group "avatars" {
 		count = 2

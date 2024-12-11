@@ -52,3 +52,11 @@ grafana.pluralkit.me {
                 header_down +Content-Security-Policy "frame-ancestors stats.pluralkit.me"
         }
 }
+
+test-grafana.pluralkit.net {
+        reverse_proxy /* {
+                to http://test-grafana.service.consul:3000
+                header_down -X-Frame-Options
+                header_down +Content-Security-Policy "frame-ancestors stats.pluralkit.me"
+        }
+}

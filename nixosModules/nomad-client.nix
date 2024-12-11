@@ -17,6 +17,7 @@
         servers = ["hashi.svc.pluralkit.net"];
         node_class = lib.mkDefault "changeme";
       };
+      consul.address = "http://${config.pkTailscaleIp}:8500";
       vault = {
         enabled = true;
         address = "http://active.vault.service.consul:8200";

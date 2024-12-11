@@ -3,8 +3,7 @@
 {
 	imports = [
 		(modulesPath + "/profiles/qemu-guest.nix")
-    ../nixosModules/seaweedfs.nix
-    ../nixosModules/hashi.nix
+    ../nixosModules/worker.nix
 	];
 
 	boot.loader.grub.device = "/dev/sda";
@@ -14,16 +13,15 @@
 
 	systemd.network.networks."eth0" = {
 		matchConfig = { Name = "eth0"; };
-		address = [ "95.216.154.82/32" ];
+		address = [ "65.108.248.27/32" ];
 		gateway = [ "172.31.1.1" ];
 		routes = [
 			{ Destination = "172.31.1.1/32"; Scope = "link"; }
 		];
 	};
 
-  pkTailscaleIp = "100.120.65.72";
-
-  seaweedMaster = true;
+  pkTailscaleIp = "100.109.78.112";
 
 	system.stateVersion = "24.04";
 }
+

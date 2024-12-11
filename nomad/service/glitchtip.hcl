@@ -10,39 +10,6 @@ job "service_glitchtip" {
     policies = ["read-kv"]
   }
 
-  group "postgres" {
-    volume "pg-data" {
-      type            = "csi"
-      source          = "glitchtip-postgres-data"
-      access_mode     = "single-node-writer"
-      attachment_mode = "file-system"
-    }
-
-    task "glitchtip-postgres" {
-      driver = "docker"
-
-      config {
-        image = "postgres:17"
-        advertise_ipv6_address = true
-      }
-
-      volume_mount {
-        volume = "pg-data"
-        destination = "/var/lib/postgresql/data"
-      }
-
-      env {
-        POSTGRES_PASSWORD = "postgres"
-      }
-
-			service {
-				name = "glitchtip-postgres"
-				address_mode = "driver"
-				provider = "consul"
-			}
-    }
-  }
-
   group "valkey" {
     task "glitchtip-valkey" {
       driver = "docker"
@@ -77,6 +44,7 @@ job "service_glitchtip" {
       template {
         data = <<EOD
           {{ with secret "kv/service" }}
+          DATABASE_URL = "postgres://glitchtip:{{ .Data.glitchtipDatabasePassword }}@db.svc.pluralkit.net:5435/glitchtip"
           SECRET_KEY = "{{ .Data.glitchtipSecretKey }}"
           {{ end }}
         EOD
@@ -85,7 +53,6 @@ job "service_glitchtip" {
       }
 
       env {
-        DATABASE_URL = "postgres://postgres:postgres@glitchtip-postgres.service.consul:5432/postgres"
         REDIS_URL = "redis://glitchtip-valkey.service.consul:6379"
         PORT = "[::]:8000"
         EMAIL_URL = "consolemail://"
@@ -113,6 +80,7 @@ job "service_glitchtip" {
       template {
         data = <<EOD
           {{ with secret "kv/service" }}
+          DATABASE_URL = "postgres://glitchtip:{{ .Data.glitchtipDatabasePassword }}@db.svc.pluralkit.net:5435/glitchtip"
           SECRET_KEY = "{{ .Data.glitchtipSecretKey }}"
           {{ end }}
         EOD
@@ -121,7 +89,6 @@ job "service_glitchtip" {
       }
 
       env {
-        DATABASE_URL = "postgres://postgres:postgres@glitchtip-postgres.service.consul:5432/postgres"
         REDIS_URL = "redis://glitchtip-valkey.service.consul:6379"
         PORT = "8000"
         EMAIL_URL = "consolemail://"
@@ -147,6 +114,7 @@ job "service_glitchtip" {
       template {
         data = <<EOD
           {{ with secret "kv/service" }}
+          DATABASE_URL = "postgres://glitchtip:{{ .Data.glitchtipDatabasePassword }}@db.svc.pluralkit.net:5435/glitchtip"
           SECRET_KEY = "{{ .Data.glitchtipSecretKey }}"
           {{ end }}
         EOD
@@ -155,7 +123,6 @@ job "service_glitchtip" {
       }
 
       env {
-        DATABASE_URL = "postgres://postgres:postgres@glitchtip-postgres.service.consul:5432/postgres"
         REDIS_URL = "redis://glitchtip-valkey.service.consul:6379"
         PORT = "8000"
         EMAIL_URL = "consolemail://"

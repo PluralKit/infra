@@ -166,6 +166,12 @@ in
         database = "messages";
       };
     };
+
+    pluralkit-db-utils = mkPostgresService "pluralkit-db-utils" {
+      package = pkgs.postgresql_17;
+      dataDir = "/mnt/appdata/utils";
+      listenPort = 5435;
+    };
   };
 
   pkServerChecks = [

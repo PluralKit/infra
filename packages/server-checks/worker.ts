@@ -8,6 +8,7 @@ const machinesToCheck = [
 	"database-hrhel1-b959773f",
 	"compute-hrhel1-3c45e932",
 	"compute-hrhel1-70e1bd12",
+	"compute-hchel1-416cf81b",
 ];
 
 async function processMachine(env, m, silences, notifRole) {

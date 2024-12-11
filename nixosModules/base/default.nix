@@ -34,8 +34,8 @@
   };
 
   environment.variables = {
-    NOMAD_ADDR = "http://hashi.svc.pluralkit.net:4646";
-    CONSUL_HTTP_ADDR = "127.0.0.1:8500";
+    NOMAD_ADDR = "http://${config.pkTailscaleIp}:4646";
+    CONSUL_HTTP_ADDR = "${config.pkTailscaleIp}:8500";
     VAULT_ADDR = "http://hashi.svc.pluralkit.net:8200";
   };
 
@@ -68,6 +68,7 @@
     enable = config.pkTailscaleIp != "";
     extraConfig = {
       bind_addr = "${config.pkTailscaleIp}";
+      addresses.http = "${config.pkTailscaleIp}";
       addresses.dns = "169.254.254.169";
       ports.dns = 53;
       retry_join = ["hashi.svc.pluralkit.net"]; # todo: is this correct for a client?

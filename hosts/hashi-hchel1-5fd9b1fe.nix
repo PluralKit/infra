@@ -17,7 +17,7 @@
 		address = [ "95.217.177.254/32" ];
 		gateway = [ "172.31.1.1" ];
 		routes = [
-			{ routeConfig = { Destination = "172.31.1.1/32"; Scope = "link"; }; }
+			{ Destination = "172.31.1.1/32"; Scope = "link"; }
 		];
 	};
 

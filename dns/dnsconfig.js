@@ -12,6 +12,7 @@ String.prototype.endsWith = function(search) {
 var hosts = {
 	"compute-hrhel1-3c45e932": [ "65.21.83.253", "100.125.28.89" ],
 	"compute-hrhel1-70e1bd12": [ "65.108.12.49", "100.77.98.43" ],
+	"compute-hchel1-416cf81b": [ "65.108.248.27", "100.109.78.112" ],
 	"database-hrhel1-b959773f": [ "95.217.79.59", "100.96.216.62" ],
 	"edge-vlsto-4622d8e3": [ "70.34.216.227", "100.120.109.26" ],
 	"hashi-hchel1-5fd89a52": [ "95.216.154.82", "100.120.65.72" ],
@@ -32,6 +33,7 @@ var serviceHostMap = {
 var argoTunnelDomain = "5fbeffbb-cdec-4d64-b5b7-63c1d6e2e9cd.cfargotunnel.com.";
 var cfTunnels = [
 	"logs.pluralkit.net.",
+	"nomad.pluralkit.net.",
 ];
 
 D.apply(null, Array.prototype.concat(
@@ -47,7 +49,7 @@ D.apply(null, Array.prototype.concat(
 	}),
 
 	// cloudflare tunnel records
-	cfTunnels.map(function (t) { return [ CNAME(t, argoTunnelDomain) ] }),
+	cfTunnels.map(function (t) { return [ CNAME(t, argoTunnelDomain, CF_PROXY_ON) ] }),
 
 	// services
 	Array.prototype.concat(Object.keys(serviceHostMap).map(function (svc) {

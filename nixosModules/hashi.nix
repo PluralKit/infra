@@ -43,7 +43,6 @@ in {
     extraConfig = {
       ui_config.enabled = true;
       server = true;
-      addresses.http = "${pkTailscaleIp}";
     };
   };
 

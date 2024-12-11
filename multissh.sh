@@ -3,6 +3,7 @@
 query=$1
 shift
 user=${user:-alyssa}
+wait=${wait:-false}
 
 hosts=($(find hosts -type f -exec basename {} \; | grep -v default | sed 's/.nix//'))
 
@@ -25,5 +26,9 @@ read
 for hostname in ${hosts[@]}; do
   ip=$(nix eval -v -L ".#nixosConfigurations.$hostname.config.systemd.network.networks.eth0.address" | jq -r .[0] | sed 's/\// /' | awk '{print $1}')
   echo $hostname at $ip
+  if [ "$wait" == "true" ]; then
+    echo "tap enter to run command"
+    read
+  fi
   ssh -t $user@$ip $@
 done

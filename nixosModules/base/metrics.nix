@@ -3,14 +3,14 @@
 {
 	services.consul-template.instances.metrics = {
     enable = true;
-    settings.consul.address = "http://127.0.0.1:8500";
+    settings.consul.address = "http://${config.pkTailscaleIp}:8500";
     settings.template = [ {
       source = (pkgs.writeTextFile {
         name = "vector-metrics.tpl";
         text = ''
 [sources.node-exporter]
 type = "prometheus_scrape"
-endpoints = [ "http://127.0.0.1:9100/metrics" ]
+endpoints = [ "http://${config.networking.hostName}.vpn.pluralkit.net:9100/metrics" ]
 instance_tag = "host"
 
 [transforms.node-exporter-tagged]
@@ -24,6 +24,7 @@ source = ".tags.job = \"node-exporter\""
 [sources.{{ .ID }}]
 type = "prometheus_scrape"
 endpoints = [ "http://[{{ .Address }}]:{{ .Port }}/metrics" ]
+instance_tag = "host"
 
   {{ end }}
 {{ end }}
@@ -54,7 +55,7 @@ healthcheck.enabled = false
 
   services.prometheus.exporters.node = {
     enable = true;
-    listenAddress = "127.0.0.1";
+    listenAddress = "${config.pkTailscaleIp}";
   };
 
   systemd.services.vector-metrics = {
