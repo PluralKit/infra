@@ -69,6 +69,14 @@ Choose an unused subnet for container IPs (172.17.xxx.0/24).
 
 Set the server to eligible in Nomad, and you're done.
 
+## Edge server
+
+Assign an IPv6 subnet from Vultr instance -> Settings -> IPv6.
+
+Copy the configuration from an existing edge server (replace the IPs, set `pkTailscaleIp` to empty, comment out `edge.nix`).
+
+Copy `/etc/pluralkit` from an existing edge server.
+
 ## Database/other
 
 There are likely manual or otherwise unknown steps here, please check with alyssa in #internal-stuffs.
