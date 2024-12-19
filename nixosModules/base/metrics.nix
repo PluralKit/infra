@@ -8,6 +8,9 @@
       source = (pkgs.writeTextFile {
         name = "vector-metrics.tpl";
         text = ''
+[sources.host]
+type = "host_metrics"
+
 [sources.node-exporter]
 type = "prometheus_scrape"
 endpoints = [ "http://${config.networking.hostName}.vpn.pluralkit.net:9100/metrics" ]
@@ -32,6 +35,7 @@ instance_tag = "host"
 [sinks.prometheus]
 type = "prometheus_remote_write"
 inputs = [
+        "host",
         "node-exporter-tagged",
 {{ range $srv := service "metrics" }}
     {{ if eq .Node "${config.networking.hostName}" }}
@@ -53,6 +57,11 @@ healthcheck.enabled = false
     unitConfig.StartLimitIntervalSec = lib.mkForce 0;
   };
 
+  systemd.services.prometheus-node-exporter = {
+    after =  [ "consul.service" ];
+    requires =  [ "consul.service" ];
+    serviceConfig.Restart = lib.mkForce "always";
+  };
   services.prometheus.exporters.node = {
     enable = true;
     listenAddress = "${config.pkTailscaleIp}";
