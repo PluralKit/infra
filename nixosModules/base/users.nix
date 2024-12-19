@@ -29,6 +29,7 @@ in
       {
         root = {
           initialHashedPassword = "";
+          extraGroups = [ "wheel" ];
           openssh.authorizedKeys.keys =
             (flatten (map (user: (mkUserDesc user).openssh.authorizedKeys.keys) userList))
             ++ [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO+QannbrOTNjjYfCkXFY/uc5JFvTp/hQyTv3vhPLF5S pluralkit-provisioner" ];
