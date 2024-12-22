@@ -2,6 +2,7 @@ const notify = (env, msg) => fetch(env.webhookUrl+"?wait=true", { method: "POST"
 
 const machinesToCheck = [
 	"edge-vlsto-4622d8e3",
+	"edge-vlsto-4622d978",
 	"hashi-hchel1-251b08ea",
 	"hashi-hchel1-5fd89a52",
 	"hashi-hchel1-5fd9b1fe",
