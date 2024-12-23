@@ -19,43 +19,42 @@ in {
 
   services.nomad.settings.client.node_class = "compute";
 
-  systemd.services.vector = {
-    description = "Vector.dev (logs)";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network-online.target" "consul.service" ];
-    requires = [ "network-online.target" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.vector}/bin/vector --config ${pkgs.writeTextFile {
-        name = "vector.conf";
-        text = ''
-          [sources.docker-rust]
-          type = "docker_logs"
-          include_labels = ["pluralkit_rust=true"]
+  pkLogTargets = [
+    ''
+      [sources.docker]
+      type = "docker_logs"
 
-          [transforms.tf-docker-rust]
-          type = "remap"
-          inputs = ["docker-rust"]
-          source = ".data = parse_json(.message) ?? {}"
+      [sinks.opensearch-docker]
+      type = "elasticsearch"
+      api_version = "v8"
+      inputs = ["docker"]
+      bulk.index = "docker"
+      endpoints = ["http://es.svc.pluralkit.net"]
 
-          [sinks.opensearch]
-          type = "elasticsearch"
-          api_version = "v8"
-          inputs = ["tf-docker-rust"]
-          bulk.index = "pluralkit-rust"
-          endpoints = ["http://observability.svc.pluralkit.net:9200"]
-        '';
-      }}";
-      DynamicUser = true;
-      Group = "docker";
-      Restart = "always";
-      StateDirectory = "vector";
-      ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
-    };
-    unitConfig = {
-      StartLimitIntervalSec = 10;
-      StartLimitBurst = 5;
-    };
-  };
+      [sources.docker-rust]
+      type = "docker_logs"
+      include_labels = ["pluralkit_rust=true"]
+
+      [transforms.tf-docker-rust]
+      type = "remap"
+      inputs = ["docker-rust"]
+      source = ".data = parse_json(.message) ?? {}"
+
+      [sinks.opensearch-rust]
+      type = "elasticsearch"
+      api_version = "v8"
+      inputs = ["tf-docker-rust"]
+      bulk.index = "pluralkit-rust"
+      endpoints = ["http://observability.svc.pluralkit.net:9200"]
+
+      [sinks.opensearch-rust-new]
+      type = "elasticsearch"
+      api_version = "v8"
+      inputs = ["tf-docker-rust"]
+      bulk.index = "pluralkit-rust"
+      endpoints = ["http://es.svc.pluralkit.net"]
+    ''
+  ];
 
   pkServerChecks = [
     { type = "systemd_service_running"; value = "nomad"; }

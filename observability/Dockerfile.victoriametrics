@@ -1,0 +1,9 @@
+FROM alpine:latest
+
+ENV VERSION=v1.108.1
+
+RUN wget https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/$VERSION/victoria-metrics-linux-amd64-$VERSION-cluster.tar.gz \
+	&& cd /usr/local/bin && tar xvf /victoria-metrics* && rm /victoria-metrics*
+
+RUN wget https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/$VERSION/vmutils-linux-amd64-$VERSION.tar.gz \
+	&& cd /usr/local/bin && tar xvf /vmutils* && rm /vmutils*

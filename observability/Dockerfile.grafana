@@ -1,0 +1,3 @@
+FROM grafana/grafana:11.3.0-security-01
+USER root
+RUN apk add e2fsprogs

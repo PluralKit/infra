@@ -1,0 +1,9 @@
+FROM quay.io/prometheus/alertmanager AS upstream
+
+FROM alpine:latest
+RUN apk add envsubst
+COPY alertmanager-entrypoint.sh /entrypoint.sh
+COPY alertmanager.template.yml /
+COPY --from=upstream /bin/alertmanager /bin/alertmanager
+
+ENTRYPOINT [ "/entrypoint.sh" ]

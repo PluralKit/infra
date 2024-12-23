@@ -12,6 +12,7 @@
     ./packages.nix
     ./networking.nix
     ./metrics.nix
+    ./logs.nix
     ../../packages/server-checks/configuration.nix
   ];
 

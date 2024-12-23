@@ -45,6 +45,19 @@ inputs = [
 ]
 endpoint = "http://observability.svc.pluralkit.net:9090/api/v1/write"
 healthcheck.enabled = false
+
+[sinks.victoriametrics]
+type = "prometheus_remote_write"
+inputs = [
+        "host",
+{{ range $srv := service "metrics" }}
+    {{ if eq .Node "${config.networking.hostName}" }}
+        "{{ .ID }}",
+    {{ end }}
+{{ end }}
+]
+endpoint = "http://vm.svc.pluralkit.net/insert/0/prometheus/api/v1/write"
+healthcheck.enabled = false
         '';
       });
       destination = "/run/vector-metrics.toml";

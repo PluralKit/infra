@@ -77,6 +77,13 @@ D.apply(null, Array.prototype.concat(
 
 		/// services
 		AAAA("dispatch.svc.pluralkit.net.", "fdaa:9:e856:0:1::3"),
+
+    // observability
+    AAAA("vm.svc.pluralkit.net.", "fdaa:9:e856:0:1::4"),
+    AAAA("alerts.svc.pluralkit.net.", "fdaa:9:e856:0:1::5"),
+    AAAA("es.svc.pluralkit.net.", "fdaa:9:e856:0:1::6"),
+    AAAA("newlogs.pluralkit.net.", "fdaa:9:e856:0:1::7"),
+    AAAA("grafana.pluralkit.net.", "fdaa:9:e856:0:1::8"),
 	],
 	[END]
 ));

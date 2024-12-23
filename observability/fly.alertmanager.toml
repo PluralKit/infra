@@ -1,0 +1,8 @@
+app = "pluralkit-alertmanager"
+primary_region = "sjc"
+build.Dockerfile = "Dockerfile.alertmanager"
+http_service.internal_port = 9093
+
+[[mounts]]
+  source = "alertmanager"
+  destination = "/alertmanager"
