@@ -1,3 +1,9 @@
 #!/bin/sh
 
-echo '{"cloudflare":{"TYPE":"CLOUDFLAREAPI","accountid":"'"$(op item get --vault=pluralkit --field=account_id cloudflare)"'","apitoken":"'"$(op item get --vault=pluralkit --field=dnscontrol_auth_token cloudflare --reveal)"'"}}'
+op item get mmpg5s3r3ffaatoz2k3wi5f3cy --format json | jq '{
+  cloudflare: {
+    TYPE: "CLOUDFLAREAPI",
+    accountid: (.fields[] | select(.label == "account_id") | .value),
+    apitoken: (.fields[] | select(.label == "dnscontrol_auth_token") | .value)
+  }
+}'
