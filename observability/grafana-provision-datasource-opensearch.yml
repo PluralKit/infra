@@ -40,6 +40,7 @@ datasources:
       serverless: false
       database: 'dotnet-logs*'
       timeField: 'timestamp'
+      logMessageField: 'message'
       tlsAuth: false
       version: '2.18.0'
       versionLabel: 'OpenSearch 2.18.0'
