@@ -18,6 +18,10 @@ job "service_glitchtip" {
         advertise_ipv6_address = true
       }
 
+      resources {
+        memory = 2000
+      }
+
       service {
         name = "glitchtip-valkey"
         address_mode = "driver"
@@ -27,17 +31,10 @@ job "service_glitchtip" {
   }
 
   group "glitchtip" {
-    volume "glitchtip-appdata" {
-      type = "csi"
-      source = "glitchtip-appdata"
-      access_mode = "multi-node-multi-writer"
-      attachment_mode = "file-system"
-    }
-
     task "glitchtip-web" {
       driver = "docker"
       config {
-        image = "glitchtip/glitchtip"
+        image = "glitchtip/glitchtip:v4.1"
         advertise_ipv6_address = true
       }
 
@@ -73,7 +70,7 @@ job "service_glitchtip" {
     task "glitchtip-worker" {
       driver = "docker"
       config {
-        image = "glitchtip/glitchtip"
+        image = "glitchtip/glitchtip:v4.1"
         command = "./bin/run-celery-with-beat.sh"
       }
 
@@ -103,7 +100,7 @@ job "service_glitchtip" {
     task "glitchtip-migrate" {
       driver = "docker"
       config {
-        image = "glitchtip/glitchtip"
+        image = "glitchtip/glitchtip:v4.1"
         command = "./bin/run-migrate.sh"
       }
 

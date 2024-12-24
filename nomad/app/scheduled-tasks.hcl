@@ -24,7 +24,7 @@ job "app_scheduled-tasks" {
 					SENTRY_DSN={{ .Data.scheduledTasksSentryUrl }}
 					DATA_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@db.svc.pluralkit.net:5432/pluralkit
 					MESSAGES_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@db.svc.pluralkit.net:5434/messages
-					STATS_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@postgres-stats.service.consul:5432/stats
+					STATS_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@db.svc.pluralkit.net:5435/stats
 					{{ end }}
 				EOD
 				destination = "local/secret.env"
