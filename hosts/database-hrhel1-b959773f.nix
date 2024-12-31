@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../nixosModules/observability.nix
     ../nixosModules/database.nix
   ];
 
@@ -30,5 +29,4 @@
 
   # databases
   fileSystems."/mnt/appdata" = { device = "/dev/disk/by-label/appdata"; fsType = "ext4"; };
-  fileSystems."/mnt/observability" = { device = "/dev/disk/by-label/observability"; fsType = "ext4"; };
 }

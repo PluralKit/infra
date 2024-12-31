@@ -28,7 +28,6 @@ var serviceHostMap = {
 		"hashi-hchel1-251b08ea",
 	],
 	"db": ["database-hrhel1-b959773f"],
-	"observability": ["database-hrhel1-b959773f"],
 };
 
 var argoTunnelDomain = "5fbeffbb-cdec-4d64-b5b7-63c1d6e2e9cd.cfargotunnel.com.";

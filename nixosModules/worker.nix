@@ -40,13 +40,6 @@ in {
       inputs = ["docker-rust"]
       source = ".data = parse_json(.message) ?? {}"
 
-      [sinks.opensearch-rust]
-      type = "elasticsearch"
-      api_version = "v8"
-      inputs = ["tf-docker-rust"]
-      bulk.index = "pluralkit-rust"
-      endpoints = ["http://observability.svc.pluralkit.net:9200"]
-
       [sinks.opensearch-rust-new]
       type = "elasticsearch"
       api_version = "v8"

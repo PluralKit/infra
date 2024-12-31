@@ -32,20 +32,6 @@ instance_tag = "host"
   {{ end }}
 {{ end }}
 
-[sinks.prometheus]
-type = "prometheus_remote_write"
-inputs = [
-        "host",
-        "node-exporter-tagged",
-{{ range $srv := service "metrics" }}
-    {{ if eq .Node "${config.networking.hostName}" }}
-        "{{ .ID }}",
-    {{ end }}
-{{ end }}
-]
-endpoint = "http://observability.svc.pluralkit.net:9090/api/v1/write"
-healthcheck.enabled = false
-
 [sinks.victoriametrics]
 type = "prometheus_remote_write"
 inputs = [
