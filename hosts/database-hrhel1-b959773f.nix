@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../nixosModules/seaweedfs.nix
     ../nixosModules/observability.nix
     ../nixosModules/database.nix
   ];
@@ -28,10 +27,6 @@
   };
 
   system.stateVersion = "24.04";
-
-  # seaweedfs
-  fileSystems."/mnt/csi" = { device = "/dev/disk/by-label/csi"; fsType = "ext4"; };
-  seaweedStorageSize = 400;
 
   # databases
   fileSystems."/mnt/appdata" = { device = "/dev/disk/by-label/appdata"; fsType = "ext4"; };

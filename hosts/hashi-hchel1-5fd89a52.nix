@@ -3,7 +3,6 @@
 {
 	imports = [
 		(modulesPath + "/profiles/qemu-guest.nix")
-    ../nixosModules/seaweedfs.nix
     ../nixosModules/hashi.nix
 	];
 
@@ -22,8 +21,6 @@
 	};
 
   pkTailscaleIp = "100.120.65.72";
-
-  seaweedMaster = true;
 
 	system.stateVersion = "24.04";
 }

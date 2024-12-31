@@ -2,7 +2,7 @@
 
 (this document assumes you have basic knowledge of Nix and NixOS configuration)
 
-PluralKit uses Hetzner cloud instances for management (hashistack, seaweedfs master) and dedicated servers for database/compute. Hetzner doesn't offer NixOS as a boot option, so it has to be installed manually.
+PluralKit uses Hetzner cloud instances for management (hashistack) and dedicated servers for database/compute. Hetzner doesn't offer NixOS as a boot option, so it has to be installed manually.
 
 For cloud instances: install Debian and use [nixos-infect](https://github.com/elitak/nixos-infect/) through `cloud-init`.
 
