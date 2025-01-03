@@ -88,8 +88,8 @@ job "app_dotnet-bot" {
       # todo: add healthcheck
 
       resources {
-        cpu    = 501
-        memory = 1200
+        cpu    = 500
+        memory = 800
       }
     }
   }

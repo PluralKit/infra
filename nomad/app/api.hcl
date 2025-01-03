@@ -43,9 +43,7 @@ job "app_api" {
 				PluralKit__Database = "Host=db.svc.pluralkit.net;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
 				PluralKit__MessagesDatabase = "Host=db.svc.pluralkit.net;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
 				PluralKit__RedisAddr = "db.svc.pluralkit.net:6379,abortConnect=false"
-				PluralKit__InfluxUrl = "http://influxdb.service.consul:8086"
-				PluralKit__InfluxDb = "pluralkit"
-				PluralKit__ElasticUrl = "http://observability.svc.pluralkit.net:9200"
+				PluralKit__ElasticUrl = "http://es.svc.pluralkit.net"
 
         PluralKit__DispatchProxyUrl = "http://dispatch.svc.pluralkit.net"
 				PluralKit__ConsoleLogLevel = 2

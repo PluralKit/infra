@@ -16,15 +16,15 @@ job "app_scheduled-tasks" {
 			config {
 				image = "ghcr.io/pluralkit/scheduled_tasks:version"
 				advertise_ipv6_address = true
+				labels = { pluralkit_rust = "true" }
 			}
 
 			template {
 				data = <<EOD
 					{{ with secret "kv/pluralkit" }}
-					SENTRY_DSN={{ .Data.scheduledTasksSentryUrl }}
-					DATA_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@db.svc.pluralkit.net:5432/pluralkit
-					MESSAGES_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@db.svc.pluralkit.net:5434/messages
-					STATS_DB_URI=postgresql://pluralkit:{{ .Data.databasePassword }}@db.svc.pluralkit.net:5435/stats
+					pluralkit__db__db_password={{ .Data.databasePassword }}
+	        pluralkit__discord__bot_token={{ .Data.discordToken }}
+	        pluralkit__sentry_url={{ .Data.scheduledTasksSentryUrl }}
 					{{ end }}
 				EOD
 				destination = "local/secret.env"
@@ -32,10 +32,24 @@ job "app_scheduled-tasks" {
 			}
 
 			env {
-				REDIS_ADDR = "db.svc.pluralkit.net:6379"
-				SET_GUILD_COUNT = "true"
-				HTTP_CACHE_URL = "pluralkit-gateway.service.consul"
-				CLUSTER_COUNT = "54"
+				RUST_LOG="info"
+				pluralkit__json_log=true
+
+				pluralkit__run_metrics_server=true
+				pluralkit__scheduled_tasks__set_guild_count=true
+				pluralkit__scheduled_tasks__expected_gateway_count=54
+				pluralkit__scheduled_tasks__gateway_url="pluralkit-gateway.service.consul:5000"
+
+				pluralkit__db__data_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5432/pluralkit"
+				pluralkit__db__messages_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5434/messages"
+				pluralkit__db__stats_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5435/stats"
+				pluralkit__db__data_redis_addr="redis://db.svc.pluralkit.net:6379"
+
+        pluralkit__discord__api_base_url="http://nirn-proxy.service.consul:8002/api/v10"
+
+        pluralkit__discord__client_id=1
+        pluralkit__discord__client_secret=1
+        pluralkit__discord__max_concurrency=1
 			}
 
 			service {

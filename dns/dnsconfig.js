@@ -30,12 +30,6 @@ var serviceHostMap = {
 	"db": ["database-hrhel1-b959773f"],
 };
 
-var argoTunnelDomain = "5fbeffbb-cdec-4d64-b5b7-63c1d6e2e9cd.cfargotunnel.com.";
-var cfTunnels = [
-	"logs.pluralkit.net.",
-	"nomad.pluralkit.net.",
-];
-
 D.apply(null, Array.prototype.concat(
 	// meta
 	["pluralkit.net", REG_NONE, DnsProvider(DNS_CLOUDFLARE)],
@@ -47,9 +41,6 @@ D.apply(null, Array.prototype.concat(
 			A(host+".vpn.pluralkit.net.", hosts[host][1]),
 		]
 	}),
-
-	// cloudflare tunnel records
-	cfTunnels.map(function (t) { return [ CNAME(t, argoTunnelDomain, CF_PROXY_ON) ] }),
 
 	// services
 	Array.prototype.concat(Object.keys(serviceHostMap).map(function (svc) {
@@ -81,7 +72,7 @@ D.apply(null, Array.prototype.concat(
     AAAA("vm.svc.pluralkit.net.", "fdaa:9:e856:0:1::4"),
     AAAA("alerts.svc.pluralkit.net.", "fdaa:9:e856:0:1::5"),
     AAAA("es.svc.pluralkit.net.", "fdaa:9:e856:0:1::6"),
-    AAAA("newlogs.pluralkit.net.", "fdaa:9:e856:0:1::7"),
+    AAAA("logs.pluralkit.net.", "fdaa:9:e856:0:1::7"),
     AAAA("grafana.pluralkit.net.", "fdaa:9:e856:0:1::8"),
 	],
 	[END]
