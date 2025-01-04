@@ -74,6 +74,12 @@ D.apply(null, Array.prototype.concat(
     AAAA("es.svc.pluralkit.net.", "fdaa:9:e856:0:1::6"),
     AAAA("logs.pluralkit.net.", "fdaa:9:e856:0:1::7"),
     AAAA("grafana.pluralkit.net.", "fdaa:9:e856:0:1::8"),
+
+    // oob
+    A("node1.oob.pluralkit.net.", "192.168.255.101"),
+    A("sw01.oob.pluralkit.net.", "192.168.255.102"),
+    A("node2.oob.pluralkit.net.", "192.168.255.103"),
+    A("router1.oob.pluralkit.net.", "192.168.255.104"),
 	],
 	[END]
 ));
