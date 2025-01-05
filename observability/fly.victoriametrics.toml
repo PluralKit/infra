@@ -1,11 +1,12 @@
 app = "pluralkit-victoriametrics"
 primary_region = "sjc"
-
+vm.cpus = 2
+vm.memory = "4GB"
 build.dockerfile = "Dockerfile.victoriametrics"
 
 [processes]
 	vminsert = "/usr/local/bin/vminsert-prod -enableTCP6 -storageNode=d891261c63d2d8.vm.pluralkit-victoriametrics.internal -storageNode=e82d392c74e748.vm.pluralkit-victoriametrics.internal -storageNode=e78437e2f39e58.vm.pluralkit-victoriametrics.internal"
-	vmselect = "/usr/local/bin/vmselect-prod -enableTCP6 -storageNode=d891261c63d2d8.vm.pluralkit-victoriametrics.internal -storageNode=e82d392c74e748.vm.pluralkit-victoriametrics.internal -storageNode=e78437e2f39e58.vm.pluralkit-victoriametrics.internal"
+	vmselect = "/usr/local/bin/vmselect-prod -enableTCP6 -storageNode=d891261c63d2d8.vm.pluralkit-victoriametrics.internal -storageNode=e82d392c74e748.vm.pluralkit-victoriametrics.internal -storageNode=e78437e2f39e58.vm.pluralkit-victoriametrics.internal -vmalert.proxyURL=http://pluralkit-vmalert.internal:8880"
 	vmstorage = "/usr/local/bin/vmstorage-prod -enableTCP6 -retentionPeriod=30d -storageDataPath=/data"
 	vmauth = "/usr/local/bin/vmauth-prod -enableTCP6 -auth.config=/vmauth.yml"
 

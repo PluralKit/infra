@@ -1,0 +1,17 @@
+app = "pluralkit-vmalert"
+primary_region = "sjc"
+vm.cpus = 2
+vm.memory = "4GB"
+build.dockerfile = "Dockerfile.victoriametrics"
+
+processes.vmalert = "/vmalert-entrypoint.sh"
+
+[[files]]
+	guest_path = "/vmalert.yml"
+	local_path = "vmalert.yml"
+	processes = ["vmalert"]
+
+[[files]]
+	guest_path = "/vmalert-entrypoint.sh"
+	local_path = "vmalert-entrypoint.sh"
+	processes = ["vmalert"]

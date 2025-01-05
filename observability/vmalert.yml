@@ -1,0 +1,11 @@
+groups:
+  - name: test
+    interval: 10s
+    rules:
+      - alert: test_gateway_somealert
+        expr: 'avg(pluralkit_gateway_shard_latency) > 122'
+        debug: false
+        labels:
+          alertname: 'Test alert'
+        annotations:
+          dashboard: 'http://grafana.pluralkit.net/explore?schemaVersion=1&panes=%7B%2292b%22:%7B%22datasource%22:%22PABDA7AB1AD2A1489%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22victoriametrics-datasource%22,%22uid%22:%22PABDA7AB1AD2A1489%22%7D,%22editorMode%22:%22code%22,%22expr%22:%22avg%28pluralkit_gateway_shard_latency%29%22,%22legendFormat%22:%22__auto%22,%22range%22:true,%22instant%22:true%7D%5D,%22range%22:%7B%22from%22:%22now-12h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1'
