@@ -1,5 +1,0 @@
-FROM opensearchproject/opensearch:latest
-USER root
-RUN dnf install -y procps util-linux
-COPY opensearch-entrypoint.sh /pluralkit-entrypoint.sh
-ENTRYPOINT [ "/pluralkit-entrypoint.sh" ]
