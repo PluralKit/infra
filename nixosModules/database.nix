@@ -87,6 +87,7 @@ let
           TimeoutSec = 120;
 
           ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
+          # `primary-conninfo` is a regular postgresql connection string
           ExecStart = if backupSettings != {} then pkgs.writeShellScript "run-postgres" ''
             if [ -f /etc/pluralkit/postgres-${backupSettings.s3dir}-primary-conninfo ]; then
               touch ${dataDir}/standby.signal
