@@ -18,7 +18,7 @@ let
     isNormalUser = true;
     extraGroups = [ "wheel" "systemd-journal" ];
     openssh.authorizedKeys.keys =
-      (splitString "\n" (readFile ../../sshKeys/${user.name}));
+      (splitString "\n" (readFile sshKeys/${user.name}));
   };
 
 in
