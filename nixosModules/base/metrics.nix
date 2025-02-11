@@ -1,55 +1,79 @@
 { lib, pkgs, config, ... }:
 
 {
-  services.vmagent = {
+	services.consul-template.instances.metrics = {
     enable = true;
-    extraArgs = [ "-enableTCP6" ];
-    remoteWrite.url = "http://vm.svc.pluralkit.net/insert/0/prometheus/api/v1/write";
-    prometheusConfig = {
-      scrape_configs = [
-        {
-          job_name = "consul";
-          consul_sd_configs = [{
-            server = "${config.pkTailscaleIp}:8500";
-            services = [ "metrics" ];
-            filter = "Node == \"${config.networking.hostName}\"";
-          }];
-        }
-        {
-          job_name = "node_exporter";
-          static_configs = [{
-            targets = [ "http://${config.networking.hostName}.vpn.pluralkit.net:9100" ];
-          }];
-        }
-      ];
-    };
-  };
+    settings.consul.address = "http://${config.pkTailscaleIp}:8500";
+    settings.template = [ {
+      source = (pkgs.writeTextFile {
+        name = "vector-metrics.tpl";
+        text = ''
+[sources.host]
+type = "host_metrics"
 
-  systemd.services.vmagent = {
+[sources.node-exporter]
+type = "prometheus_scrape"
+endpoints = [ "http://${config.networking.hostName}.vpn.pluralkit.net:9100/metrics" ]
+instance_tag = "host"
+
+[transforms.node-exporter-tagged]
+type = "remap"
+inputs = ["node-exporter"]
+source = ".tags.job = \"node-exporter\""
+
+{{ range service "metrics" }}
+  {{ if eq .Node "${config.networking.hostName}" }}
+
+[sources.{{ .ID }}]
+type = "prometheus_scrape"
+endpoints = [ "http://[{{ .Address }}]:{{ .Port }}/metrics" ]
+instance_tag = "host"
+
+  {{ end }}
+{{ end }}
+
+[sinks.victoriametrics]
+type = "prometheus_remote_write"
+inputs = [
+        "host",
+{{ range $srv := service "metrics" }}
+    {{ if eq .Node "${config.networking.hostName}" }}
+        "{{ .ID }}",
+    {{ end }}
+{{ end }}
+]
+endpoint = "http://vm.svc.pluralkit.net/insert/0/prometheus/api/v1/write"
+healthcheck.enabled = false
+        '';
+      });
+      destination = "/run/vector-metrics.toml";
+    } ];
+  };
+  systemd.services.consul-template-metrics = {
     after =  [ "consul.service" ];
     requires =  [ "consul.service" ];
     serviceConfig.Restart = lib.mkForce "always";
     unitConfig.StartLimitIntervalSec = lib.mkForce 0;
   };
 
-  environment.etc."vector-node-exporter.toml".text = ''
-    sources.host.type = "host_metrics"
-
-    [sinks.prometheus]
-    type = "prometheus_exporter"
-    inputs = [ "host" ]
-    address = "${config.pkTailscaleIp}:9100"
-  '';
-
-  systemd.services.vector-node-exporter = {
+  systemd.services.prometheus-node-exporter = {
+    after =  [ "consul.service" ];
+    requires =  [ "consul.service" ];
+    serviceConfig.Restart = lib.mkForce "always";
+  };
+  services.prometheus.exporters.node = {
     enable = true;
-    description = "Vector.dev (host metrics exporter)";
+    listenAddress = "${config.pkTailscaleIp}";
+  };
+
+  systemd.services.vector-metrics = {
+    description = "Vector.dev (metrics scrape)";
     wantedBy = [ "multi-user.target" ];
-    after = [ "consul.service" ];
-    requires = [ "consul.service" ];
+    after = [ "consul-template-metrics.service" ];
+    requires = [ "consul-template-metrics.service" ];
     serviceConfig = {
-      ExecStart = "${pkgs.vector}/bin/vector -w --config /etc/vector-node-exporter.toml";
-      User = "root";
+      ExecStart = "${pkgs.vector}/bin/vector -w --config /run/vector-metrics.toml";
+      DynamicUser = true;
       Restart = "always";
       StateDirectory = "vector-metrics";
       ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
@@ -58,7 +82,8 @@
   };
 
   pkServerChecks = [
-    { type = "systemd_service_running"; value = "vector-node-exporter"; }
-    { type = "systemd_service_running"; value = "vmagent"; }
+    { type = "systemd_service_running"; value = "prometheus-node-exporter"; }
+    { type = "systemd_service_running"; value = "consul-template-metrics"; }
+    { type = "systemd_service_running"; value = "vector-metrics"; }
   ];
 }
