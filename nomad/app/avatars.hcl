@@ -25,8 +25,8 @@ job "app_avatars" {
 				data = <<EOH
 				{{ with secret "kv/pluralkit" }}
 				pluralkit__db__db_password={{ .Data.databasePassword }}
-
 				pluralkit__avatars__s3__application_key={{ .Data.avatarsB2ApplicationKey }}
+				pluralkit__sentry_url={{ .Data.avatarsSentryUrl }}
 				{{ end }}
 
 				EOH
@@ -73,9 +73,9 @@ job "app_avatars" {
 				data = <<EOH
 				{{ with secret "kv/pluralkit" }}
 				pluralkit__db__db_password={{ .Data.databasePassword }}
-
 				pluralkit__avatars__s3__application_key={{ .Data.avatarsB2ApplicationKey }}
 				pluralkit__avatars__cloudflare_token={{ .Data.cloudflareCdnPurgeToken }}
+				pluralkit__sentry_url={{ .Data.avatarsSentryUrl }}
 				{{ end }}
 
 				EOH

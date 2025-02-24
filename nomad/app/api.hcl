@@ -11,6 +11,8 @@ job "app_api" {
   }
 
 	group "pluralkit-api" {
+		count = 2
+
 		task "api" {
 			driver = "docker"
 			config {
@@ -28,7 +30,7 @@ job "app_api" {
 					{{ with secret "kv/pluralkit" }}
 					PluralKit__Api__ClientSecret = "{{ .Data.discordClientSecret }}"
 					PluralKit__DatabasePassword = "{{ .Data.databasePassword }}"
-					PluralKit__SentryUrl = "{{ .Data.sentryUrl }}"
+					PluralKit__SentryUrl = "{{ .Data.dotnetApiSentryUrl }}"
 					{{ end }}
 				EOH
 
@@ -71,6 +73,7 @@ job "app_api" {
 				{{ with secret "kv/pluralkit" }}
 				pluralkit__api__temp_token2={{ .Data.api_token2 }}
 				pluralkit__db__db_password={{ .Data.databasePassword }}
+				pluralkit__sentry_url={{ .Data.rustApiSentryUrl }}
 				{{ end }}
 				EOH
 

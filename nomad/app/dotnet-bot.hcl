@@ -89,7 +89,7 @@ job "app_dotnet-bot" {
 
       resources {
         cpu    = 500
-        memory = 800
+        memory = 900
       }
     }
   }

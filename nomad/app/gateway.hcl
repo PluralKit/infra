@@ -55,6 +55,7 @@ job "app_gateway" {
 				{{ with secret "kv/pluralkit" }}
 				pluralkit__db__db_password={{ .Data.databasePassword }}
         pluralkit__discord__bot_token={{ .Data.discordToken }}
+				pluralkit__sentry_url={{ .Data.avatarsSentryUrl }}
 				{{ end }}
 
 			  pluralkit__discord__cluster__node_id=${NOMAD_ALLOC_INDEX}
