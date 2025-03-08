@@ -6,8 +6,6 @@ let
       (builtins.head config.systemd.network.networks.eth0.address)
   );
 in {
-  imports = [ ./nomad-client.nix ];
-
   # add anycast IPs to lo
 	systemd.network.networks.lo.address = [
     "70.34.215.108/32"

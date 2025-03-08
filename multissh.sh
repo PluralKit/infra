@@ -30,5 +30,5 @@ for hostname in ${hosts[@]}; do
     echo "tap enter to run command"
     read
   fi
-  ssh -t $user@$ip $@
+  ssh -t -i ~/.ssh/provisioner $user@$ip $@
 done

@@ -172,6 +172,10 @@ in
       package = pkgs.postgresql_17;
       dataDir = "/mnt/appdata/utils";
       listenPort = 5435;
+      backupSettings = {
+        s3dir = "utils";
+        database = "stats";
+      };
     };
   };
 
@@ -179,5 +183,6 @@ in
     { type = "systemd_service_running"; value = "redis-pluralkit"; }
     { type = "systemd_service_running"; value = "pluralkit-db-data"; }
     { type = "systemd_service_running"; value = "pluralkit-db-messages"; }
+    { type = "systemd_service_running"; value = "pluralkit-db-utils"; }
   ];
 }

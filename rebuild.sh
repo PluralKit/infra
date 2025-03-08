@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export NIX_SSHOPTS="-i /root/.ssh/provisioner"
+export NIX_SSHOPTS="-i ~/.ssh/provisioner"
 
 if [ "$1" == "do_rebuild" ]; then
   user=${user:-root}

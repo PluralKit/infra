@@ -45,7 +45,7 @@ job "app_scheduled-tasks" {
 				pluralkit__db__stats_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5435/stats"
 				pluralkit__db__data_redis_addr="redis://db.svc.pluralkit.net:6379"
 
-        pluralkit__discord__api_base_url="http://nirn-proxy.service.consul:8002/api/v10"
+        pluralkit__discord__api_base_url="nirn-proxy.service.consul:8002"
 
         pluralkit__discord__client_id=1
         pluralkit__discord__client_secret=1

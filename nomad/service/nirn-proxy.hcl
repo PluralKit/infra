@@ -34,6 +34,10 @@ job "service_nirn-proxy" {
         provider = "consul"
         port = 9002
       }
+
+      resources {
+        memory = 1000
+      }
     }
   }
 }

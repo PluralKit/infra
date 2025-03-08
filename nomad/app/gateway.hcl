@@ -74,7 +74,7 @@ job "app_gateway" {
         pluralkit__discord__cluster__total_shards=864
         pluralkit__discord__cluster__total_nodes=54
         pluralkit__discord__max_concurrency=16
-        pluralkit__discord__api_base_url="http://nirn-proxy.service.consul:8002/api/v10"
+        pluralkit__discord__api_base_url="nirn-proxy.service.consul:8002"
 
 				pluralkit__db__data_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5432/pluralkit"
 				pluralkit__db__data_redis_addr="redis://db.svc.pluralkit.net:6379"
