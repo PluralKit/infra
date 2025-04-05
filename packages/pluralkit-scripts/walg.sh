@@ -12,5 +12,4 @@ shift
 shift
 shift
 
-# todo: use a binary from packages
-/opt/wal-g-bin $@
+wal-g $@

@@ -35,7 +35,7 @@ job "app_gateway" {
   }
 
 	group "gateway" {
-		count = 54
+		count = 57
 	  network {
 	    port "port" {
 	      to = 5000
@@ -45,7 +45,7 @@ job "app_gateway" {
 	  task "gateway" {
 	    driver = "docker"
 	    config {
-	      image = "ghcr.io/pluralkit/gateway:version"
+	      image = "ghcr.io/pluralkit/gateway:image"
 				labels = { pluralkit_rust = "true" }
         advertise_ipv6_address = true
 	    }
@@ -55,7 +55,7 @@ job "app_gateway" {
 				{{ with secret "kv/pluralkit" }}
 				pluralkit__db__db_password={{ .Data.databasePassword }}
         pluralkit__discord__bot_token={{ .Data.discordToken }}
-				pluralkit__sentry_url={{ .Data.avatarsSentryUrl }}
+				pluralkit__sentry_url={{ .Data.gatewaySentryUrl }}
 				{{ end }}
 
 			  pluralkit__discord__cluster__node_id=${NOMAD_ALLOC_INDEX}
@@ -71,13 +71,13 @@ job "app_gateway" {
 
         pluralkit__discord__client_id=466378653216014359
 
-        pluralkit__discord__cluster__total_shards=864
-        pluralkit__discord__cluster__total_nodes=54
+        pluralkit__discord__cluster__total_shards=912
+        pluralkit__discord__cluster__total_nodes=57
         pluralkit__discord__max_concurrency=16
-        pluralkit__discord__api_base_url="nirn-proxy.service.consul:8002"
+        pluralkit__discord__api_base_url="http://nirn-proxy.service.consul:8002/api/v10"
 
-				pluralkit__db__data_db_uri="postgresql://pluralkit@db.svc.pluralkit.net:5432/pluralkit"
-				pluralkit__db__data_redis_addr="redis://db.svc.pluralkit.net:6379"
+				pluralkit__db__data_db_uri="postgresql://pluralkit@database-hrhel1-251b75a5.vpn.pluralkit.net:5432/pluralkit"
+				pluralkit__db__data_redis_addr="redis://database-hrhel1-251b75a5.vpn.pluralkit.net:6379"
 
 				pluralkit__run_metrics_server=true
 

@@ -2,6 +2,7 @@
 , lib
 , python3
 , postgresql_15
+, wal-g
 , makeWrapper
 }:
 
@@ -9,6 +10,7 @@ let
   deps = [
     python3
     postgresql_15
+    wal-g
   ];
 
 in
