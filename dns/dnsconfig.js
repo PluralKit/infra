@@ -61,8 +61,8 @@ D.apply(null, Array.prototype.concat(
 
 	// manual records
 	[
-		A("anycast.pluralkit.net.", "70.34.215.108"),
-		AAAA("anycast.pluralkit.net.", "2a05:f480:2000:2894::"),
+		A("anycast.pluralkit.net.", "37.16.30.32"),
+		AAAA("anycast.pluralkit.net.", "2a09:8280:1::6e:4cd4:0"),
 
 		CNAME("packages.pluralkit.net.", "public.r2.dev.", CF_PROXY_ON),
 
@@ -98,8 +98,10 @@ D("pluralkit.me", REG_NONE, DnsProvider(DNS_CLOUDFLARE),
 	TXT("@", "google-site-verification=LaVKTs1MvdA4MLaHV_3hUlR1aOVKqfjWzaBWNlGVblE"),
 
 	// web
-	ALIAS("@", "apex-loadbalancer.netlify.com."),
+	ALIAS("@", "anycast.pluralkit.net."),
 	CNAME("cdn", "f003.backblazeb2.com.", CF_PROXY_ON),
+
+	CNAME("_acme-challenge", "pluralkit.me.enqnew.flydns.net."),
 
 	anycastSubdomains.map(function (t) { return [
 		CNAME(t+".pluralkit.me.", "anycast.pluralkit.net.")

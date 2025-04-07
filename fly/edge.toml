@@ -1,0 +1,70 @@
+app = "pluralkit-http-edge"
+primary_region = "arn"
+vm.size = "shared-cpu-4x"
+http_service.internal_port = 80
+build.image = "alpine" # unused
+
+experimental.machine_config = '''{
+	"dns": {
+		"nameservers": ["127.0.0.53"],
+		"dns_forward_rules": [{
+			"basename": "consul.",
+			"addr": "127.0.0.1:53"
+		}]
+	},
+	"containers": [
+		{
+			"name": "tailscale",
+			"image": "tailscale/tailscale:latest",
+			"entrypoint_": ["/bin/sleep", "inf"],
+			"env": {
+				"PATH": "/bin:/usr/bin:/sbin:/usr/local/bin",
+				"TS_HOSTNAME": "fly-http-edge",
+				"TS_EXTRA_ARGS": "--accept-routes",
+				"TS_USERSPACE": "false",
+				"TS_ENABLE_HEALTH_CHECK": "true"
+			},
+			"healthchecks": [{
+				"name": "tailscale_up",
+				"timeout": 1,
+				"http": {
+					"method": "GET",
+					"port": 9002,
+					"path": "/healthz"
+				}
+			}],
+			"secrets": [{ "env_var": "TS_AUTHKEY", "name": "TS_AUTHKEY" }]
+		},
+		{
+			"name": "consul",
+			"image": "hashicorp/consul:latest",
+			"entrypoint": [
+				"/bin/sh",
+				"-c",
+				"mkdir /tmp/consul-data && consul agent -data-dir=/tmp/consul-data --node=fly-http-edge-$FLY_MACHINE_ID -retry-join=hashi.svc.pluralkit.net -dns-port 53 -bind $(ip a | grep 100 | grep -v mtu | awk '{print $2}' | sed 's/...$//') && /bin/sleep inf"
+			],
+			"depends_on": [{ "name": "tailscale", "condition": "healthy" }]
+		},
+		{
+			"name": "caddy",
+			"image": "caddy:latest",
+			"entrypoint": ["/usr/bin/caddy", "run", "-c", "/etc/caddy/Caddyfile"],
+			"depends_on": [{ "name": "consul", "condition": "started" }]
+		}
+	]
+}'''
+
+[[files]]
+	local_path = "fly/edge.Caddyfile"
+	guest_path = "/etc/caddy/Caddyfile"
+	processes = ["caddy"]
+
+[[files]]
+	local_path = "fly/edge.anycast.html"
+	guest_path = "/etc/caddy/anycast.html"
+	processes = ["caddy"]
+
+[[files]]
+	local_path = "fly/edge.stats.html"
+	guest_path = "/etc/caddy/stats.html"
+	processes = ["caddy"]

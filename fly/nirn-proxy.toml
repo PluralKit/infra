@@ -1,0 +1,15 @@
+app = "pluralkit-nirn-proxy"
+primary_region = "arn"
+
+vm.size = "shared-cpu-4x"
+build.image = "ghcr.io/pluralkit/nirn-proxy:02af044d499381f6a34d65e9ac9a290251b44ac9"
+
+metrics.port = 9000
+metrics.path = "/metrics"
+
+http_service.internal_port = 8080
+
+[env]
+BIND_IP = "[::]"
+CLUSTER_DNS = "pluralkit-nirn-proxy.internal"
+FORCE_BIND_FDAA = "true"
