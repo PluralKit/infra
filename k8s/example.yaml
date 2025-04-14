@@ -1,0 +1,22 @@
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: discord-token
+spec:
+  itemPath: "vaults/acnop6sxzggtzwha2bulnpjj6i/items/5t7e6bxsqxglrvmlatqd4xwkdi"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test
+spec:
+  containers:
+  - name: test
+    image: alpine:latest
+    command: ["/bin/sleep", "inf"]
+    env:
+    - name: DISCORD_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: discord-token
+          key: credential
