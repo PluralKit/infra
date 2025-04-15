@@ -17,7 +17,7 @@ if [ "$1" == "do_rebuild" ]; then
     echo "tap enter to run build"
     read
   fi
-  nixos-rebuild $action --flake .#$hostname --target-host $user@$ip --build-host $user@$ip --use-remote-sudo
+  nixos-rebuild $action --flake .#$hostname --target-host $user@$ip --build-host $user@$ip --use-remote-sudo --show-trace
   exit 0
 fi
 

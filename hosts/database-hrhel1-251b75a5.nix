@@ -21,6 +21,8 @@ in
 
   pkTailscaleIp = "100.115.185.127";
 
+  networking.firewall.trustedInterfaces = [ "fly" ];
+
   # not sure why this is needed
   networking.usePredictableInterfaceNames = false;
 
@@ -30,6 +32,17 @@ in
     gateway = [ "37.27.117.129" ];
   };
 
+  networking.wg-quick.interfaces.fly = {
+    address = [ "fdaa:9:e856:a7b:35c:0:a:102/120" ];
+    privateKeyFile = "/opt/fly-wg-privkey";
+    peers = [{
+      publicKey = "tyYPi0DmwNDs3YEhnm4CeNy5I9m2QSsdry4H46Zfr3M=";
+      endpoint = "arn1.gateway.6pn.dev:51820";
+      allowedIPs = [ "fdaa:9:e856::/48" ];
+      persistentKeepalive = 15;
+    }];
+  };
+
   system.stateVersion = "25.05";
 
   # databases
@@ -37,7 +50,7 @@ in
 
   services.redis.servers."pluralkit" = {
     enable = true;
-    bind = "127.0.0.1 ${config.pkTailscaleIp}";
+    bind = "127.0.0.1 ${config.pkTailscaleIp} ${(builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address)))}";
     port = 6379;
     openFirewall = lib.mkForce false;
     settings = {
@@ -75,6 +88,8 @@ in
         s3dir = "data";
         database = "pluralkit";
       };
+      extraListen = [ (builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address))) ];
+      extraPgHba = [ "host all all ${builtins.head (builtins.head config.networking.wg-quick.interfaces.fly.peers).allowedIPs} md5" ];
     };
 
     pluralkit-db-messages = mkPostgresService "pluralkit-db-messages" {
@@ -92,6 +107,8 @@ in
         s3dir = "messages";
         database = "messages";
       };
+      extraListen = [ (builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address))) ];
+      extraPgHba = [ "host all all ${builtins.head (builtins.head config.networking.wg-quick.interfaces.fly.peers).allowedIPs} md5" ];
     };
   };
 

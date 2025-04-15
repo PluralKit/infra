@@ -24,7 +24,7 @@ stats.pluralkit.me:80 {
 
 api.pluralkit.me:80 {
         reverse_proxy /* {
-                to http://pluralkit-api.service.consul:5000
+                to http://pluralkit-api.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000
                 header_up X-PluralKit-Client-IP {http.request.header.Fly-Client-Ip}
                 header_up -x-pluralkit-systemid
         }
@@ -32,19 +32,20 @@ api.pluralkit.me:80 {
 
 dash.pluralkit.me:80 {
         reverse_proxy /* {
-                to http://pluralkit-dashboard.service.consul:8080
+				to http://pluralkit-dashboard.flycast
         }
 }
 
 gt.pluralkit.me:80 {
         reverse_proxy /* {
                 to http://glitchtip.service.consul:8000
+				header_up Host gt.pluralkit.me
         }
 }
 
 grafana.pluralkit.me:80 {
         reverse_proxy /* {
-                to http://100.115.84.103:3000
+                to http://100.79.33.60:3000
                 header_down -X-Frame-Options
                 header_down +Content-Security-Policy "frame-ancestors stats.pluralkit.me"
         }

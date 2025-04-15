@@ -1,0 +1,143 @@
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: discord-client-secret
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/g6veebjeflumbyn675g3x4fi3i
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: api-token2
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/kk6h2taivk4pcohocdycmpwi5y
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: dotnet-api-sentry-url
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/qc73b255pnsk36n7pneewrg7ma
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: rust-api-sentry-url
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/orbdi2ffqhdnbbpu3ebiefjmfa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pluralkit-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pluralkit-api
+  template:
+    metadata:
+      labels:
+        app: pluralkit-api
+    spec:
+      containers:
+      - name: dotnet-api
+        # this needs to go in containers for some reason, so we put it in the first one
+        resources:
+          requests:
+            cpu: 4 # * 256mb = 1G memory
+        image: ghcr.io/pluralkit/pluralkit:19616b6bbb7e1d3932f1a1d96011b0b1eb54b761
+        command: [ "dotnet", "bin/PluralKit.API.dll" ]
+        env:
+        - name: PluralKit__Api__ClientId
+          value: '466378653216014359'
+        - name: PluralKit__Api__ClientSecret
+          valueFrom:
+            secretKeyRef:
+              name: discord-client-secret
+              key: credential
+        - name: PluralKit__DatabasePassword
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: PluralKit__SentryUrl
+          valueFrom:
+            secretKeyRef:
+              name: dotnet-api-sentry-url
+              key: credential
+        - name: PluralKit__Api__TrustAuth
+          value: 'true'
+        - name: PluralKit__Database
+          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+        - name: PluralKit__MessagesDatabase
+          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+        - name: PluralKit__RedisAddr
+          value: "[fdaa:9:e856:a7b:35c:0:a:102]:6379,abortConnect=false"
+        - name: PluralKit__ElasticUrl
+          value: "http://es.svc.pluralkit.net"
+        - name: PluralKit__DispatchProxyUrl
+          value: "http://dispatch.svc.pluralkit.net"
+        - name: PluralKit__DispatchProxyToken
+          valueFrom:
+            secretKeyRef:
+              name: dispatch-proxy-token
+              key: credential
+        - name: PluralKit__ConsoleLogLevel
+          value: '2'
+        - name: PluralKit__ElasticLogLevel
+          value: '2'
+        - name: PluralKit__FileLogLevel
+          value: '5'
+
+      - name: rust-api
+        image: ghcr.io/pluralkit/api:19616b6bbb7e1d3932f1a1d96011b0b1eb54b761
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: pluralkit__json_log
+          value: "true"
+        - name: pluralkit__run_metrics_server
+          value: "true"
+        - name: pluralkit__sentry_url
+          valueFrom:
+            secretKeyRef:
+              name: rust-api-sentry-url
+              key: credential
+        - name: pluralkit__db__data_db_uri
+          value: "postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5432/pluralkit"
+        - name: pluralkit__db__db_password
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: pluralkit__db__data_redis_addr
+          value: "redis://[fdaa:9:e856:a7b:35c:0:a:102]:6379"
+        - name: pluralkit__api__ratelimit_redis_addr
+          value: "redis://[fdaa:9:e856:a7b:35c:0:a:102]:6379"
+        - name: pluralkit__api__addr
+          value: '[::]:5001'
+        - name: pluralkit__api__remote_url
+          value: "http://localhost:5000"
+        - name: pluralkit__api__temp_token2
+          valueFrom:
+            secretKeyRef:
+              name: api-token2
+              key: credential
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pluralkit-api
+spec:
+  ipFamilies:
+  - IPv6
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: api
+    port: 5000
+    protocol: TCP
+    targetPort: 5001
+  selector:
+    app: pluralkit-api
+  type: ClusterIP

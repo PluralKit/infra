@@ -54,6 +54,7 @@ job "service_glitchtip" {
         PORT = "[::]:8000"
         EMAIL_URL = "consolemail://"
         GLITCHTIP_DOMAIN = "https://gt.pluralkit.me"
+        CSRF_TRUSTED_ORIGINS = "https://gt.pluralkit.me"
         DEFAULT_FROM_EMAIL = "admin@pluralkit.me"
         CELERY_WORKER_AUTOSCALE = "1,3"
         CELERY_WORKER_MAX_TASKS_PER_CHILD = "10000"

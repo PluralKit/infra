@@ -1,0 +1,80 @@
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: avatars-sentry-url
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/2as6sgd6uwskp63ojkz7ysp3li
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: avatars-s3-key
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/o5v4kz5v6o5h4qkehapz3q7sxi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pluralkit-avatars
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pluralkit-avatars
+  template:
+    metadata:
+      labels:
+        app: pluralkit-avatars
+    spec:
+      containers:
+      - name: avatars
+        image: ghcr.io/pluralkit/avatars:19616b6bbb7e1d3932f1a1d96011b0b1eb54b761
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: pluralkit__json_log
+          value: "true"
+        - name: pluralkit__sentry_url
+          valueFrom:
+            secretKeyRef:
+              name: avatars-sentry-url
+              key: credential
+        - name: pluralkit__db__data_db_uri
+          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5432/pluralkit'
+        - name: pluralkit__db__db_password
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: pluralkit__avatars__cdn_url
+          value: 'https://cdn.pluralkit.me/'
+        - name: pluralkit__avatars__s3__bucket
+          value: 'pluralkit-avatars'
+        - name: pluralkit__avatars__s3__endpoint
+          value: 'https://s3.eu-central-003.backblazeb2.com'
+        - name: pluralkit__avatars__s3__application_id
+          value: '0031de9bd0a26160000000005'
+        - name: pluralkit__avatars__s3__application_key
+          valueFrom:
+            secretKeyRef:
+              name: avatars-s3-key
+              key: credential
+        - name: pluralkit__db__data_redis_addr
+          value: '1'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pluralkit-avatars
+spec:
+  ipFamilies:
+  - IPv6
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: avatars
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: pluralkit-avatars
+  type: ClusterIP

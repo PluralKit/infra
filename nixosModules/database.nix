@@ -21,6 +21,8 @@ name:
 , listenPort
 , backupSettings ? {}
 , extraSettings ? {}
+, extraPgHba ? []
+, extraListen ? []
 , initDbArgs ? []
 , ...
 }:
@@ -28,15 +30,17 @@ let
   configFile = pkgs.writeTextDir "postgresql.conf"
     (concatStringsSep "\n" (mapAttrsToList (n: v: "${n} = ${toStr v}") pgSettings));
 
-  authFile = pkgs.writeText "pg_hba.conf"
-    ''
-      local all all peer
-      local replication all peer
-      host all all 127.0.0.1/32 md5
-      host all all ::1/128 md5
-      host replication pkrepluser 100.64.0.0/10 md5
-      host all all 100.64.0.0/10 md5
-    '';
+  pgHba = [
+     "local all all peer"
+     "local replication all peer"
+     "host all all 127.0.0.1/32 md5"
+     "host all all 172.17.0.1/24 md5"
+     "host all all ::1/128 md5"
+     "host replication pkrepluser 100.64.0.0/10 md5"
+     "host all all 100.64.0.0/10 md5"
+  ];
+
+  authFile = pkgs.writeText "pg_hba.conf" (builtins.concatStringsSep "\n" (pgHba ++ extraPgHba));
 
   walArchiveSettings = if backupSettings != {} then {
     archive_mode = "yes";
@@ -44,9 +48,11 @@ let
     archive_timeout = 60;
   } else {};
 
+  pgListen = [ "localhost" config.pkTailscaleIp ];
+
   pgSettings = {
     port = listenPort;
-    listen_addresses = "localhost, ${config.pkTailscaleIp}";
+    listen_addresses = builtins.concatStringsSep ", " (pgListen ++ extraListen);
     log_line_prefix = "${name}";
     log_destination = "stderr";
     hba_file = "${authFile}";

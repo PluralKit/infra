@@ -1,12 +1,10 @@
 const notify = (env, msg) => fetch(env.webhookUrl+"?wait=true", { method: "POST", body: JSON.stringify({ content: msg }), headers: { "content-type": "application/json" } });
 
 const machinesToCheck = [
-	"edge-vlsto-4622d8e3",
-	"edge-vlsto-4622d978",
 	"hashi-hchel1-251b08ea",
 	"hashi-hchel1-5fd89a52",
 	"hashi-hchel1-5fd9b1fe",
-	"database-hrhel1-b959773f",
+	"database-hrhel1-251b75a5",
 	"compute-hrhel1-3c45e932",
 	"compute-hrhel1-70e1bd12",
 	"compute-hchel1-416cf81b",
