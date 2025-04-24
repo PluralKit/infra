@@ -15,6 +15,21 @@ www.pluralkit.me:80 {
 	redir https://pluralkit.me{uri}
 }
 
+pk.mt:80 {
+	handle / {
+		redir https://pluralkit.me
+	}
+	handle /s/* {
+		redir https://dash.pluralkit.me/profile{uri}
+	}
+	handle /m/* {
+		redir https://dash.pluralkit.me/profile{uri}
+	}
+	handle /g/* {
+		redir https://dash.pluralkit.me/profile{uri}
+	}
+}
+
 stats.pluralkit.me:80 {
   file_server / {
 	root /etc/caddy/
