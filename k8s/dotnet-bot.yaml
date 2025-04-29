@@ -1,0 +1,129 @@
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: dotnet-bot-sentry-url
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/7nd2jbvi32tutbzv7zlpu3gbne
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pluralkit-dotnet-bot
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: pluralkit-dotnet-bot
+  template:
+    metadata:
+      labels:
+        app: pluralkit-dotnet-bot
+      annotations:
+        compute.fly.io/cpu-kind: performance
+    spec:
+      containers:
+      - name: dotnet-bot
+        resources:
+          requests:
+            cpu: 2
+        ports:
+        - containerPort: 5002
+        image: ghcr.io/pluralkit/pluralkit:96ddfaebf10f38ee4525372ef6c199598921ead2
+        command: [ "dotnet", "bin/PluralKit.Bot.dll" ]
+        env:
+        - name: PluralKit__Bot__ClientId
+          value: '466378653216014359'
+        - name: PluralKit__Bot__AdminRole
+          value: '913986523500777482'
+        - name: PluralKit__Bot__Token
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: credential
+        - name: PluralKit__DatabasePassword
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: PluralKit__SentryUrl
+          valueFrom:
+            secretKeyRef:
+              name: dotnet-bot-sentry-url
+              key: credential
+        - name: PluralKit__Bot__Cluster__TotalShards
+          value: '912'
+          # otherwise the bot crashes
+        - name: PluralKit__Bot__Cluster__NodeName
+          value: 'whatever-0'
+        - name: PluralKit__Bot__HttpListenerAddr
+          value: 'allv4v6'
+        - name: PluralKit__Bot__DisableGateway
+          value: 'true'
+        - name: PluralKit__Bot__DiscordBaseUrl
+          value: 'http://pluralkit-nirn-proxy.flycast/api/v10'
+        - name: PluralKit__Bot__HttpCacheUrl
+          value: 'pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.cluster.local:5000'
+        - name: PluralKit__Bot__EventAwaiterTarget
+          value: 'source-addr'
+        - name: PluralKit__Bot__AvatarServiceUrl
+          value: 'http://pluralkit-avatars.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000'
+        - name: PluralKit__Database
+          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+        - name: PluralKit__MessagesDatabase
+          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+        - name: PluralKit__RedisAddr
+          value: "[fdaa:9:e856:a7b:35c:0:a:102]:6379,abortConnect=false"
+        - name: PluralKit__ElasticUrl
+          value: "http://es.svc.pluralkit.net"
+        - name: PluralKit__InfluxUrl
+          value: "http://vm.svc.pluralkit.net/insert/0/influx/"
+        - name: PluralKit__InfluxDb
+          value: "pluralkit"
+        - name: PluralKit__DispatchProxyUrl
+          value: "http://dispatch.svc.pluralkit.net"
+        - name: PluralKit__DispatchProxyToken
+          valueFrom:
+            secretKeyRef:
+              name: dispatch-proxy-token
+              key: credential
+        - name: PluralKit__ConsoleLogLevel
+          value: '2'
+        - name: PluralKit__ElasticLogLevel
+          value: '1'
+        - name: PluralKit__FileLogLevel
+          value: '5'
+---
+# todo: fix dotnet-bot binding to v4/v6 at the same time
+# so this works
+apiVersion: v1
+kind: Service
+metadata:
+  name: pluralkit-dotnet-bot
+  annotations:
+    service.fly.io/bot-handlers: http
+    service.fly.io/concurrency-kind: connections
+    service.fly.io/concurrency-limit-soft: "50"
+    service.fly.io/concurrency-limit-hard: "2000"
+spec:
+  ipFamilies:
+  - IPv6
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: bot
+    port: 5002
+    protocol: TCP
+    targetPort: 5002
+  selector:
+    app: pluralkit-dotnet-bot
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pluralkit-dotnet-bot-headless
+spec:
+  clusterIP: None
+  selector:
+    app: pluralkit-dotnet-bot
+  ports:
+  - port: 5002
