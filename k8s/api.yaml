@@ -46,7 +46,7 @@ spec:
         resources:
           requests:
             cpu: 4 # * 256mb = 1G memory
-        image: ghcr.io/pluralkit/pluralkit:19616b6bbb7e1d3932f1a1d96011b0b1eb54b761
+        image: ghcr.io/pluralkit/pluralkit:6c0c7a5c9918c106bef1ccc09b4ee434ca830c1b
         command: [ "dotnet", "bin/PluralKit.API.dll" ]
         env:
         - name: PluralKit__Api__ClientId
@@ -78,6 +78,8 @@ spec:
           value: "http://es.svc.pluralkit.net"
         - name: PluralKit__DispatchProxyUrl
           value: "http://dispatch.svc.pluralkit.net"
+        - name: PluralKit__AvatarServiceUrl
+          value: 'http://pluralkit-avatars.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000'
         - name: PluralKit__DispatchProxyToken
           valueFrom:
             secretKeyRef:
@@ -91,7 +93,7 @@ spec:
           value: '5'
 
       - name: rust-api
-        image: ghcr.io/pluralkit/api:19616b6bbb7e1d3932f1a1d96011b0b1eb54b761
+        image: ghcr.io/pluralkit/api:6c0c7a5c9918c106bef1ccc09b4ee434ca830c1b
         env:
         - name: RUST_LOG
           value: info
