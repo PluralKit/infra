@@ -15,6 +15,22 @@ www.pluralkit.me:80 {
 	redir https://pluralkit.me{uri}
 }
 
+cdn.pluralkit.me:80 {
+	handle / {
+		file_server {
+			root /etc/caddy/
+			index cdn.html
+		}
+	}
+	handle /images/* {
+		reverse_proxy {
+			to https://pluralkit-avatars.s3.eu-central-003.backblazeb2.com
+			header_up Host pluralkit-avatars.s3.eu-central-003.backblazeb2.com
+			header_up -sec*
+		}
+	}
+}
+
 pk.mt:80 {
 	handle / {
 		redir https://pluralkit.me

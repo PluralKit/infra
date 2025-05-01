@@ -28,7 +28,6 @@ var serviceHostMap = {
 		"hashi-hchel1-5fd9b1fe",
 		"hashi-hchel1-251b08ea",
 	],
-	"db": ["database-hrhel1-b959773f"],
 };
 
 D.apply(null, Array.prototype.concat(
@@ -81,12 +80,16 @@ D.apply(null, Array.prototype.concat(
     A("sw01.oob.pluralkit.net.", "192.168.255.102"),
     A("node2.oob.pluralkit.net.", "192.168.255.103"),
     A("router1.oob.pluralkit.net.", "192.168.255.104"),
+    A("sw02.oob.pluralkit.net.", "192.168.255.105"),
+    A("node3.oob.pluralkit.net.", "192.168.255.106"),
+    A("node4.oob.pluralkit.net.", "192.168.255.107"),
 	],
 	[END]
 ));
 
 var anycastSubdomains = [
 	"www",
+	"cdn",
 	"api",
 	"dash",
 	"grafana",
@@ -99,7 +102,6 @@ D("pluralkit.me", REG_NONE, DnsProvider(DNS_CLOUDFLARE),
 
 	// web
 	ALIAS("@", "anycast.pluralkit.net."),
-	CNAME("cdn", "f003.backblazeb2.com.", CF_PROXY_ON),
 
 	CNAME("_acme-challenge", "pluralkit.me.enqnew.flydns.net."),
 
