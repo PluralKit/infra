@@ -1,0 +1,78 @@
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: scheduled-tasks-sentry-url
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/cxipguhghc473xr6prfooegzam
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pluralkit-scheduled-tasks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pluralkit-scheduled-tasks
+  template:
+    metadata:
+      labels:
+        app: pluralkit-scheduled-tasks
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '9000'
+    spec:
+      containers:
+      - name: scheduled-tasks
+        image: ghcr.io/pluralkit/scheduled_tasks:7ca49c32e697fb842c103ffa182483f1e38b38b2
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: pluralkit__json_log
+          value: "true"
+        - name: pluralkit__run_metrics_server
+          value: "true"
+        - name: pluralkit__discord__bot_token
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: credential
+        - name: pluralkit__db__data_db_uri
+          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5432/pluralkit'
+        - name: pluralkit__db__messages_db_uri
+          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5434/messages'
+        - name: pluralkit__db__stats_db_uri
+          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:8cfe:0:a:2]:5432/stats'
+        - name: pluralkit__db__db_password
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: pluralkit__sentry_url
+          valueFrom:
+            secretKeyRef:
+              name: scheduled-tasks-sentry-url
+              key: credential
+        - name: pluralkit__scheduled_tasks__set_guild_count
+          value: 'true'
+        - name: pluralkit__scheduled_tasks__expected_gateway_count
+          value: '57'
+        - name: pluralkit__scheduled_tasks__gateway_url
+          value: 'http://pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.cluster.local:5000/stats'
+        - name: pluralkit__scheduled_tasks__prometheus_url
+          value: 'http://vm.svc.pluralkit.net/select/0/prometheus'
+        - name: pluralkit__discord__client_id
+          value: "466378653216014359"
+        - name: pluralkit__discord__max_concurrency
+          value: '0'
+        - name: pluralkit__discord__cluster__node_id
+          value: '0'
+        - name: pluralkit__discord__cluster__total_shards
+          value: '0'
+        - name: pluralkit__discord__cluster__total_nodes
+          value: '0'
+        - name: pluralkit__discord__client_secret
+          value: '0'
+        - name: pluralkit__db__data_redis_addr
+          value: "redis://[fdaa:9:e856:a7b:35c:0:a:102]:6379"

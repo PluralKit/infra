@@ -69,7 +69,7 @@ dash.pluralkit.me:80 {
 
 gt.pluralkit.me:80 {
         reverse_proxy /* {
-                to http://glitchtip.service.consul:8000
+                to http://100.79.33.60:8000
 				header_up Host gt.pluralkit.me
         }
 }

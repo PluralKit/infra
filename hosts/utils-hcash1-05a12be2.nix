@@ -32,7 +32,8 @@ in
 
   pkTailscaleIp = "100.79.33.60";
 
-	networking.firewall.trustedInterfaces = [ "docker0" ];
+	# todo: put wg config here
+	networking.firewall.trustedInterfaces = [ "docker0" "fly-wg" ];
 
 	system.stateVersion = "24.04";
 
@@ -58,6 +59,8 @@ in
 		package = pkgs.postgresql_17;
 		dataDir = "/srv/postgres-utils";
 		listenPort = 5432;
+		extraListen = [ "fdaa:9:e856:a7b:8cfe:0:a:2" ];
+		extraPgHba = [ "host all all fdaa:9:e856::/48 md5" ];
 	};
 
 	services.redis.servers.utils = {

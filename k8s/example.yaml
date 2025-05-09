@@ -1,22 +1,19 @@
-apiVersion: onepassword.com/v1
-kind: OnePasswordItem
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
-  name: discord-token
+  name: example
 spec:
-  itemPath: "vaults/acnop6sxzggtzwha2bulnpjj6i/items/5t7e6bxsqxglrvmlatqd4xwkdi"
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: test
-spec:
-  containers:
-  - name: test
-    image: alpine:latest
-    command: ["/bin/sleep", "inf"]
-    env:
-    - name: DISCORD_TOKEN
-      valueFrom:
-        secretKeyRef:
-          name: discord-token
-          key: credential
+  serviceName: example
+  replicas: 6
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers:
+      - name: test
+        image: alpine:latest
+        command: ["/bin/sleep", "inf"]

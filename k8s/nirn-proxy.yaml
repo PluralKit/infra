@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nirn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nirn-proxy
+  namespace: nirn
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nirn-proxy
+  template:
+    metadata:
+      labels:
+        app: nirn-proxy
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '9000'
+    spec:
+      containers:
+        - name: nirn-proxy
+          resources:
+            requests:
+              cpu: 4 # shared-cpu-4x
+          image: ghcr.io/pluralkit/nirn-proxy:02af044d499381f6a34d65e9ac9a290251b44ac9
+          env:
+            - name: BIND_IP
+              value: '[::]'
+            - name: CLUSTER_DNS
+              value: nirn-proxy-headless.nirn.svc.cluster.local
+            - name: FORCE_BIND_FDAA
+              value: 'true'
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nirn-proxy
+  namespace: nirn
+  annotations:
+    service.fly.io/nirn-handlers: http
+    service.fly.io/concurrency-kind: connections
+    service.fly.io/concurrency-limit-soft: "50"
+    service.fly.io/concurrency-limit-hard: "2000"
+spec:
+  ipFamilies:
+  - IPv6
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: nirn
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: nirn-proxy
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nirn-proxy-headless
+  namespace: nirn
+spec:
+  clusterIP: None
+  selector:
+    app: nirn-proxy
+  ports:
+  - port: 8080

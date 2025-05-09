@@ -21,6 +21,9 @@ spec:
         app: pluralkit-gateway
       annotations:
         compute.fly.io/cpu-kind: performance
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '9000'
     spec:
       containers:
       - name: gateway
@@ -28,8 +31,6 @@ spec:
         resources:
           requests:
             cpu: 1 # performance; 2G memory
-        ports:
-        - containerPort: 5000
         env:
         - name: RUST_LOG
           value: info

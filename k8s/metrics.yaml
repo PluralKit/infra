@@ -18,11 +18,15 @@ spec:
       serviceAccountName: vmagent
       containers:
       - name: vmagent
-        image: victoriametrics/vmagent:latest
+        image: victoriametrics/vmagent:stable
         args:
           - "-remoteWrite.url=http://vm.svc.pluralkit.net/insert/0/prometheus/api/v1/write"
           - "-enableTCP6"
           - "-promscrape.config=/etc/vmagent/vmagent.yml"
+          - "-promscrape.maxScrapeSize=67108864"
+        resources:
+          requests:
+            cpu: 4
         volumeMounts:
           - name: config-volume
             mountPath: /etc/vmagent

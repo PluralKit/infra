@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: avatars
-        image: ghcr.io/pluralkit/avatars:19616b6bbb7e1d3932f1a1d96011b0b1eb54b761
+        image: ghcr.io/pluralkit/avatars:6c0c7a5c9918c106bef1ccc09b4ee434ca830c1b
         env:
         - name: RUST_LOG
           value: info
@@ -78,3 +78,54 @@ spec:
   selector:
     app: pluralkit-avatars
   type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pluralkit-avatar-cleanup
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pluralkit-avatar-cleanup
+  template:
+    metadata:
+      labels:
+        app: pluralkit-avatar-cleanup
+    spec:
+      containers:
+      - name: avatars
+        image: ghcr.io/pluralkit/avatars:7ca49c32e697fb842c103ffa182483f1e38b38b2
+        command: [ "/bin/avatar_cleanup" ]
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: pluralkit__json_log
+          value: "true"
+        - name: pluralkit__sentry_url
+          valueFrom:
+            secretKeyRef:
+              name: avatars-sentry-url
+              key: credential
+        - name: pluralkit__db__data_db_uri
+          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5432/pluralkit'
+        - name: pluralkit__db__db_password
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: pluralkit__avatars__cdn_url
+          value: 'https://cdn.pluralkit.me/'
+        - name: pluralkit__avatars__s3__bucket
+          value: 'pluralkit-avatars'
+        - name: pluralkit__avatars__s3__endpoint
+          value: 'https://s3.eu-central-003.backblazeb2.com'
+        - name: pluralkit__avatars__s3__application_id
+          value: '0031de9bd0a26160000000005'
+        - name: pluralkit__avatars__s3__application_key
+          valueFrom:
+            secretKeyRef:
+              name: avatars-s3-key
+              key: credential
+        - name: pluralkit__db__data_redis_addr
+          value: '1'

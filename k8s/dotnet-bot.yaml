@@ -60,7 +60,7 @@ spec:
         - name: PluralKit__Bot__DisableGateway
           value: 'true'
         - name: PluralKit__Bot__DiscordBaseUrl
-          value: 'http://pluralkit-nirn-proxy.flycast/api/v10'
+          value: 'http://nirn-proxy.nirn.svc.cluster.local/api/v10'
         - name: PluralKit__Bot__HttpCacheUrl
           value: 'pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.cluster.local:5000'
         - name: PluralKit__Bot__EventAwaiterTarget
@@ -93,8 +93,6 @@ spec:
         - name: PluralKit__FileLogLevel
           value: '5'
 ---
-# todo: fix dotnet-bot binding to v4/v6 at the same time
-# so this works
 apiVersion: v1
 kind: Service
 metadata:

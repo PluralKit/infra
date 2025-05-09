@@ -36,20 +36,10 @@ experimental.machine_config = '''{
 			"secrets": [{ "env_var": "TS_AUTHKEY", "name": "TS_AUTHKEY" }]
 		},
 		{
-			"name": "consul",
-			"image": "hashicorp/consul:latest",
-			"entrypoint": [
-				"/bin/sh",
-				"-c",
-				"mkdir /tmp/consul-data && consul agent -data-dir=/tmp/consul-data --node=fly-http-edge-$FLY_MACHINE_ID -retry-join=hashi.svc.pluralkit.net -dns-port 53 -bind $(ip a | grep 100 | grep -v mtu | awk '{print $2}' | sed 's/...$//') && /bin/sleep inf"
-			],
-			"depends_on": [{ "name": "tailscale", "condition": "healthy" }]
-		},
-		{
 			"name": "caddy",
 			"image": "caddy:latest",
 			"entrypoint": ["/usr/bin/caddy", "run", "-c", "/etc/caddy/Caddyfile"],
-			"depends_on": [{ "name": "consul", "condition": "started" }]
+			"depends_on": [{ "name": "tailscale", "condition": "healthy" }]
 		}
 	]
 }'''
