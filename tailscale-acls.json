@@ -1,0 +1,83 @@
+// update with `op item get men6qzmzjluxnlsalvuqnm3pxa --format json | bash -c "$(jq -r '"TS_OAUTH_ID=\(.fields[] | select(.label == "client_id") | .value) TS_OAUTH_SECRET=\(.fields[] | select(.label == "client_secret") | .value) TS_TAILNET=pluralkit.org.github nix run nixpkgs#go -- run tailscale.com/cmd/gitops-pusher@66aa77416744037baec93206ae212012a2314f83 --policy-file=tailscale-acls.json"') test"`
+
+{
+	"groups": {
+		"group:admins": ["u1f408@github", "avioletheart@github"],
+		"group:devs":   ["rladenson@github"],
+	},
+
+	"tagOwners": {
+		"tag:prod":  [],
+		"tag:flyio": [],
+		"tag:edge":  [],
+		"tag:oob":   [],
+		"tag:o11y":  [],
+	},
+
+	"hosts": {},
+
+	"autoApprovers": {
+		"routes": {
+			"fdaa:9:e856:0:1::/80": ["tag:flyio"],
+			"fdaa::3/128":          ["tag:flyio"],
+		},
+	},
+
+	"acls": [
+		{"action": "accept", "src": ["*"], "dst": ["autogroup:self:*"]},
+		{"action": "accept", "src": ["group:admins"], "dst": ["*:*"]},
+
+		{"action": "accept", "src": ["tag:prod"], "dst": ["tag:prod:*"]},
+
+		// unsure what these are for?
+		{"action": "accept", "src": ["tag:prod"], "dst": ["172.17.0.0/16:*"]},
+		{"action": "accept", "src": ["tag:prod"], "dst": ["tag:edge:*"]},
+
+		{
+			"action": "accept",
+			"src":    ["tag:prod"],
+			"dst":    ["fdaa:9:e856:0:1::/80:*", "fdaa::3/128:53"],
+		},
+
+		// old nomad network
+		{
+			"action": "accept",
+			"src":    ["tag:prod"],
+			"dst":    ["fdef::/16:*"],
+		},
+
+		// todo: this no longer works
+		{
+			"action": "accept",
+			"src":    ["group:devs"],
+			"dst":    ["*:4646", "[fdaa:9:e856:0:1::7]:80"],
+		},
+
+		// grafana
+		{"action": "accept", "src": ["tag:edge"], "dst": ["100.67.200.121:3000"]},
+
+		// fly edge -> consul services
+		{
+			"action": "accept",
+			"src":    ["tag:edge"],
+			"dst":    ["100.64.0.0/10:*", "fdef::/16:*"],
+		},
+	],
+
+	"ssh": [
+		{
+			"action": "accept",
+			"src":    ["group:admins"],
+			"dst":    ["tag:prod", "tag:oob"],
+			"users":  ["autogroup:nonroot", "root"],
+		},
+		{
+			"action": "accept",
+			"src":    ["tag:prod"],
+			"dst":    ["tag:prod"],
+			"users":  ["root"],
+		},
+	],
+	"nodeAttrs": [],
+}
+
