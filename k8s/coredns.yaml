@@ -6,7 +6,9 @@ metadata:
 data:
   Corefile: |
     .:53 {
-        log
+        log {
+          class error
+        }
         errors
         health
         ready
