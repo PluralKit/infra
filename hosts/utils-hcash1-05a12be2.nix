@@ -68,6 +68,9 @@ in
 		bind = "127.0.0.1 ${config.pkTailscaleIp}";
 		port = 6379;
 		openFirewall = lib.mkForce false;
+		settings = {
+			protected-mode = "no";
+		};
 	};
 
 	virtualisation.docker.enable = true;
