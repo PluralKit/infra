@@ -1,0 +1,47 @@
+app = "pluralkit-telemetry"
+primary_region = "iad"
+vm.size = "performance-1x"
+build.image = "alpine" # unused
+
+experimental.machine_config = '''{
+"containers": [
+		{
+			"name": "tailscale",
+			"image": "tailscale/tailscale:latest",
+			"env": {
+				"PATH": "/bin:/usr/bin:/sbin:/usr/local/bin",
+				"TS_HOSTNAME": "fly-telemetry",
+        "TS_EXTRA_ARGS": "--advertise-tags tag:fly-telemetry",
+				"TS_USERSPACE": "false",
+				"TS_ENABLE_HEALTH_CHECK": "true"
+			},
+			"healthchecks": [{
+				"name": "tailscale_up",
+				"timeout": 1,
+				"http": {
+					"method": "GET",
+					"port": 9002,
+					"path": "/healthz"
+				}
+			}],
+			"secrets": [{ "env_var": "TS_AUTHKEY", "name": "TS_AUTHKEY" }]
+		},
+		{
+			"name": "vector",
+			"image": "timberio/vector:latest-alpine",
+			"entrypoint": ["/bin/sh", "/entrypoint.sh"],
+			"secrets": [{ "env_var": "FLY_API_TOKEN", "name": "FLY_API_TOKEN" }],
+			"depends_on": [{ "name": "tailscale", "condition": "healthy" }]
+		}
+]
+}'''
+
+[[files]]
+  local_path = "vector.yaml"
+  guest_path = "/etc/vector/vector.yaml"
+  processes = ["vector"]
+
+[[files]]
+  local_path = "entrypoint.sh"
+  guest_path = "/entrypoint.sh"
+  processes = ["vector"]

@@ -1,0 +1,20 @@
+metrics.svc.pluralkit.net:80 {
+	reverse_proxy /insert/* {
+		to http://localhost:8480
+	}
+	reverse_proxy /select/* {
+		to http://localhost:8481
+	}
+}
+
+logs.svc.pluralkit.net:80 {
+	reverse_proxy /* {
+		to http://localhost:9429
+	}
+}
+
+alerts.svc.pluralkit.net:80 {
+	reverse_proxy /* {
+		to http://localhost:9093
+	}
+}

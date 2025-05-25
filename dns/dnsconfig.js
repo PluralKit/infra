@@ -12,9 +12,17 @@ String.prototype.endsWith = function(search) {
 var hosts = {
 	"database-hrhel1-251b75a5": [ "37.27.117.165", "100.115.185.127" ],
 	"utils-hcash1-05a12be2": [ "5.161.43.226", "100.79.33.60" ],
+
+	"o11y-1": [ "5.78.72.225", "100.84.252.29" ],
+	"o11y-2": [ "5.78.90.109", "100.90.106.105" ],
+	"o11y-3": [ "5.78.115.114", "100.104.46.23" ],
 };
 
-var serviceHostMap = {};
+var serviceHostMap = {
+	"logs": ["o11y-1", "o11y-2", "o11y-3"],
+	"metrics": ["o11y-1", "o11y-2", "o11y-3"],
+	"alerts": ["o11y-1", "o11y-2", "o11y-3"],
+};
 
 D.apply(null, Array.prototype.concat(
 	// meta
@@ -56,9 +64,8 @@ D.apply(null, Array.prototype.concat(
 
     // observability
     AAAA("vm.svc.pluralkit.net.", "fdaa:9:e856:0:1::4"),
-    AAAA("alerts.svc.pluralkit.net.", "fdaa:9:e856:0:1::5"),
     AAAA("es.svc.pluralkit.net.", "fdaa:9:e856:0:1::6"),
-    AAAA("logs.pluralkit.net.", "fdaa:9:e856:0:1::7"),
+
     AAAA("grafana.pluralkit.net.", "fdaa:9:e856:0:1::8"),
 
     // oob

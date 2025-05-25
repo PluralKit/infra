@@ -1,0 +1,17 @@
+#!/sbin/openrc-run
+
+command="/usr/local/vicky/bin/vmalert"
+command_args="-rule=/usr/share/vicky/vmalert-logs.yml \
+	-httpListenAddr=:8881 \
+	-rule.defaultRuleType=vlogs \
+	-datasource.url=http://logs.svc.pluralkit.net:80/ \
+	-remoteWrite.url=http://metrics.svc.pluralkit.net:80/insert/0/prometheus/ \
+	-remoteRead.url=http://metrics.svc.pluralkit.net:80/select/0/prometheus/ \
+	-notifier.url=http://o11y-1.vpn.pluralkit.net:9093 \
+	-notifier.url=http://o11y-2.vpn.pluralkit.net:9093 \
+	-notifier.url=http://o11y-3.vpn.pluralkit.net:9093 \
+"
+output_log="/var/log/vmalert-logs.log"
+error_log="/var/log/vmalert-logs.err"
+command_background="yes"
+pidfile="/run/vmalert-logs.pid"

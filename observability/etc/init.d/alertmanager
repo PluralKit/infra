@@ -1,0 +1,14 @@
+#!/sbin/openrc-run
+
+tailscale_ip=$(ip -json a show dev tailscale0 | jq -r ".[0].addr_info[] | select(.family == \"inet\") | .local")
+
+command="/usr/bin/alertmanager"
+command_args="--config.file=/etc/alertmanager/alertmanager.yml \
+	--storage.path=/srv/alertmanager \
+	--cluster.listen-address=$tailscale_ip:9094 \
+	--cluster.advertise-address=$tailscale_ip:9094 \
+	--cluster.peer=alerts.svc.pluralkit.net:9094"
+output_log="/var/log/alertmanager.log"
+error_log="/var/log/alertmanager.err"
+command_background="yes"
+pidfile="/run/alertmanager.pid"

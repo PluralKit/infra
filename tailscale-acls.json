@@ -12,6 +12,7 @@
 		"tag:edge":  [],
 		"tag:oob":   [],
 		"tag:o11y":  [],
+		"tag:fly-telemetry": [],
 	},
 
 	"hosts": {},
@@ -28,6 +29,8 @@
 		{"action": "accept", "src": ["group:admins"], "dst": ["*:*"]},
 
 		{"action": "accept", "src": ["tag:prod"], "dst": ["tag:prod:*"]},
+		{"action": "accept", "src": ["tag:o11y"], "dst": ["tag:o11y:*"]},
+		{"action": "accept", "src": ["tag:fly-telemetry"], "dst": ["tag:o11y:80"]},
 
 		// unsure what these are for?
 		{"action": "accept", "src": ["tag:prod"], "dst": ["172.17.0.0/16:*"]},
