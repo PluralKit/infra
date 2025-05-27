@@ -16,6 +16,8 @@ www.pluralkit.me:80 {
 }
 
 cdn.pluralkit.me:80 {
+	log
+
 	handle / {
 		file_server {
 			root /etc/caddy/
@@ -27,6 +29,16 @@ cdn.pluralkit.me:80 {
 			to https://pluralkit-avatars.s3.eu-central-003.backblazeb2.com
 			header_up Host pluralkit-avatars.s3.eu-central-003.backblazeb2.com
 			header_up -sec*
+
+			@ok status 200 304 404
+			handle_response @ok {
+				log_skip
+			}
+
+			@error status 500 502 503
+			handle_response @error {
+				respond "failed to connect to image backend" 500
+			}
 		}
 	}
 }

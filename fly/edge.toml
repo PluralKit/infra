@@ -1,6 +1,7 @@
 app = "pluralkit-http-edge"
 primary_region = "arn"
 vm.size = "shared-cpu-4x"
+deploy.strategy = "canary"
 http_service.internal_port = 80
 build.image = "alpine" # unused
 
@@ -16,7 +17,6 @@ experimental.machine_config = '''{
 		{
 			"name": "tailscale",
 			"image": "tailscale/tailscale:latest",
-			"entrypoint_": ["/bin/sleep", "inf"],
 			"env": {
 				"PATH": "/bin:/usr/bin:/sbin:/usr/local/bin",
 				"TS_HOSTNAME": "fly-http-edge",
