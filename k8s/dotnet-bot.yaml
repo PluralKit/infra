@@ -30,6 +30,12 @@ spec:
         - containerPort: 5002
         image: ghcr.io/pluralkit/pluralkit:96ddfaebf10f38ee4525372ef6c199598921ead2
         command: [ "dotnet", "bin/PluralKit.Bot.dll" ]
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5002
+          initialDelaySeconds: 10
+          periodSeconds: 3
         env:
         - name: PluralKit__Bot__ClientId
           value: '466378653216014359'
