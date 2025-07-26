@@ -26,8 +26,8 @@ cdn.pluralkit.me:80 {
 	}
 	handle /images/* {
 		reverse_proxy {
-			to https://pluralkit-avatars-backend.pk.mt
-			header_up Host pluralkit-avatars-backend.pk.mt
+			to https://r2-avatars.pluralkit.net
+			header_up Host r2-avatars.pluralkit.net
 			header_up -sec*
 
 			transport http {
@@ -36,20 +36,7 @@ cdn.pluralkit.me:80 {
 
 			@notfound status 404
 			handle_response @notfound {
-				reverse_proxy {
-					to https://pluralkit-avatars.s3.eu-central-003.backblazeb2.com
-					header_up Host pluralkit-avatars.s3.eu-central-003.backblazeb2.com
-					header_up -sec*
-
-					transport http {
-						versions 1.1
-					}
-
-					@error status 500 502 503
-					handle_response @error {
-						respond "failed to connect to image backend" 500
-					}
-				}
+				respond "404 not found" 404
 			}
 
 			@error status 500 502 503

@@ -2,7 +2,7 @@
 
 query=$1
 shift
-user=${user:-alyssa}
+user=${user:-root}
 wait=${wait:-false}
 
 hosts=($(find hosts -type f -exec basename {} \; | grep -v default | sed 's/.nix//'))

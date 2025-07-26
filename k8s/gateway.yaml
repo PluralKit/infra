@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: gateway
-        image: ghcr.io/pluralkit/gateway:4a098e45338914636a21495b86b0163f748cccd3
+        image: ghcr.io/pluralkit/gateway:73103dc2b5bc4075d8edbaa14290b85fdd2a5828
         resources:
           requests:
             cpu: 1 # performance; 2G memory

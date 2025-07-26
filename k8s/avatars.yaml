@@ -8,9 +8,9 @@ spec:
 apiVersion: onepassword.com/v1
 kind: OnePasswordItem
 metadata:
-  name: avatars-s3-key
+  name: avatars-r2-key
 spec:
-  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/o5v4kz5v6o5h4qkehapz3q7sxi
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/ilulelqu74hoschnwlisiknqh4
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: avatars
-        image: ghcr.io/pluralkit/avatars:6c0c7a5c9918c106bef1ccc09b4ee434ca830c1b
+        image: ghcr.io/pluralkit/avatars:049f06d9b1f75d4ab73323120287703607d3c86a
         env:
         - name: RUST_LOG
           value: info
@@ -49,15 +49,15 @@ spec:
         - name: pluralkit__avatars__cdn_url
           value: 'https://cdn.pluralkit.me/'
         - name: pluralkit__avatars__s3__bucket
-          value: 'pluralkit-avatars'
+          value: 'pluralkit-avatars-2'
         - name: pluralkit__avatars__s3__endpoint
-          value: 'https://s3.eu-central-003.backblazeb2.com'
+          value: 'https://34d8c1092fc4c5853b6a5a05b08228c5.r2.cloudflarestorage.com'
         - name: pluralkit__avatars__s3__application_id
-          value: '0031de9bd0a26160000000005'
+          value: 'cedf19445910ca54744d8ac0f1a4e7a0'
         - name: pluralkit__avatars__s3__application_key
           valueFrom:
             secretKeyRef:
-              name: avatars-s3-key
+              name: avatars-r2-key
               key: credential
         - name: pluralkit__db__data_redis_addr
           value: '1'
@@ -95,7 +95,7 @@ spec:
     spec:
       containers:
       - name: avatars
-        image: ghcr.io/pluralkit/avatars:7ca49c32e697fb842c103ffa182483f1e38b38b2
+        image: ghcr.io/pluralkit/avatars:049f06d9b1f75d4ab73323120287703607d3c86a
         command: [ "/bin/avatar_cleanup" ]
         env:
         - name: RUST_LOG
@@ -117,15 +117,15 @@ spec:
         - name: pluralkit__avatars__cdn_url
           value: 'https://cdn.pluralkit.me/'
         - name: pluralkit__avatars__s3__bucket
-          value: 'pluralkit-avatars'
+          value: 'pluralkit-avatars-2'
         - name: pluralkit__avatars__s3__endpoint
-          value: 'https://s3.eu-central-003.backblazeb2.com'
+          value: 'https://34d8c1092fc4c5853b6a5a05b08228c5.r2.cloudflarestorage.com'
         - name: pluralkit__avatars__s3__application_id
-          value: '0031de9bd0a26160000000005'
+          value: 'cedf19445910ca54744d8ac0f1a4e7a0'
         - name: pluralkit__avatars__s3__application_key
           valueFrom:
             secretKeyRef:
-              name: avatars-s3-key
+              name: avatars-r2-key
               key: credential
         - name: pluralkit__db__data_redis_addr
           value: '1'

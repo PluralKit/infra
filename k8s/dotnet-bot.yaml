@@ -28,7 +28,7 @@ spec:
             cpu: 2
         ports:
         - containerPort: 5002
-        image: ghcr.io/pluralkit/pluralkit:96ddfaebf10f38ee4525372ef6c199598921ead2
+        image: ghcr.io/pluralkit/pluralkit:fdfa2baaef12b66e428a6d432fefe3616a7dd646
         command: [ "dotnet", "bin/PluralKit.Bot.dll" ]
         readinessProbe:
           httpGet:

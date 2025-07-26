@@ -43,14 +43,16 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/metrics'
         prometheus.io/port: '9000'
+      annotations:
+        compute.fly.io/cpu-kind: performance
     spec:
       containers:
       - name: dotnet-api
         # this needs to go in containers for some reason, so we put it in the first one
         resources:
           requests:
-            cpu: 4 # * 256mb = 1G memory
-        image: ghcr.io/pluralkit/pluralkit:6c0c7a5c9918c106bef1ccc09b4ee434ca830c1b
+            cpu: 1
+        image: ghcr.io/pluralkit/pluralkit:51df2bc9dd9208d09833b239f2ccb779cf4ae8a4
         command: [ "dotnet", "bin/PluralKit.API.dll" ]
         env:
         - name: PluralKit__Api__ClientId
@@ -95,9 +97,11 @@ spec:
           value: '2'
         - name: PluralKit__FileLogLevel
           value: '5'
+        - name: PluralKit__Api__SearchGuildSettings
+          value: 'true'
 
       - name: rust-api
-        image: ghcr.io/pluralkit/api:6c0c7a5c9918c106bef1ccc09b4ee434ca830c1b
+        image: ghcr.io/pluralkit/api:5f08a3ed132bcfdc731372caf64a3d95bc55b835
         env:
         - name: RUST_LOG
           value: info

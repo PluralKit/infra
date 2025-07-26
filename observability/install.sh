@@ -6,6 +6,7 @@ apk fix
 
 rc-update add nftables
 service nftables start
+sysctl -w
 
 [ "$(grep sdb /etc/fstab >/dev/null; echo $?)" == "1" ] && (
   mkfs.ext4 /dev/sdb

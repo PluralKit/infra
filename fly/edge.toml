@@ -20,7 +20,7 @@ experimental.machine_config = '''{
 			"env": {
 				"PATH": "/bin:/usr/bin:/sbin:/usr/local/bin",
 				"TS_HOSTNAME": "fly-http-edge",
-				"TS_EXTRA_ARGS": "--accept-routes",
+				"TS_EXTRA_ARGS": "--accept-routes --advertise-tags tag:edge",
 				"TS_USERSPACE": "false",
 				"TS_ENABLE_HEALTH_CHECK": "true"
 			},

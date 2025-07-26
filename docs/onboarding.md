@@ -1,0 +1,5 @@
+- roles in discord (infra, pluralkit permissions)
+- github
+- 1password
+- fly
+- tailscale +admin

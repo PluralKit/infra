@@ -34,12 +34,6 @@
     execWheelOnly = lib.mkForce true;
   };
 
-  environment.variables = {
-    NOMAD_ADDR = "http://${config.pkTailscaleIp}:4646";
-    CONSUL_HTTP_ADDR = "${config.pkTailscaleIp}:8500";
-    VAULT_ADDR = "http://hashi.svc.pluralkit.net:8200";
-  };
-
   services.openssh = {
     enable = true;
     settings = {

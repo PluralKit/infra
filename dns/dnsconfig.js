@@ -13,15 +13,15 @@ var hosts = {
 	"database-hrhel1-251b75a5": [ "37.27.117.165", "100.115.185.127" ],
 	"utils-hcash1-05a12be2": [ "5.161.43.226", "100.79.33.60" ],
 
-	"o11y-1": [ "5.78.72.225", "100.84.252.29" ],
-	"o11y-2": [ "5.78.90.109", "100.90.106.105" ],
-	"o11y-3": [ "5.78.115.114", "100.104.46.23" ],
+	"o11y-hchil1-054e4c90": [ "5.78.76.144", "100.71.144.27" ],
+	"o11y-hchil1-054e6bd7": [ "5.78.107.215", "100.111.221.125" ],
+	"o11y-hchil1-054e59e6": [ "5.78.89.230", "100.119.133.46" ],
 };
 
 var serviceHostMap = {
-	"logs": ["o11y-1", "o11y-2", "o11y-3"],
-	"metrics": ["o11y-1", "o11y-2", "o11y-3"],
-	"alerts": ["o11y-1", "o11y-2", "o11y-3"],
+	"logs": ["o11y-hchil1-054e4c90", "o11y-hchil1-054e6bd7", "o11y-hchil1-054e59e6"],
+	"metrics": ["o11y-hchil1-054e4c90", "o11y-hchil1-054e6bd7", "o11y-hchil1-054e59e6"],
+	"alerts": ["o11y-hchil1-054e4c90", "o11y-hchil1-054e6bd7", "o11y-hchil1-054e59e6"],
 };
 
 D.apply(null, Array.prototype.concat(
@@ -57,6 +57,7 @@ D.apply(null, Array.prototype.concat(
 		A("anycast.pluralkit.net.", "37.16.30.32"),
 		AAAA("anycast.pluralkit.net.", "2a09:8280:1::6e:4cd4:0"),
 
+		CNAME("r2-avatars.pluralkit.net.", "public.r2.dev.", CF_PROXY_ON),
 		CNAME("packages.pluralkit.net.", "public.r2.dev.", CF_PROXY_ON),
 
 		/// services

@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: scheduled-tasks
-        image: ghcr.io/pluralkit/scheduled_tasks:7ca49c32e697fb842c103ffa182483f1e38b38b2
+        image: ghcr.io/pluralkit/scheduled_tasks:05817afdba4221c2c58afc5c251a4ff7c915ea7b
         env:
         - name: RUST_LOG
           value: info
