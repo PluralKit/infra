@@ -66,4 +66,13 @@ alerts.svc.pluralkit.net:80 {
 		# vmalert-logs = {};
 		# alertmanager = {};
 	};
+
+	pkServerChecks = [
+		{ type = "systemd_service_running"; value = "vminsert"; }
+		{ type = "systemd_service_running"; value = "vmselect"; }
+		{ type = "systemd_service_running"; value = "vmstorage"; }
+		{ type = "systemd_service_running"; value = "vlproxy"; }
+		{ type = "systemd_service_running"; value = "vlstorage"; }
+		{ type = "systemd_service_running"; value = "caddy"; }
+	];
 }

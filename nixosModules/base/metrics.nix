@@ -27,15 +27,11 @@
   };
 
   systemd.services.vmagent = {
-    after =  [ "consul.service" ];
-    requires =  [ "consul.service" ];
     serviceConfig.Restart = lib.mkForce "always";
     unitConfig.StartLimitIntervalSec = lib.mkForce 0;
   };
 
   systemd.services.prometheus-node-exporter = {
-    after =  [ "consul.service" ];
-    requires =  [ "consul.service" ];
     serviceConfig.Restart = lib.mkForce "always";
   };
   services.prometheus.exporters.node = {
