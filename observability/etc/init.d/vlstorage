@@ -1,8 +1,0 @@
-#!/sbin/openrc-run
-
-command="/usr/local/vicky/bin/victorialogs"
-command_args="-storageDataPath=/srv/logs -retentionPeriod=30d"
-output_log="/var/log/vlstorage.log"
-error_log="/var/log/vlstorage.err"
-command_background="yes"
-pidfile="/run/vlstorage.pid"

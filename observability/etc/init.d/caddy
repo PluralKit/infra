@@ -1,8 +1,0 @@
-#!/sbin/openrc-run
-
-command="/usr/sbin/caddy"
-command_args="run -c /etc/caddy/Caddyfile"
-output_log="/var/log/caddy.log"
-error_log="/var/log/caddy.err"
-command_background="yes"
-pidfile="/run/caddy.pid"

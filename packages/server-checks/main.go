@@ -1,17 +1,19 @@
 package main
 
 import (
-	"os"
-	"log"
-	"fmt"
-	"time"
+	"bytes"
 	"encoding/json"
-	"strings"
-	"runtime/debug"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"runtime/debug"
+	"strings"
+	"time"
 )
 
 var stateFile = "/run/server-checks.json"
+var checkId, checkToken string
 
 func main() {
 	switch len(os.Args) {
@@ -20,6 +22,11 @@ func main() {
 	case 2:
 		switch os.Args[1] {
 		case "agent":
+			checkId = os.Getenv("NODEPING_CHECK_ID")
+			checkToken = os.Getenv("NODEPING_CHECK_TOKEN")
+			if len(checkId) == 0 || len(checkToken) == 0 {
+				log.Fatalf("missing nodeping id/token!")
+			}
 			runAgent()
 			return
 		case "check-now":
@@ -43,10 +50,10 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	checkAge := int(time.Now().UTC().Unix()) - d.Ts
+	checkAge := time.Now().UTC().Unix() - d.Ts
 
 	if checkAge > 60 {
-		log.Println("warn: last check too old (%v seconds ago)!\n", checkAge)
+		log.Printf("warn: last check too old (%v seconds ago)!\n", checkAge)
 	}
 
 	if len(d.Errors) > 0 {
@@ -59,34 +66,56 @@ func main() {
 
 func runAgent() {
 	log.Println("starting server-checks agent")
-	go runAgentWebserver()
-	wait_until_next_10s()
-	doforever(time.Second * 10, withtime("server-checks", task_main))
+	wait_until_next(60 * time.Second)
+	go doforever(time.Second*60, withtime("server-checks", task_main))
+	time.Sleep(30 * time.Second)
+	doforever(time.Second*60, nodepingHeartbeat)
 }
 
-func runAgentWebserver() {
-	http.HandleFunc("/checks", func(rw http.ResponseWriter, _ *http.Request) {
-		d, err := os.ReadFile(stateFile)
-		if err != nil {
-			log.Println(fmt.Sprintf("serve http: %v", err))
-			rw.WriteHeader(500)
-		} else {
-			rw.Write(d)
-		}
-	})
-	log.Fatal(http.ListenAndServe(":19999", nil))
+type NodePingPayload struct {
+	Data struct {
+		CheckAge  int64 `json:"check_age"`
+		NumFailed int   `json:"num_failed"`
+	} `json:"data"`
 }
 
-func wait_until_next_10s() {
-	now := time.Now().UTC()
-	minute := now.Minute()
-	second := (now.Second() - (now.Second() % 10)) + 10
-	if second == 60 {
-		minute += 1
-		second = 0
+func nodepingHeartbeat() {
+	stateRaw, err := os.ReadFile(stateFile)
+	if err != nil {
+		log.Printf("read err: %v", err)
+		return
 	}
-	after := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), minute, second, 0, time.UTC)
-	time.Sleep(after.Sub(time.Now().UTC()))
+	var state runfile
+	err = json.Unmarshal(stateRaw, &state)
+	if err != nil {
+		log.Printf("json parse err: %v", err)
+		return
+	}
+
+	payloadData := NodePingPayload{}
+	payloadData.Data.CheckAge = time.Now().Unix() - state.Ts
+	payloadData.Data.NumFailed = len(state.Errors)
+	payload, err := json.Marshal(payloadData)
+	if err != nil {
+		log.Printf("json marshal err: %v", err)
+		return
+	}
+
+	resp, err := http.Post(fmt.Sprintf("https://push.nodeping.com/v1?id=%s&checktoken=%s", checkId, checkToken), "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		log.Printf("http err: %v", err)
+		return
+	}
+	defer resp.Body.Close()
+}
+
+func wait_until_next(period time.Duration) {
+	if period <= 0 {
+		log.Fatalf("invalid time period of %v", period)
+	}
+	now := time.Now().UTC()
+	next := now.Truncate(period).Add(period)
+	time.Sleep(next.Sub(now))
 }
 
 func withtime(name string, todo func()) func() {

@@ -1,8 +1,0 @@
-#!/sbin/openrc-run
-
-command="/usr/local/vicky/bin/vmstorage"
-command_args="-storageDataPath=/srv/metrics -retentionPeriod=30d"
-output_log="/var/log/vmstorage.log"
-error_log="/var/log/vmstorage.err"
-command_background="yes"
-pidfile="/run/vmstorage.pid"

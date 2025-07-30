@@ -1,26 +1,26 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"encoding/json"
-	"time"
+	"fmt"
 	"log"
-	"strings"
+	"os"
 	"os/exec"
+	"strings"
+	"time"
 
 	"github.com/coreos/go-systemd/v22/dbus"
 )
 
 type runfile struct {
-	Ts int `json:"ts"`
+	Ts     int64    `json:"ts"`
 	Errors []string `json:"errors"`
 }
 
 type check struct {
-	Type string `json:"type"`
+	Type  string `json:"type"`
 	Value string `json:"value"`
-	any `json:"data"`
+	any   `json:"data"`
 }
 
 // main check runner function
@@ -45,16 +45,16 @@ func task_main() {
 	}
 
 	// fetch systemd unit state (this is used in multiple checks)
-    conn, err := dbus.NewSystemConnection()
-    if err != nil {
-        panic(fmt.Sprintf("failed to connect to systemd: %v", err))
-    }
-    defer conn.Close()
+	conn, err := dbus.NewSystemConnection()
+	if err != nil {
+		panic(fmt.Sprintf("failed to connect to systemd: %v", err))
+	}
+	defer conn.Close()
 
-    units, err := conn.ListUnits()
-    if err != nil {
-        panic(fmt.Sprintf("failed to list systemd units: %v", err))
-    }
+	units, err := conn.ListUnits()
+	if err != nil {
+		panic(fmt.Sprintf("failed to list systemd units: %v", err))
+	}
 
 	errors := []string{}
 
@@ -68,7 +68,7 @@ func task_main() {
 	}
 
 	d := runfile{
-		Ts: int(time.Now().UTC().Unix()),
+		Ts:     time.Now().UTC().Unix(),
 		Errors: errors,
 	}
 

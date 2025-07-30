@@ -42,7 +42,8 @@ Continue to one of the machine-type-specific sections below.
 
 Add the new server's public and VPN (Tailscale) IPs to DNS in `dns/dnsconfig.js`.
 
-Add the server to the server-checks worker script in `packages/server-checks/worker.ts`.
+Create a new PUSH check in NodePing and set the `NODEPING_CHECK_ID` and `NODEPING_CHECK_TOKEN` values in `/etc/pluralkit/server-checks.env`. (todo: automate this?)
+- During creation, add field checks for `num_failed` `check_age` and check the `Missing Heartbeat Fail` option
 
 ## Management server
 

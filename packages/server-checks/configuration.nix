@@ -23,8 +23,8 @@
 			serviceConfig = {
 				ExecStart = "${package}/bin/server-checks agent";
 				User = "root";
+				EnvironmentFile = "/etc/pluralkit/server-checks.env";
 			};
 		};
-		networking.firewall.interfaces.eth0.allowedTCPPorts = [ 19999 ];
 	};
 }
