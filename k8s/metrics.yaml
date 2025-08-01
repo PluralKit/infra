@@ -20,9 +20,10 @@ spec:
       serviceAccountName: vmagent
       containers:
       - name: vmagent
-        image: victoriametrics/vmagent:stable
+        image: victoriametrics/vmagent:latest
         args:
           - "-remoteWrite.url=http://vm.svc.pluralkit.net/insert/0/prometheus/api/v1/write"
+          - "-remoteWrite.url=http://metrics.svc.pluralkit.net/insert/0/prometheus/api/v1/write"
           - "-enableTCP6"
           - "-promscrape.config=/etc/vmagent/vmagent.yml"
           - "-promscrape.maxScrapeSize=67108864"
@@ -32,6 +33,34 @@ spec:
         volumeMounts:
           - name: config-volume
             mountPath: /etc/vmagent
+      - name: tailscale
+        image: tailscale/tailscale:latest
+        env:
+        - name: PATH
+          value: "/bin:/usr/bin:/sbin:/usr/local/bin"
+        - name: TS_HOSTNAME
+          value: "k8s-metrics"
+        - name: TS_EXTRA_ARGS
+          value: "--advertise-tags tag:fly-telemetry"
+        - name: TS_USERSPACE
+          value: "false"
+        - name: TS_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: vmagent-tailscale
+              key: credential
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_UID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.uid
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
       volumes:
         - name: config-volume
           configMap:
@@ -96,6 +125,17 @@ rules:
   verbs: ["get", "list", "watch"]
 - nonResourceURLs: ["/metrics"]
   verbs: ["get"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: [""]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["tailscale"]
+  verbs: ["get", "create", "update"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["get", "create", "patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -125,3 +165,12 @@ metadata:
   annotations:
     kubernetes.io/service-account.name: vmagent
 type: kubernetes.io/service-account-token
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: vmagent-tailscale
+  namespace: kube-system
+spec:
+  itemPath: "vaults/acnop6sxzggtzwha2bulnpjj6i/items/ewzhq6zod6vlawupgitkoikfnm"
+---
