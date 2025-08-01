@@ -12,12 +12,12 @@ groups:
           summary: 'Average shard latency is above 200ms'
           dashboard: 'https://grafana.pluralkit.me/explore?orgId=1'
       - alert: gateway_events
-        expr: 'rate(pluralkit_gateway_events_shard[1h]) == 0'
+        expr: 'rate(pluralkit_gateway_events_shard[15m]) == 0'
         labels:
           alertgroup: 'gateway'
         annotations:
           name: 'No Events Recieved'
-          summary: 'Shard {{ $labels.shard_id }} has recieved 0 events over the past hour'
+          summary: 'Shard {{ $labels.shard_id }} has recieved 0 events over the past 15m'
           dashboard: 'https://grafana.pluralkit.me/explore?orgId=1'
   - name: backups
     interval: 1h

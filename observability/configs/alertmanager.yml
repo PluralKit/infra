@@ -2,9 +2,21 @@ route:
   group_by: ['alertgroup']
   group_wait: 30s
   group_interval: 5m
-  repeat_interval: 1h
+  repeat_interval: 4h
   receiver: discord
 receivers:
   - name: discord
     discord_configs:
       - webhook_url_file: '/etc/pluralkit/alertmanager-webhook'
+        title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .GroupLabels.SortedPairs.Values | join " " }}'
+        message: |
+          {{ define "__discord_alert_list" }}
+          {{ range . }}### {{ .Annotations.name }}
+          {{ .Annotations.summary }}
+          -# [Source]({{ .GeneratorURL }}) | [Dashboard]({{ .Annotations.dashboard }})
+          {{ end }}{{ end }}
+
+          {{ if gt (len .Alerts.Firing) 0 }}{{ if gt (len .Alerts.Resolved) 0 }}## Firing:{{end}}
+          {{ template "__discord_alert_list" .Alerts.Firing }}{{ end }}
+          {{ if gt (len .Alerts.Resolved) 0 }}{{ if gt (len .Alerts.Firing) 0 }}## Resolved:{{ end }}
+          {{ template "__discord_alert_list" .Alerts.Resolved }}{{ end }}
