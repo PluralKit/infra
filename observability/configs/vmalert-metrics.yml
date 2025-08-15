@@ -16,8 +16,8 @@ groups:
         labels:
           alertgroup: 'gateway'
         annotations:
-          name: 'No Events Recieved'
-          summary: 'Shard {{ $labels.shard_id }} has recieved 0 events over the past 15m'
+          name: 'No Events Received'
+          summary: 'Shard {{ $labels.shard_id }} (in pod `{{ $labels.kubernetes_pod_name }}`) has received 0 events over the past 15m'
           dashboard: 'https://grafana.pluralkit.me/explore?orgId=1'
   - name: backups
     interval: 1h

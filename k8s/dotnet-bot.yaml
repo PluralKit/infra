@@ -28,7 +28,7 @@ spec:
             cpu: 2
         ports:
         - containerPort: 5002
-        image: ghcr.io/pluralkit/pluralkit:fdfa2baaef12b66e428a6d432fefe3616a7dd646
+        image: ghcr.io/pluralkit/pluralkit:3c4644f3cccf5ba30e0e9314c5fc00ef1f826b8c
         command: [ "dotnet", "bin/PluralKit.Bot.dll" ]
         readinessProbe:
           httpGet:
@@ -106,7 +106,7 @@ metadata:
   annotations:
     service.fly.io/bot-handlers: http
     service.fly.io/concurrency-kind: connections
-    service.fly.io/concurrency-limit-soft: "50"
+    service.fly.io/concurrency-limit-soft: "100"
     service.fly.io/concurrency-limit-hard: "2000"
 spec:
   ipFamilies:
