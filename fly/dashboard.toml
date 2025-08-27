@@ -1,5 +1,5 @@
 app = "pluralkit-dashboard"
 primary_region = "arn"
-build.image = "ghcr.io/pluralkit/dashboard:347add89989311801c69c950aef86cf7f8751745"
+build.image = "ghcr.io/pluralkit/dashboard:2fc5f2a9d9b0848068496cc3de5271c637ea5f7b"
 http_service.internal_port = 8080
 http_service.force_https = false
