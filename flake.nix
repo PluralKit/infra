@@ -22,5 +22,9 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
+    
+    pluralkit-status = {
+      url = "github:PluralKit/statuspage";
+    };
   };
 }

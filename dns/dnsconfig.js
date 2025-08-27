@@ -89,6 +89,7 @@ var anycastSubdomains = [
 	"grafana",
 	"gt",
 	"stats",
+	"status",
 ];
 
 D("pluralkit.me", REG_NONE, DnsProvider(DNS_CLOUDFLARE),

@@ -69,6 +69,12 @@ stats.pluralkit.me:80 {
   }
 }
 
+status.pluralkit.me:80 {
+	reverse_proxy /* {
+		to http://100.79.33.60:5080
+	}
+}
+
 api.pluralkit.me:80 {
         reverse_proxy /* {
                 to http://pluralkit-api.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000
