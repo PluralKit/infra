@@ -3,6 +3,7 @@ primary_region = "arn"
 vm.size = "shared-cpu-4x"
 deploy.strategy = "canary"
 http_service.internal_port = 80
+http_service.force_https = true
 build.image = "alpine" # unused
 
 experimental.machine_config = '''{
