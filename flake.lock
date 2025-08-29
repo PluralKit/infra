@@ -110,11 +110,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1756273774,
-        "narHash": "sha256-jCFXVbMQ+hpvIasXvcB2WZONAG9wUUP21KjYnGINo2A=",
+        "lastModified": 1756424372,
+        "narHash": "sha256-HxLrfP6vFKsYLLd2Mryt6RDzo3ofHvZVnIFen7Uztec=",
         "owner": "PluralKit",
         "repo": "statuspage",
-        "rev": "d48e26c022ccfc61e457d2c484bb86867dfefadf",
+        "rev": "f49c3ee9ad0c7bf7b7ffce945ca2fd1ea7922ae8",
         "type": "github"
       },
       "original": {

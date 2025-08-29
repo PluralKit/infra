@@ -12,9 +12,28 @@ in
         not remote_ip 100.83.14.76 fd7a:115c:a1e0:ab12:4843:cd96:6253:e4c 127.0.0.1 ::1
       }
       abort @authAdmin
-      reverse_proxy /api/* localhost:5000
-      file_server /* {
-        root ${pluralkit-status.pluralkit-status-frontend}
+
+      handle /api/v1/shards {
+        header Clear-Site-Data "cache"
+        respond 200
+      }
+      
+      handle /api/* {
+        reverse_proxy /api/* localhost:5000
+      }
+
+      @index {
+        path /
+        path index.html
+      }
+
+      handle {
+        root * ${pluralkit-status.pluralkit-status-frontend}
+        route {
+          try_files {path} @index
+          header @index Cache-Control "public, max-age=0, must-revalidate"
+        }
+        file_server
       }
     '';
 	};
