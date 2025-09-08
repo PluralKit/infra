@@ -5,6 +5,27 @@ metadata:
 spec:
   itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/cxipguhghc473xr6prfooegzam
 ---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: scheduled-tasks-aws-access-key-id
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/udi6spmn3gmzums4qcyd5uvbhe
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: scheduled-tasks-aws-access-key
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/ex4j3srhmc7rkpp7saxwpvlcy4
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: scheduled-tasks-aws-endpoint
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/cj4c72qvxajjhak52bh6jw2rfa
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,7 +46,7 @@ spec:
     spec:
       containers:
       - name: scheduled-tasks
-        image: ghcr.io/pluralkit/scheduled_tasks:05817afdba4221c2c58afc5c251a4ff7c915ea7b
+        image: ghcr.io/pluralkit/scheduled_tasks:ccbc02772972477cc77bbc163733dc4aa4dddc05
         env:
         - name: RUST_LOG
           value: info
@@ -76,3 +97,18 @@ spec:
           value: '0'
         - name: pluralkit__db__data_redis_addr
           value: "redis://[fdaa:9:e856:a7b:35c:0:a:102]:6379"
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: scheduled-tasks-aws-access-key-id
+              key: credential
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: scheduled-tasks-aws-access-key
+              key: credential
+        - name: AWS_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: scheduled-tasks-aws-endpoint
+              key: credential
