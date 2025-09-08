@@ -11,7 +11,7 @@ metadata:
   name: pluralkit-gateway
 spec:
   serviceName: pluralkit-gateway
-  replicas: 57
+  replicas: 61
   selector:
     matchLabels:
       app: pluralkit-gateway
@@ -41,9 +41,9 @@ spec:
         - name: pluralkit__discord__client_id
           value: "466378653216014359"
         - name: pluralkit__discord__cluster__total_shards
-          value: "912"
+          value: "976"
         - name: pluralkit__discord__cluster__total_nodes
-          value: "57"
+          value: "61"
         - name: pluralkit__discord__max_concurrency
           value: "16"
         - name: pluralkit__runtime_config_key

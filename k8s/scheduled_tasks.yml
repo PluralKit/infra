@@ -57,7 +57,7 @@ spec:
         - name: pluralkit__scheduled_tasks__set_guild_count
           value: 'true'
         - name: pluralkit__scheduled_tasks__expected_gateway_count
-          value: '57'
+          value: '61'
         - name: pluralkit__scheduled_tasks__gateway_url
           value: 'http://pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.cluster.local:5000/stats'
         - name: pluralkit__scheduled_tasks__prometheus_url

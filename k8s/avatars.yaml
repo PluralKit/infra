@@ -95,6 +95,9 @@ spec:
     spec:
       containers:
       - name: avatars
+        resources:
+          requests:
+            cpu: 2
         image: ghcr.io/pluralkit/avatars:049f06d9b1f75d4ab73323120287703607d3c86a
         command: [ "/bin/avatar_cleanup" ]
         env:

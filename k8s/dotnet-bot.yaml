@@ -57,7 +57,7 @@ spec:
               name: dotnet-bot-sentry-url
               key: credential
         - name: PluralKit__Bot__Cluster__TotalShards
-          value: '912'
+          value: '976'
           # otherwise the bot crashes
         - name: PluralKit__Bot__Cluster__NodeName
           value: 'whatever-0'
@@ -87,6 +87,8 @@ spec:
           value: "pluralkit"
         - name: PluralKit__DispatchProxyUrl
           value: "http://dispatch.svc.pluralkit.net"
+        - name: PluralKit__DashboardBaseUrl
+          value: "https://dash.pluralkit.me"
         - name: PluralKit__DispatchProxyToken
           valueFrom:
             secretKeyRef:
