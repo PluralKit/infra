@@ -14,7 +14,6 @@ in
 {
 	imports = [
 		(modulesPath + "/profiles/qemu-guest.nix")
-		../nixosModules/statuspage.nix
 	];
 
 	boot.loader.grub.device = "/dev/sda";
