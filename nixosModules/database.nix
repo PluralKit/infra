@@ -64,7 +64,8 @@ in
 {
   description = "PostgreSQL - ${name}";
   wantedBy = [ "multi-user.target" ];
-  after = [ "network.target" "consul.service" ];
+  after = [ "network.target" "tailscale-ready.service" ];
+  wants  = [ "tailscale-ready.service" ];
 
   unitConfig.RequiresMountsFor = "${dataDir}";
   environment.PGDATA = "${dataDir}";

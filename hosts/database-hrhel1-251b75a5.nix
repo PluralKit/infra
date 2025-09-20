@@ -72,7 +72,10 @@ in
   };
 
   systemd.services = {
-    redis-pluralkit.after = [ "consul.service" ];
+    redis-pluralkit = {
+      after = [ "tailscale-ready.service" ];
+      wants = [ "tailscale-ready.service" ];
+    };
 
     pluralkit-db-data = mkPostgresService "pluralkit-db-data" {
       package = pkgs.postgresql_14;

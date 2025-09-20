@@ -9,14 +9,6 @@
       global.scrape_interval = "15s";
       scrape_configs = [
         {
-          job_name = "consul";
-          consul_sd_configs = [{
-            server = "${config.pkTailscaleIp}:8500";
-            services = [ "metrics" ];
-            filter = "Node == \"${config.networking.hostName}\"";
-          }];
-        }
-        {
           job_name = "prometheus-node-exporter";
           static_configs = [{
             targets = ["http://${config.networking.hostName}.vpn.pluralkit.net:9100/metrics"];
@@ -33,6 +25,8 @@
 
   systemd.services.prometheus-node-exporter = {
     serviceConfig.Restart = lib.mkForce "always";
+    after = [ "tailscale-ready.service" ];
+    wants  = [ "tailscale-ready.service" ];
   };
   services.prometheus.exporters.node = {
     enable = true;

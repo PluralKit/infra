@@ -45,28 +45,18 @@
     };
   };
 
-  systemd.services.consul = let
+  systemd.services.tailscale-ready = let
     check-interface-ready = pkgs.callPackage ../../packages/check-interface-ready {};
   in {
+    wantedBy = [ "multi-user.target" ];
+		after = [ "tailscaled.service" ];
     serviceConfig = {
-      AmbientCapabilities = "cap_net_bind_service";
-      Restart = lib.mkForce "always";
-      RestartMode = "quick";
-      RestartSec = 5;
-      ExecStartPre = [
+      Type = "oneshot";
+      RemainAfterExit = true;
+      TimeoutStartSec = "2min";
+      ExecStart = [
         "+${check-interface-ready}/bin/check-interface-ready tailscale0"
       ];
-    };
-    unitConfig.StartLimitIntervalSec = 0;
-  };
-  services.consul = {
-    enable = config.pkTailscaleIp != "";
-    extraConfig = {
-      bind_addr = "${config.pkTailscaleIp}";
-      addresses.http = "${config.pkTailscaleIp}";
-      addresses.dns = "169.254.254.169";
-      ports.dns = 53;
-      retry_join = ["hashi.svc.pluralkit.net"]; # todo: is this correct for a client?
     };
   };
 
@@ -78,7 +68,6 @@
   pkServerChecks = [
     { type = "systemd_no_failing_services"; }
     { type = "systemd_service_running"; value = "tailscaled"; }
-    { type = "systemd_service_running"; value = "consul"; }
     { type = "systemd_service_running"; value = "sshd"; }
   ];
 }

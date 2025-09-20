@@ -6,11 +6,6 @@
 }:
 
 {
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "nomad" "consul" "vault-bin"
-  ];
-
-  services.nomad.package = (pkgs.callPackage ../../packages/nomad.nix {});
   services.caddy.package = (pkgs.callPackage ../../packages/caddy.nix {});
 
   environment.systemPackages = with pkgs; [

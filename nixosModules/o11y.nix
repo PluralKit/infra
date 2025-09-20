@@ -4,7 +4,8 @@ let
 	mkSimpleService = execStart:
 	{
 		wantedBy = [ "multi-user.target" ];
-		after = [ "tailscaled.service" ];
+		after = [ "tailscale-ready.service" ];
+		wants  = [ "tailscale-ready.service" ];
 		serviceConfig.ExecStart = execStart;
 	};
 

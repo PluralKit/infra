@@ -25,7 +25,8 @@
     systemd.services.vector = {
       description = "Vector.dev (logs)";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" "consul.service" ];
+      after = [ "network-online.target" "tailscale-ready.service" ];
+      wants  = [ "tailscale-ready.service" ];
       requires = [ "network-online.target" ];
       serviceConfig = {
         ExecStart = "${pkgs.vector}/bin/vector --config ${pkgs.writeTextFile {
