@@ -2,16 +2,16 @@
 
 {
 	"groups": {
-		"group:admins": ["u1f408@github", "avioletheart@github"],
+		"group:admins": ["u1f408@github", "avioletheart@github", "asleepyskye@github"],
 		"group:devs":   ["rladenson@github"],
 	},
 
 	"tagOwners": {
-		"tag:prod":  [],
-		"tag:flyio": [],
-		"tag:edge":  [],
-		"tag:oob":   [],
-		"tag:o11y":  [],
+		"tag:prod":          [],
+		"tag:flyio":         [],
+		"tag:edge":          [],
+		"tag:oob":           [],
+		"tag:o11y":          [],
 		"tag:fly-telemetry": [],
 	},
 
@@ -35,6 +35,7 @@
 		// unsure what these are for?
 		{"action": "accept", "src": ["tag:prod"], "dst": ["172.17.0.0/16:*"]},
 		{"action": "accept", "src": ["tag:prod"], "dst": ["tag:edge:*"]},
+		{"action": "accept", "src": ["tag:prod"], "dst": ["tag:o11y:*"]},
 
 		{
 			"action": "accept",
