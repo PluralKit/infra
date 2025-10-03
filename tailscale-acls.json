@@ -58,7 +58,11 @@
 		},
 
 		// grafana
-		{"action": "accept", "src": ["tag:edge"], "dst": ["100.67.200.121:3000"]},
+		{"action": "accept", "src": ["tag:edge"], "dst": ["100.79.33.60:3000"]},
+		// glitchtip
+		{"action": "accept", "src": ["tag:edge"], "dst": ["100.79.33.60:8000"]},
+		// statuspage
+		{"action": "accept", "src": ["tag:edge"], "dst": ["100.79.33.60:5080"]}
 
 		// fly edge -> consul services
 		{
