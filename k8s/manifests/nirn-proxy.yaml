@@ -32,7 +32,7 @@ spec:
             - name: BIND_IP
               value: '[::]'
             - name: CLUSTER_DNS
-              value: nirn-proxy-headless.nirn.svc.cluster.local
+              value: nirn-proxy-headless.nirn.svc
             - name: FORCE_BIND_FDAA
               value: 'true'
             - name: NODE_NAME
@@ -52,7 +52,7 @@ metadata:
     service.fly.io/concurrency-limit-hard: "2000"
 spec:
   ipFamilies:
-  - IPv6
+  - IPv4
   ipFamilyPolicy: SingleStack
   ports:
   - name: nirn

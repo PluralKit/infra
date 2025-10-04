@@ -8,6 +8,7 @@
 
 	"tagOwners": {
 		"tag:prod":          [],
+		"tag:k8s-cp":        [],
 		"tag:flyio":         [],
 		"tag:edge":          [],
 		"tag:oob":           [],
@@ -21,6 +22,8 @@
 		"routes": {
 			"fdaa:9:e856:0:1::/80": ["tag:flyio"],
 			"fdaa::3/128":          ["tag:flyio"],
+			"10.20.0.0/16":         ["tag:prod"],
+			"10.21.21.0/24":        ["tag:prod"]
 		},
 	},
 
@@ -29,47 +32,35 @@
 		{"action": "accept", "src": ["group:admins"], "dst": ["*:*"]},
 
 		{"action": "accept", "src": ["tag:prod"], "dst": ["tag:prod:*"]},
+		{"action": "accept", "src": ["tag:prod"], "dst": ["fdaa:9:e856:0:1::/80:*", "fdaa::3/128:*"]},
 		{"action": "accept", "src": ["tag:o11y"], "dst": ["tag:o11y:*"]},
 		{"action": "accept", "src": ["tag:fly-telemetry"], "dst": ["tag:o11y:80"]},
+
+		// k8s
+		// probably scope this down at some point
+		{"action": "accept", "src": ["tag:k8s-cp"], "dst":["tag:prod:*"]},
+		{"action": "accept", "src": ["tag:prod"], "dst":["tag:k8s-cp:*"]},
+		{"action": "accept", "src": ["tag:prod"], "dst":["10.20.0.0/16:*","10.21.21.0/24:*"]},
+		{"action": "accept", "src": ["tag:edge"], "dst":["10.21.21.0/24:*"]},
 
 		// unsure what these are for?
 		{"action": "accept", "src": ["tag:prod"], "dst": ["172.17.0.0/16:*"]},
 		{"action": "accept", "src": ["tag:prod"], "dst": ["tag:edge:*"]},
 		{"action": "accept", "src": ["tag:prod"], "dst": ["tag:o11y:*"]},
 
-		{
-			"action": "accept",
-			"src":    ["tag:prod"],
-			"dst":    ["fdaa:9:e856:0:1::/80:*", "fdaa::3/128:53"],
-		},
-
-		// old nomad network
-		{
-			"action": "accept",
-			"src":    ["tag:prod"],
-			"dst":    ["fdef::/16:*"],
-		},
-
-		// todo: this no longer works
-		{
-			"action": "accept",
-			"src":    ["group:devs"],
-			"dst":    ["*:4646", "[fdaa:9:e856:0:1::7]:80"],
-		},
-
 		// grafana
 		{"action": "accept", "src": ["tag:edge"], "dst": ["100.79.33.60:3000"]},
 		// glitchtip
 		{"action": "accept", "src": ["tag:edge"], "dst": ["100.79.33.60:8000"]},
 		// statuspage
-		{"action": "accept", "src": ["tag:edge"], "dst": ["100.79.33.60:5080"]}
+		{"action": "accept", "src": ["tag:edge"], "dst": ["100.79.33.60:5080"]},
 
 		// fly edge -> consul services
 		{
 			"action": "accept",
 			"src":    ["tag:edge"],
 			"dst":    ["100.64.0.0/10:*", "fdef::/16:*"],
-		},
+		}
 	],
 
 	"ssh": [

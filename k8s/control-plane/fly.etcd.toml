@@ -1,0 +1,17 @@
+app = "pluralkit-sjc-k8s-etcd"
+primary_region = "sjc"
+vm.size = "performance-1x"
+
+kill_signal = 'SIGTERM'
+kill_timeout = '30s'
+
+build.image = "flyio/fly-etcd:3.5.16"
+
+[[mounts]]
+  source = 'etcd_data'
+  destination = '/data'
+
+[[metrics]]
+  port = 2112
+  path = '/metrics'
+  https = false
