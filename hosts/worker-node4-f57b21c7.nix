@@ -98,4 +98,6 @@ in
 
   pkTailscaleIp = "100.68.206.85";
   system.stateVersion = "25.05";
+
+  services.pk-k3s.bridgeSubnet = "10.20.104.0/24";
 }

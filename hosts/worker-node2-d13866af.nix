@@ -84,37 +84,8 @@ in
   };
   networking.firewall.trustedInterfaces = [ "bond0" ];
 
-  environment.etc."cni/net.d/10-bridge.conflist".text = ''
-{
-  "name":"cbr0",
-  "cniVersion":"1.0.0",
-  "plugins":[
-    {
-        "name": "mynet",
-        "type": "bridge",
-        "bridge": "br0",
-        "isDefaultGateway": true,
-        "forceAddress": false,
-        "ipMasq": true,
-        "hairpinMode": false,
-        "ipam": {
-            "type": "host-local",
-            "subnet": "10.20.102.0/24"
-        }
-    }
-  ]
-}
-  '';
-
-  systemd.services.k3s.serviceConfig.ExecStart = pkgs.writeShellScript "k3s" ''
-    ${pkgs.k3s}/bin/k3s agent \
-      --server https://sjc-k8s.svc.pluralkit.net:6443 \
-      --token $(cat /etc/pluralkit/k3s-token) \
-      --debug \
-      --node-name $(cat /etc/hostname) \
-      --node-ip $(${pkgs.tailscale}/bin/tailscale ip -4)
-  '';
-
   pkTailscaleIp = "100.93.93.55";
   system.stateVersion = "25.05";
+
+  services.pk-k3s.bridgeSubnet = "10.20.102.0/24";
 }

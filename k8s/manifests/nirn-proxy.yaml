@@ -30,11 +30,9 @@ spec:
           image: ghcr.io/pluralkit/nirn-proxy:02af044d499381f6a34d65e9ac9a290251b44ac9
           env:
             - name: BIND_IP
-              value: '[::]'
+              value: '0.0.0.0'
             - name: CLUSTER_DNS
               value: nirn-proxy-headless.nirn.svc
-            - name: FORCE_BIND_FDAA
-              value: 'true'
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
