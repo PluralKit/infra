@@ -24,6 +24,14 @@ in
     MDADM_MONITOR_ARGS = "--scan --syslog";
   };
 
+  environment.etc.crypttab = {
+    mode = "0600";
+    text = ''
+      # <volume-name> <encrypted-device> [key-file] [options]
+      appdata_storage UUID=37b0f87a-011f-4955-8208-257ff2d434eb /etc/pluralkit/appdata.key
+    '';
+  };
+
   fileSystems."/" =
     { device = "/dev/disk/by-label/NIXROOT";
       fsType = "ext4";
@@ -31,6 +39,10 @@ in
   fileSystems."/boot" = 
     { device = "/dev/disk/by-label/NIXBOOT";
       fsType = "vfat";
+    };
+  fileSystems."/mnt/appdata" =
+    { device = "/dev/disk/by-label/appdata";
+      fsType = "ext4";
     };
 
   networking.usePredictableInterfaceNames = false;
