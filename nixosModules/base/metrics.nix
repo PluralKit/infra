@@ -4,7 +4,7 @@
   services.vmagent = {
     enable = true;
     extraArgs = [ "-enableTCP6" ];
-    remoteWrite.url = "http://vm.svc.pluralkit.net/insert/0/prometheus/api/v1/write";
+    remoteWrite.url = "http://metrics.svc.pluralkit.net/insert/0/prometheus/api/v1/write";
     prometheusConfig = {
       global.scrape_interval = "15s";
       scrape_configs = [
@@ -43,7 +43,7 @@ type = "host_metrics"
 [sinks.victoriametrics]
   type = "prometheus_remote_write"
   inputs = ["host"]
-  endpoint = "http://vm.svc.pluralkit.net/insert/0/prometheus/api/v1/write"
+  endpoint = "http://metrics.svc.pluralkit.net/insert/0/prometheus/api/v1/write"
   healthcheck.enabled = false
   '';
 

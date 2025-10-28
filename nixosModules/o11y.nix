@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, pkgs-unstable, lib, config, ... }:
 
 let
 	mkSimpleService = execStart:
@@ -39,11 +39,11 @@ in
 		vmstorage = mkSimpleService "/usr/local/vicky/bin/vmstorage -storageDataPath=/srv/metrics -retentionPeriod=30d";
 
 		vlproxy = mkSimpleService (pkgs.writeShellScript "vlproxy" ''
-			/usr/local/vicky/bin/victorialogs \
+			${pkgs-unstable.victorialogs}/bin/victoria-logs \
 				-httpListenAddr=:9429 \
 				${storageArgsVL}
 		'');
-		vlstorage = mkSimpleService "/usr/local/vicky/bin/victorialogs -storageDataPath=/srv/logs -retentionPeriod=30d";
+		vlstorage = mkSimpleService "${pkgs-unstable.victorialogs}/bin/victoria-logs -storageDataPath=/srv/logs -retentionPeriod=30d";
 
 		vmalert-metrics = mkSimpleService (pkgs.writeShellScript "vmalert-metrics" ''
 			/usr/local/vicky/bin/vmalert \
@@ -65,7 +65,7 @@ in
 		'');
 
 		alertmanager = mkSimpleService (pkgs.writeShellScript "alertmanager" ''
-			/usr/bin/alertmanager \
+			${pkgs.prometheus-alertmanager}/bin/alertmanager \
 				--config.file=${../observability/configs/alertmanager.yml} \
 				--storage.path=/srv/alertmanager \
 				--cluster.listen-address=${config.pkTailscaleIp}:9094 \
