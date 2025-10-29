@@ -18,7 +18,15 @@
         api_version = "v8"
         inputs = ["journald"]
         bulk.index = "journald"
-        endpoints = ["http://es.svc.pluralkit.net"]
+        endpoints = ["http://logs.svc.pluralkit.net/insert/elasticsearch/"]
+
+        [sinks.opensearch-journald.healthcheck]
+        enabled = false
+
+        [sinks.opensearch-journald.query]
+        _msg_field = "message"
+        _time_field = "timestamp"
+        _stream_fields = "host,container_name"
       ''
     ];
 
