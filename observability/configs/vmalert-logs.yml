@@ -3,7 +3,7 @@ groups:
     interval: 10s
     rules:
       - alert: out_of_memory
-        expr: '_msg: "Out of memory" | stats count() as errorLog | filter errorLog:>0'
+        expr: '_COMM:!~"victoria-logs|vmalert" _msg: "Out of memory" | stats count() as errorLog | filter errorLog:>0'
         labels:
           alertgroup: 'general'
         annotations:
@@ -13,7 +13,7 @@ groups:
     interval: 10s
     rules:
       - alert: event_error
-        expr: '_msg: "error sending shard event" | stats count() as errorLog | filter errorLog:>0'
+        expr: '_COMM:!~"victoria-logs|vmalert" _msg: "error sending shard event" | stats count() as errorLog | filter errorLog:>0'
         labels:
           alertgroup: 'gateway'
         annotations:
