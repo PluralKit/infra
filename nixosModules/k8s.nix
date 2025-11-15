@@ -4,6 +4,11 @@ with lib;
 let
   cfg = config.services.pk-k3s;
 
+  bridge6Subnet = let
+    pt1 = builtins.substring 0 4 config.networking.hostId;
+    pt2 = builtins.substring 4 8 config.networking.hostId;
+  in "fdef:${pt1}:${pt2}::/80";
+
   containerdConfig = pkgs.writeText "config-v3.toml.tmpl" ''
     {{ template "base" . }}
 
@@ -34,7 +39,14 @@ in
               "hairpinMode": false,
               "ipam": {
                   "type": "host-local",
-                  "subnet": "${cfg.bridgeSubnet}"
+                  "ranges": [
+                    [{
+                      "subnet": "${cfg.bridgeSubnet}"
+                    }],
+                    [{
+                      "subnet": "${bridge6Subnet}"
+                    }]
+                  ]
               }
           }
         ]

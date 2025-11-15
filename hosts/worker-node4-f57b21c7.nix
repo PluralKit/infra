@@ -96,10 +96,14 @@ in
       "50-vlan10" = {
         matchConfig.Name = "vlan10";
         
-        address = [ "91.208.228.72/28" ];
+        address = [ "91.208.228.72/28" "2403:b4c0:5b07:4::1/48" ];
         routes = [
           {
             Gateway = "91.208.228.65";
+            Metric = 100;
+          }
+          {
+            Gateway = "2403:b4c0:5b07::1";
             Metric = 100;
           }
         ];
