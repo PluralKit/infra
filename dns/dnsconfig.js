@@ -96,6 +96,10 @@ var anycastSubdomains = [
 	"gt",
 	"stats",
 	"status",
+	"beta",
+	"api.beta",
+	"dash.beta",
+	"beta.dash",
 ];
 
 D("pluralkit.me", REG_NONE, DnsProvider(DNS_CLOUDFLARE),
@@ -105,17 +109,11 @@ D("pluralkit.me", REG_NONE, DnsProvider(DNS_CLOUDFLARE),
 	ALIAS("@", "anycast.pluralkit.net."),
 
 	CNAME("_acme-challenge", "pluralkit.me.enqnew.flydns.net."),
+	CNAME("_acme-challenge.beta", "beta.pluralkit.me.enqnew.flydns.net."),
 
 	anycastSubdomains.map(function (t) { return [
 		CNAME(t+".pluralkit.me.", "anycast.pluralkit.net.")
 	] }),
-
-	// beta
-	A("beta.pluralkit.me.", "168.119.255.71"),
-	AAAA("beta.pluralkit.me.", "2a01:4f8:1c17:e154::1"),
-	A("*.beta.pluralkit.me.", "168.119.255.71"),
-	AAAA("*.beta.pluralkit.me.", "2a01:4f8:1c17:e154::1"),
-	CNAME("beta.dash.pluralkit.me.", "beta.pluralkit.me."),
 
 	// email
 	MX("@", 10, "in1-smtp.messagingengine.com."),

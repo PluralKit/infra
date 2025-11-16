@@ -5,15 +5,67 @@
   }
 }
 
+pk.mt:80 {
+	handle / {
+		redir https://pluralkit.me
+	}
+	handle /s/* {
+		redir https://dash.pluralkit.me/profile{uri}
+	}
+	handle /m/* {
+		redir https://dash.pluralkit.me/profile{uri}
+	}
+	handle /g/* {
+		redir https://dash.pluralkit.me/profile{uri}
+	}
+}
+
+# main
+
 pluralkit.me:80 {
 	reverse_proxy /* {
 		to http://pluralkit-docs.flycast
 	}
 }
 
-www.pluralkit.me:80 {
+www.pluralkit.me:80, beta.pluralkit.me:80 {
 	redir https://pluralkit.me{uri}
 }
+
+api.pluralkit.me:80 {
+        reverse_proxy /* {
+                to http://pluralkit-api.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000
+                header_up X-PluralKit-Client-IP {http.request.header.Fly-Client-Ip}
+                header_up -x-pluralkit-systemid
+        }
+}
+
+dash.pluralkit.me:80 {
+        reverse_proxy /* {
+				to http://pluralkit-dashboard.flycast
+        }
+}
+
+# beta
+
+api.beta.pluralkit.me:80 {
+    reverse_proxy /* {
+        to http://pluralkit-api.beta.svc.sjc.k8s.pluralkit.net
+        header_up X-PluralKit-Client-IP {remote_host}
+    }
+}
+
+dash.beta.pluralkit.me:80 {
+    reverse_proxy /* {
+        to http://pluralkit-dashboard.beta.svc.sjc.k8s.pluralkit.net
+    }
+}
+
+beta.dash.pluralkit.me:80 {
+        redir https://dash.beta.pluralkit.me
+}
+
+# cdn
 
 cdn.pluralkit.me:80 {
 	log
@@ -47,20 +99,7 @@ cdn.pluralkit.me:80 {
 	}
 }
 
-pk.mt:80 {
-	handle / {
-		redir https://pluralkit.me
-	}
-	handle /s/* {
-		redir https://dash.pluralkit.me/profile{uri}
-	}
-	handle /m/* {
-		redir https://dash.pluralkit.me/profile{uri}
-	}
-	handle /g/* {
-		redir https://dash.pluralkit.me/profile{uri}
-	}
-}
+# misc
 
 stats.pluralkit.me:80 {
   file_server / {
@@ -73,20 +112,6 @@ status.pluralkit.me:80 {
 	reverse_proxy /* {
 		to http://100.79.33.60:5080
 	}
-}
-
-api.pluralkit.me:80 {
-        reverse_proxy /* {
-                to http://pluralkit-api.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000
-                header_up X-PluralKit-Client-IP {http.request.header.Fly-Client-Ip}
-                header_up -x-pluralkit-systemid
-        }
-}
-
-dash.pluralkit.me:80 {
-        reverse_proxy /* {
-				to http://pluralkit-dashboard.flycast
-        }
 }
 
 gt.pluralkit.me:80 {

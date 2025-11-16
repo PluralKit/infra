@@ -4,22 +4,16 @@ vm.size = "shared-cpu-4x"
 deploy.strategy = "canary"
 http_service.internal_port = 80
 http_service.force_https = true
-build.image = "alpine" # unused
+build.image = "tailscale/tailscale:latest" # overwrites the first container's image, because flyctl sucks
 
-experimental.machine_config = '''{
-	"dns": {
-		"nameservers": ["127.0.0.53"],
-		"dns_forward_rules": [{
-			"basename": "consul.",
-			"addr": "127.0.0.1:53"
-		}]
-	},
+machine_config = '''{
 	"containers": [
 		{
 			"name": "tailscale",
 			"image": "tailscale/tailscale:latest",
 			"env": {
 				"PATH": "/bin:/usr/bin:/sbin:/usr/local/bin",
+				"TS_ACCEPT_DNS": "true",
 				"TS_HOSTNAME": "fly-http-edge",
 				"TS_EXTRA_ARGS": "--accept-routes --advertise-tags tag:edge",
 				"TS_USERSPACE": "false",
@@ -39,31 +33,29 @@ experimental.machine_config = '''{
 		{
 			"name": "caddy",
 			"image": "caddy:latest",
-			"entrypoint": ["/usr/bin/caddy", "run", "-c", "/etc/caddy/Caddyfile"],
-			"depends_on": [{ "name": "tailscale", "condition": "healthy" }]
+			"entrypoint": ["/bin/sh", "-c", "echo nameserver 100.100.100.100 > /etc/resolv.conf && /usr/bin/caddy run -c /etc/caddy/Caddyfile" ],
+			"depends_on": [{ "name": "tailscale", "condition": "healthy" }],
+			"files": [
+				{
+					"local_path": "Caddyfile",
+					"guest_path": "/etc/caddy/Caddyfile"
+				},
+				{
+					"local_path": "anycast.html",
+					"guest_path": "/etc/caddy/anycast.html"
+				},
+				{
+					"local_path": "stats.html",
+					"guest_path": "/etc/caddy/stats.html"
+				},
+				{
+					"local_path": "cdn-index.html",
+					"guest_path": "/etc/caddy/cdn-index.html"
+				}
+			]
 		}
 	]
 }'''
-
-[[files]]
-	local_path = "fly/edge.Caddyfile"
-	guest_path = "/etc/caddy/Caddyfile"
-	processes = ["caddy"]
-
-[[files]]
-	local_path = "fly/edge.anycast.html"
-	guest_path = "/etc/caddy/anycast.html"
-	processes = ["caddy"]
-
-[[files]]
-	local_path = "fly/edge.stats.html"
-	guest_path = "/etc/caddy/stats.html"
-	processes = ["caddy"]
-
-[[files]]
-	local_path = "cdn-index.html"
-	guest_path = "/etc/caddy/cdn.html"
-	processes = ["caddy"]
 
 [[http_service.checks]]
   grace_period = "10s"
