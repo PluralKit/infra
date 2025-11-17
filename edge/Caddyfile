@@ -1,8 +1,8 @@
 :80 {
-  file_server / {
-	root /etc/caddy/
-    index anycast.html
-  }
+	file_server / {
+		root /etc/caddy/
+		index anycast.html
+	}
 }
 
 pk.mt:80 {
@@ -33,17 +33,17 @@ www.pluralkit.me:80, beta.pluralkit.me:80 {
 }
 
 api.pluralkit.me:80 {
-        reverse_proxy /* {
-                to http://pluralkit-api.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000
-                header_up X-PluralKit-Client-IP {http.request.header.Fly-Client-Ip}
-                header_up -x-pluralkit-systemid
-        }
+	reverse_proxy /* {
+		to http://pluralkit-api.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000
+		header_up X-PluralKit-Client-IP {http.request.header.Fly-Client-Ip}
+		header_up -x-pluralkit-systemid
+	}
 }
 
 dash.pluralkit.me:80 {
-        reverse_proxy /* {
-				to http://pluralkit-dashboard.flycast
-        }
+	reverse_proxy /* {
+			to http://pluralkit-dashboard.flycast
+	}
 }
 
 # beta
@@ -62,7 +62,7 @@ dash.beta.pluralkit.me:80 {
 }
 
 beta.dash.pluralkit.me:80 {
-        redir https://dash.beta.pluralkit.me
+	redir https://dash.beta.pluralkit.me
 }
 
 # cdn
@@ -102,10 +102,10 @@ cdn.pluralkit.me:80 {
 # misc
 
 stats.pluralkit.me:80 {
-  file_server / {
-	root /etc/caddy/
-    index stats.html
-  }
+	file_server / {
+		root /etc/caddy/
+		index stats.html
+	}
 }
 
 status.pluralkit.me:80 {
@@ -115,16 +115,16 @@ status.pluralkit.me:80 {
 }
 
 gt.pluralkit.me:80 {
-        reverse_proxy /* {
-                to http://100.79.33.60:8000
-				header_up Host gt.pluralkit.me
-        }
+	reverse_proxy /* {
+		to http://100.79.33.60:8000
+		header_up Host gt.pluralkit.me
+	}
 }
 
 grafana.pluralkit.me:80 {
-        reverse_proxy /* {
-                to http://100.79.33.60:3000
-                header_down -X-Frame-Options
-                header_down +Content-Security-Policy "frame-ancestors stats.pluralkit.me"
-        }
+	reverse_proxy /* {
+		to http://100.79.33.60:3000
+		header_down -X-Frame-Options
+		header_down +Content-Security-Policy "frame-ancestors stats.pluralkit.me"
+	}
 }

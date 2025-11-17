@@ -140,21 +140,22 @@ in
       wants = [ "tailscale-ready.service" ];
     };
 
-    # pluralkit-db-data = mkPostgresService "pluralkit-db-data" {
-    #   package = pkgs.postgresql_14;
-    #   dataDir = "/srv/postgres-data";
-    #   listenPort = 5432;
-    #   extraSettings = {
-    #     shared_buffers = "50GB";
-    #     effective_cache_size = "40GB";
-    #     min_wal_size = "80MB";
-    #     max_wal_size = "1GB";
-    #   };
-    #   backupSettings = {
-    #     s3dir = "data";
-    #     database = "pluralkit";
-    #   };
-    # };
+    pluralkit-db-data = mkPostgresService "pluralkit-db-data" {
+      package = pkgs.postgresql_17;
+      dataDir = "/mnt/appdata/postgres-data";
+      listenPort = 5432;
+      extraSettings = {
+        shared_buffers = "50GB";
+        effective_cache_size = "40GB";
+        min_wal_size = "80MB";
+        max_wal_size = "1GB";
+      };
+      # temporary database, do not back up
+      # backupSettings = {
+      #   s3dir = "data";
+      #   database = "pluralkit";
+      # };
+    };
 
     # pluralkit-db-messages = mkPostgresService "pluralkit-db-messages" {
     #   package = pkgs.postgresql_14;
@@ -176,7 +177,7 @@ in
 
   pkServerChecks = [
     { type = "systemd_service_running"; value = "redis-pluralkit"; }
-    # { type = "systemd_service_running"; value = "pluralkit-db-data"; }
+    { type = "systemd_service_running"; value = "pluralkit-db-data"; }
     # { type = "systemd_service_running"; value = "pluralkit-db-messages"; }
   ];
 }

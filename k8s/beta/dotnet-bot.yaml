@@ -1,0 +1,131 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pluralkit-dotnet-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pluralkit-dotnet-bot
+  template:
+    metadata:
+      labels:
+        app: pluralkit-dotnet-bot
+    spec:
+      containers:
+      - name: dotnet-bot
+        resources:
+          requests:
+            cpu: 2
+        ports:
+        - containerPort: 5002
+        image: ghcr.io/pluralkit/pluralkit:rust-command-parser
+        command: [ "dotnet", "bin/PluralKit.Bot.dll" ]
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5002
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        env:
+        - name: PluralKit__Bot__ClientId
+          value: '912009351160541225'
+        - name: PluralKit__Bot__AdminRole
+          value: '913986523500777482'
+        - name: PluralKit__Bot__Token
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: credential
+        - name: PluralKit__DatabasePassword
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: PluralKit__SentryUrl
+          valueFrom:
+            secretKeyRef:
+              name: beta-sentry-url
+              key: credential
+        - name: PluralKit__Bot__Cluster__TotalShards
+          value: '1'
+          # otherwise the bot crashes
+        - name: PluralKit__Bot__Cluster__NodeName
+          value: 'whatever-0'
+        - name: PluralKit__Bot__HttpListenerAddr
+          value: 'allv4v6'
+        - name: PluralKit__Bot__DisableGateway
+          value: 'true'
+        - name: PluralKit__Bot__DiscordBaseUrl
+          value: 'http://nirn-proxy.nirn.svc.sjc.k8s.pluralkit.net/api/v10'
+        - name: PluralKit__Bot__HttpCacheUrl
+          value: 'pluralkit-gateway-{clusterid}.pluralkit-gateway.beta.svc.sjc.k8s.pluralkit.net:5000'
+        - name: PluralKit__Bot__EventAwaiterTarget
+          value: 'source-addr'
+        - name: PluralKit__Database
+          value: "Host=database-node1-bd9aa148.vpn.pluralkit.net;Port=5432;Username=beta;Database=beta;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+        - name: PluralKit__RedisAddr
+          value: "database-node1-bd9aa148.vpn.pluralkit.net:6379,defaultDatabase=2,abortConnect=false"
+        - name: PluralKit__InfluxUrl
+          value: "http://metrics.svc.pluralkit.net/insert/0/influx/"
+        - name: PluralKit__InfluxDb
+          value: "pluralkit"
+        - name: PluralKit__DispatchProxyUrl
+          value: "http://dispatch.svc.pluralkit.net"
+        - name: PluralKit__DashboardBaseUrl
+          value: "https://dash.beta.pluralkit.me"
+        - name: PluralKit__DispatchProxyToken
+          valueFrom:
+            secretKeyRef:
+              name: dispatch-proxy-token
+              key: credential
+        - name: PluralKit__ConsoleLogLevel
+          value: '2'
+        - name: PluralKit__ElasticLogLevel
+          value: '1'
+        - name: PluralKit__FileLogLevel
+          value: '5'
+        # for beta
+        - name: "PluralKit:Bot:Prefixes:0"
+          value: "rs;"
+        - name: "PluralKit:Bot:Prefixes:1"
+          value: "rs!"
+        - name: "PluralKit:Bot:IsBetaBot"
+          value: "true"
+        - name: "PluralKit:Bot:BetaBotAPIUrl"
+          value: "https://api.beta.pluralkit.me"
+        - name: "PluralKit:DashboardBaseUrl"
+          value: "https://dash.beta.pluralkit.me"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pluralkit-dotnet-bot
+  annotations:
+    service.fly.io/bot-handlers: http
+    service.fly.io/concurrency-kind: connections
+    service.fly.io/concurrency-limit-soft: "100"
+    service.fly.io/concurrency-limit-hard: "2000"
+spec:
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: bot
+    port: 80
+    protocol: TCP
+    targetPort: 5002
+  selector:
+    app: pluralkit-dotnet-bot
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pluralkit-dotnet-bot-headless
+spec:
+  clusterIP: None
+  selector:
+    app: pluralkit-dotnet-bot
+  ports:
+  - port: 5002

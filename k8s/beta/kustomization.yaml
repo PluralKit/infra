@@ -1,0 +1,7 @@
+namespace: beta
+resources:
+- api.yaml
+- dashboard.yaml
+- dotnet-bot.yaml
+- gateway.yaml
+- secrets.yaml

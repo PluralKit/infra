@@ -1,31 +1,3 @@
-apiVersion: onepassword.com/v1
-kind: OnePasswordItem
-metadata:
-  name: discord-client-secret
-spec:
-  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/g6veebjeflumbyn675g3x4fi3i
----
-apiVersion: onepassword.com/v1
-kind: OnePasswordItem
-metadata:
-  name: api-token2
-spec:
-  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/kk6h2taivk4pcohocdycmpwi5y
----
-apiVersion: onepassword.com/v1
-kind: OnePasswordItem
-metadata:
-  name: dotnet-api-sentry-url
-spec:
-  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/qc73b255pnsk36n7pneewrg7ma
----
-apiVersion: onepassword.com/v1
-kind: OnePasswordItem
-metadata:
-  name: rust-api-sentry-url
-spec:
-  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/orbdi2ffqhdnbbpu3ebiefjmfa
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,7 +15,6 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/metrics'
         prometheus.io/port: '9000'
-        compute.fly.io/cpu-kind: performance
     spec:
       containers:
       - name: dotnet-api
@@ -51,11 +22,11 @@ spec:
         resources:
           requests:
             cpu: 1
-        image: ghcr.io/pluralkit/pluralkit:51df2bc9dd9208d09833b239f2ccb779cf4ae8a4
+        image: ghcr.io/pluralkit/pluralkit:85b2b77730146d80c0943eb35f2d11674256ff28
         command: [ "dotnet", "bin/PluralKit.API.dll" ]
         env:
         - name: PluralKit__Api__ClientId
-          value: '466378653216014359'
+          value: '912009351160541225'
         - name: PluralKit__Api__ClientSecret
           valueFrom:
             secretKeyRef:
@@ -69,22 +40,16 @@ spec:
         - name: PluralKit__SentryUrl
           valueFrom:
             secretKeyRef:
-              name: dotnet-api-sentry-url
+              name: beta-sentry-url
               key: credential
         - name: PluralKit__Api__TrustAuth
           value: 'true'
         - name: PluralKit__Database
-          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
-        - name: PluralKit__MessagesDatabase
-          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+          value: "Host=database-node1-bd9aa148.vpn.pluralkit.net;Port=5432;Username=beta;Database=beta;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
         - name: PluralKit__RedisAddr
-          value: "[fdaa:9:e856:a7b:35c:0:a:102]:6379,abortConnect=false"
-        - name: PluralKit__ElasticUrl
-          value: "http://es.svc.pluralkit.net"
+          value: "database-node1-bd9aa148.vpn.pluralkit.net:6379,abortConnect=false"
         - name: PluralKit__DispatchProxyUrl
           value: "http://dispatch.svc.pluralkit.net"
-        - name: PluralKit__AvatarServiceUrl
-          value: 'http://pluralkit-avatars.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000'
         - name: PluralKit__DispatchProxyToken
           valueFrom:
             secretKeyRef:
@@ -100,7 +65,7 @@ spec:
           value: 'true'
 
       - name: rust-api
-        image: ghcr.io/pluralkit/api:5f08a3ed132bcfdc731372caf64a3d95bc55b835
+        image: ghcr.io/pluralkit/api:2e3172df35dc3c20767bee849997f65966d951fe
         env:
         - name: RUST_LOG
           value: info
@@ -111,19 +76,19 @@ spec:
         - name: pluralkit__sentry_url
           valueFrom:
             secretKeyRef:
-              name: rust-api-sentry-url
+              name: beta-sentry-url
               key: credential
         - name: pluralkit__db__data_db_uri
-          value: "postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5432/pluralkit"
+          value: "postgresql://beta@database-node1-bd9aa148.vpn.pluralkit.net:5432/beta"
         - name: pluralkit__db__db_password
           valueFrom:
             secretKeyRef:
               name: database-password
               key: credential
         - name: pluralkit__db__data_redis_addr
-          value: "redis://[fdaa:9:e856:a7b:35c:0:a:102]:6379"
+          value: "redis://database-node1-bd9aa148.vpn.pluralkit.net:6379/2"
         - name: pluralkit__api__ratelimit_redis_addr
-          value: "redis://[fdaa:9:e856:a7b:35c:0:a:102]:6379"
+          value: "redis://database-node1-bd9aa148.vpn.pluralkit.net:6379/2"
         - name: pluralkit__api__addr
           value: '[::]:5001'
         - name: pluralkit__api__remote_url
@@ -140,11 +105,11 @@ metadata:
   name: pluralkit-api
 spec:
   ipFamilies:
-  - IPv6
+  - IPv4
   ipFamilyPolicy: SingleStack
   ports:
   - name: api
-    port: 5000
+    port: 80
     protocol: TCP
     targetPort: 5001
   selector:

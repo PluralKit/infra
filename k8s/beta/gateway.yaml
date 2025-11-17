@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pluralkit-gateway
+spec:
+  serviceName: pluralkit-gateway
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pluralkit-gateway
+  template:
+    metadata:
+      labels:
+        app: pluralkit-gateway
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '9000'
+    spec:
+      containers:
+      - name: gateway
+        image: ghcr.io/pluralkit/gateway:621889a6c25dee96fe911e7d2d381536242f9302
+        resources:
+          requests:
+            cpu: 1
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: pluralkit__json_log
+          value: "true"
+        - name: pluralkit__run_metrics_server
+          value: "true"
+        - name: pluralkit__discord__client_id
+          value: "912009351160541225"
+        - name: pluralkit__discord__max_concurrency
+          value: "1"
+        - name: pluralkit__runtime_config_key
+          value: 'gateway-k8s'
+          # gets turned into node_id by rust code
+        - name: STATEFULSET_NAME_FOR_INDEX
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: pluralkit__discord__client_secret
+          value: "1"
+        - name: pluralkit__discord__api_base_url
+          value: "nirn-proxy.nirn.svc.sjc.k8s.pluralkit.net"
+        - name: pluralkit__sentry_url
+          valueFrom:
+            secretKeyRef:
+              name: beta-sentry-url
+              key: credential
+        - name: pluralkit__db__data_db_uri
+          value: "postgresql://beta@database-node1-bd9aa148.vpn.pluralkit.net:5432/beta"
+        - name: pluralkit__db__db_password
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: pluralkit__discord__bot_token
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: credential
+        - name: pluralkit__db__data_redis_addr
+          value: "redis://database-node1-bd9aa148.vpn.pluralkit.net:6379/2"
+        # for beta
+        - name: pluralkit__discord__gateway_target
+          value: http://pluralkit-dotnet-bot/events
+        - name: pluralkit__discord__bot_prefix_for_gateway
+          value: "rs;"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pluralkit-gateway
+spec:
+  clusterIP: None
+  selector:
+    app: pluralkit-gateway
+  ports:
+  - port: 5000

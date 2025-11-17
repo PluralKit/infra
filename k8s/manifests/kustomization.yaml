@@ -1,0 +1,6 @@
+resources:
+- api.yaml
+- avatars.yaml
+- dotnet-bot.yaml
+- gateway.yaml
+- scheduled_tasks.yaml

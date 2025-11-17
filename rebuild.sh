@@ -11,7 +11,7 @@ if [ "$1" == "do_rebuild" ]; then
   exec > >(trap "" INT TERM; sed "s/^/$hostname(stdout): /")
   exec 2> >(trap "" INT TERM; sed "s/^/$hostname(stderr): /" | grep -v 'evaluating file' >&2)
 
-  ip=$(nix eval -v -L ".#nixosConfigurations.$hostname.config.systemd.network.networks.50-vlan10.address" | jq -r .[0] | sed 's/\// /' | awk '{print $1}')
+  ip=$(nix eval -v -L ".#nixosConfigurations.$hostname.config.systemd.network.networks.50-vlan10.address" --apply builtins.head | jq -r | sed 's/\// /' | awk '{print $1}')
   echo $hostname at $ip
   if [ "$wait" == "true" ]; then
     echo "tap enter to run build"
