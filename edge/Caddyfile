@@ -20,6 +20,15 @@ pk.mt:80 {
 	}
 }
 
+(require_iad) {
+	@checkRegion expression {env.FLY_REGION} != "iad"
+
+    handle @checkRegion {
+        header fly-replay "region=iad"
+        respond 200
+    }
+}
+
 # main
 
 pluralkit.me:80 {
@@ -34,7 +43,7 @@ www.pluralkit.me:80, beta.pluralkit.me:80 {
 
 api.pluralkit.me:80 {
 	reverse_proxy /* {
-		to http://pluralkit-api.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000
+		to http://pluralkit-api.svc.fks-default-5rxvlvnrdx8mnqwj.flycast:5000
 		header_up X-PluralKit-Client-IP {http.request.header.Fly-Client-Ip}
 		header_up -x-pluralkit-systemid
 	}
@@ -70,10 +79,12 @@ beta.dash.pluralkit.me:80 {
 cdn.pluralkit.me:80 {
 	log
 
+	import require_iad
+
 	handle / {
 		file_server {
 			root /etc/caddy/
-			index cdn.html
+			index cdn-index.html
 		}
 	}
 	handle /images/* {

@@ -40,7 +40,7 @@ spec:
               name: avatars-sentry-url
               key: credential
         - name: pluralkit__db__data_db_uri
-          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5432/pluralkit'
+          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:910f:0:a:102]:5432/pluralkit'
         - name: pluralkit__db__db_password
           valueFrom:
             secretKeyRef:
@@ -111,7 +111,7 @@ spec:
               name: avatars-sentry-url
               key: credential
         - name: pluralkit__db__data_db_uri
-          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5432/pluralkit'
+          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:910f:0:a:102]:5432/pluralkit'
         - name: pluralkit__db__db_password
           valueFrom:
             secretKeyRef:

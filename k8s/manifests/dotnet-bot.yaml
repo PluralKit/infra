@@ -72,13 +72,13 @@ spec:
         - name: PluralKit__Bot__EventAwaiterTarget
           value: 'source-addr'
         - name: PluralKit__Bot__AvatarServiceUrl
-          value: 'http://pluralkit-avatars.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000'
+          value: 'http://pluralkit-avatars.svc.fks-default-5rxvlvnrdx8mnqwj.flycast:5000'
         - name: PluralKit__Database
-          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+          value: "Host=[fdaa:9:e856:a7b:910f:0:a:102];Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
         - name: PluralKit__MessagesDatabase
-          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+          value: "Host=[fdaa:9:e856:a7b:910f:0:a:102];Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
         - name: PluralKit__RedisAddr
-          value: "[fdaa:9:e856:a7b:35c:0:a:102]:6379,abortConnect=false"
+          value: "[fdaa:9:e856:a7b:910f:0:a:102]:6379,abortConnect=false"
         - name: PluralKit__ElasticUrl
           value: "http://es.svc.pluralkit.net"
         - name: PluralKit__InfluxUrl

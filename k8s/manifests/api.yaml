@@ -74,17 +74,17 @@ spec:
         - name: PluralKit__Api__TrustAuth
           value: 'true'
         - name: PluralKit__Database
-          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+          value: "Host=[fdaa:9:e856:a7b:910f:0:a:102];Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
         - name: PluralKit__MessagesDatabase
-          value: "Host=[fdaa:9:e856:a7b:35c:0:a:102];Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+          value: "Host=[fdaa:9:e856:a7b:910f:0:a:102];Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
         - name: PluralKit__RedisAddr
-          value: "[fdaa:9:e856:a7b:35c:0:a:102]:6379,abortConnect=false"
+          value: "[fdaa:9:e856:a7b:910f:0:a:102]:6379,abortConnect=false"
         - name: PluralKit__ElasticUrl
           value: "http://es.svc.pluralkit.net"
         - name: PluralKit__DispatchProxyUrl
           value: "http://dispatch.svc.pluralkit.net"
         - name: PluralKit__AvatarServiceUrl
-          value: 'http://pluralkit-avatars.svc.fks-default-yg2em6q8dzjl7x6o.flycast:5000'
+          value: 'http://pluralkit-avatars.svc.fks-default-5rxvlvnrdx8mnqwj.flycast:5000'
         - name: PluralKit__DispatchProxyToken
           valueFrom:
             secretKeyRef:
@@ -114,16 +114,16 @@ spec:
               name: rust-api-sentry-url
               key: credential
         - name: pluralkit__db__data_db_uri
-          value: "postgresql://pluralkit@[fdaa:9:e856:a7b:35c:0:a:102]:5432/pluralkit"
+          value: "postgresql://pluralkit@[fdaa:9:e856:a7b:910f:0:a:102]:5432/pluralkit"
         - name: pluralkit__db__db_password
           valueFrom:
             secretKeyRef:
               name: database-password
               key: credential
         - name: pluralkit__db__data_redis_addr
-          value: "redis://[fdaa:9:e856:a7b:35c:0:a:102]:6379"
+          value: "redis://[fdaa:9:e856:a7b:910f:0:a:102]:6379"
         - name: pluralkit__api__ratelimit_redis_addr
-          value: "redis://[fdaa:9:e856:a7b:35c:0:a:102]:6379"
+          value: "redis://[fdaa:9:e856:a7b:910f:0:a:102]:6379"
         - name: pluralkit__api__addr
           value: '[::]:5001'
         - name: pluralkit__api__remote_url
@@ -138,6 +138,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pluralkit-api
+  annotations:
+    service.fly.io/api-handlers: http
+    service.fly.io/concurrency-kind: connections
+    service.fly.io/concurrency-limit-soft: "100"
+    service.fly.io/concurrency-limit-hard: "2000"
 spec:
   ipFamilies:
   - IPv6
