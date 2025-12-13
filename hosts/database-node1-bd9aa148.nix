@@ -106,14 +106,25 @@ in
       };
     };
   };
-  networking.firewall.trustedInterfaces = [ "bond0" ];
+  networking.firewall.trustedInterfaces = [ "bond0" "fly" ];
+
+  networking.wg-quick.interfaces.fly = {
+    address = [ "fdaa:9:e856:a7b:910f:0:a:102/120" ];
+    privateKeyFile = "/opt/fly-wg-privkey";
+    peers = [{
+      publicKey = "j0WUwN5RXh/rwu4tYtaqrXjDAjVlzJgdMLfUHYwxVAQ=";
+      endpoint = "sjc2.gateway.6pn.dev:51820";
+      allowedIPs = [ "fdaa:9:e856::/48" ];
+      persistentKeepalive = 15;
+    }];
+  };
 
   pkTailscaleIp = "100.123.150.13";
   system.stateVersion = "25.05";
 
   services.redis.servers."pluralkit" = {
     enable = true;
-    bind = "127.0.0.1 ${config.pkTailscaleIp}";
+    bind = "127.0.0.1 ${config.pkTailscaleIp} ${(builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address)))}";
     port = 6379;
     openFirewall = lib.mkForce false;
     settings = {
@@ -141,7 +152,7 @@ in
     };
 
     pluralkit-db-data = mkPostgresService "pluralkit-db-data" {
-      package = pkgs.postgresql_17;
+      package = pkgs.postgresql_18;
       dataDir = "/mnt/appdata/postgres-data";
       listenPort = 5432;
       extraSettings = {
@@ -150,29 +161,32 @@ in
         min_wal_size = "80MB";
         max_wal_size = "1GB";
       };
-      # temporary database, do not back up
-      # backupSettings = {
-      #   s3dir = "data";
-      #   database = "pluralkit";
-      # };
+      backupSettings = {
+        s3dir = "data";
+        database = "pluralkit";
+      };
+      extraListen = [ (builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address))) ];
+      extraPgHba = [ "host all all ${builtins.head (builtins.head config.networking.wg-quick.interfaces.fly.peers).allowedIPs} md5" ];
     };
 
-    # pluralkit-db-messages = mkPostgresService "pluralkit-db-messages" {
-    #   package = pkgs.postgresql_14;
-    #   dataDir = "/srv/messages";
-    #   listenPort = 5434;
-    #   extraSettings = {
-    #     max_locks_per_transaction = 256;
-    #     shared_buffers = "32GB";
-    #     effective_cache_size = "16GB";
-    #     min_wal_size = "80MB";
-    #     max_wal_size = "1GB";
-    #   };
-    #   backupSettings = {
-    #     s3dir = "messages";
-    #     database = "messages";
-    #   };
-    # };
+    pluralkit-db-messages = mkPostgresService "pluralkit-db-messages" {
+      package = pkgs.postgresql_18;
+      dataDir = "/mnt/appdata/messages";
+      listenPort = 5434;
+      extraSettings = {
+        max_locks_per_transaction = 256;
+        shared_buffers = "32GB";
+        effective_cache_size = "16GB";
+        min_wal_size = "80MB";
+        max_wal_size = "1GB";
+      };
+      backupSettings = {
+        s3dir = "messages";
+        database = "messages";
+      };
+      extraListen = [ (builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address))) ];
+      extraPgHba = [ "host all all ${builtins.head (builtins.head config.networking.wg-quick.interfaces.fly.peers).allowedIPs} md5" ];
+    };
   };
 
   pkServerChecks = [
