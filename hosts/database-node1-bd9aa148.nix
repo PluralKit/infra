@@ -20,8 +20,11 @@ in
     enable = true;
     mdadmConf = "ARRAY /dev/md0 level=raid1 num-devices=2 metadata=1.2 UUID=013e207e:6160fbd5:7eef3d59:91b4776e devices=/dev/nvme0n1p2,/dev/nvme1n1p2";
   };
-  systemd.services."mdmonitor".environment = {
-    MDADM_MONITOR_ARGS = "--scan --syslog";
+  systemd.services."mdmonitor".serviceConfig = {
+    ExecStart = [
+      ""
+      "${pkgs.mdadm}/sbin/mdadm --monitor --scan --syslog"
+    ];
   };
 
   environment.etc.crypttab = {
