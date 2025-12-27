@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
       - name: scheduled-tasks
-        image: ghcr.io/pluralkit/scheduled_tasks:ccbc02772972477cc77bbc163733dc4aa4dddc05
+        image: ghcr.io/pluralkit/scheduled_tasks:a63cb30a915152bf624d71de6461920316420a41
         env:
         - name: RUST_LOG
           value: info
@@ -83,6 +83,8 @@ spec:
           value: 'http://pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.cluster.local:5000/stats'
         - name: pluralkit__scheduled_tasks__prometheus_url
           value: 'http://vm.svc.pluralkit.net/select/0/prometheus'
+        - name: pluralkit__scheduled_tasks__walg_s3_bucket
+          value: "pluralkit-backups/pluralkit-backups"
         - name: pluralkit__discord__client_id
           value: "466378653216014359"
         - name: pluralkit__discord__max_concurrency
@@ -97,6 +99,10 @@ spec:
           value: '0'
         - name: pluralkit__db__data_redis_addr
           value: "redis://[fdaa:9:e856:a7b:910f:0:a:102]:6379"
+        - name: AWS_REGION
+          value: us-east
+        - name: AWS_S3_FORCE_PATH_STYLE
+          value: "true"
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
