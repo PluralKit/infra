@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, pkgs-unstable, lib, config, ... }:
 
 with lib;
 let
@@ -62,7 +62,7 @@ in
       after = [ "tailscale-ready.service" ];
       wants  = [ "tailscale-ready.service" ];
       serviceConfig.ExecStart = pkgs.writeShellScript "k3s" ''
-        ${pkgs.k3s}/bin/k3s agent \
+        ${pkgs-unstable.k3s_1_35}/bin/k3s agent \
           --server https://sjc-k8s.svc.pluralkit.net:6443 \
           --token $(cat /etc/pluralkit/k3s-token) \
           --debug \
