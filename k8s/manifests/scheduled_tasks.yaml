@@ -84,7 +84,7 @@ spec:
         - name: pluralkit__scheduled_tasks__prometheus_url
           value: 'http://vm.svc.pluralkit.net/select/0/prometheus'
         - name: pluralkit__scheduled_tasks__walg_s3_bucket
-          value: "pluralkit-backups/pluralkit-backups"
+          value: "pluralkit-backups"
         - name: pluralkit__discord__client_id
           value: "466378653216014359"
         - name: pluralkit__discord__max_concurrency
