@@ -125,13 +125,6 @@ status.pluralkit.me:80 {
 	}
 }
 
-gt.pluralkit.me:80 {
-	reverse_proxy /* {
-		to http://100.79.33.60:8000
-		header_up Host gt.pluralkit.me
-	}
-}
-
 grafana.pluralkit.me:80 {
 	reverse_proxy /* {
 		to http://100.79.33.60:3000

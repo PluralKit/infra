@@ -93,7 +93,6 @@ var anycastSubdomains = [
 	"api",
 	"dash",
 	"grafana",
-	"gt",
 	"stats",
 	"status",
 	"beta",
