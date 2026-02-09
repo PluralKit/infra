@@ -27,12 +27,16 @@ spec:
           resources:
             requests:
               cpu: 4 # shared-cpu-4x
-          image: ghcr.io/pluralkit/nirn-proxy:02af044d499381f6a34d65e9ac9a290251b44ac9
+          image: ghcr.io/pluralkit/nirn-proxy:aaeda6383068f90d3b02b3eb5b0d8c28b11668b0
           env:
             - name: BIND_IP
               value: '0.0.0.0'
             - name: CLUSTER_DNS
               value: nirn-proxy-headless.nirn.svc
+            - name: ALLOW_CONCURRENT_REQUESTS
+              value: "true"
+            - name: LOG_LEVEL
+              value: trace
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
@@ -50,7 +54,7 @@ metadata:
     service.fly.io/concurrency-limit-hard: "2000"
 spec:
   ipFamilies:
-  - IPv4
+  - IPv6
   ipFamilyPolicy: SingleStack
   ports:
   - name: nirn
