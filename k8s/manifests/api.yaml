@@ -100,7 +100,7 @@ spec:
           value: 'true'
 
       - name: rust-api
-        image: ghcr.io/pluralkit/api:08b017c82a519b3ea1fa7857223f7f7c0657a3f3
+        image: ghcr.io/pluralkit/api:2432cbe89a9b1df3fd50552f9e55b15909391155
         env:
         - name: RUST_LOG
           value: info
