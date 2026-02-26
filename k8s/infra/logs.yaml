@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vlagent
+  namespace: kube-system
+automountServiceAccountToken: true
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vlagent
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "namespaces", "pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vlagent
+subjects:
+  - kind: ServiceAccount
+    name: vlagent
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: vlagent
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vlagent
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels: 
+      app: vlagent
+  template:
+    metadata:
+      labels:
+          app: vlagent
+    spec:
+      serviceAccountName: vlagent
+      containers:
+        - name: vlagent
+          image: victoriametrics/vlagent:v1.46.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9429
+              protocol: TCP
+          args:
+          - --envflag.enable
+          - --envflag.prefix=VL_
+          - --kubernetesCollector
+          - --kubernetesCollector.includeNodeAnnotations=false
+          # - --kubernetesCollector.includeNodeLabels=false
+          - --kubernetesCollector.includePodAnnotations=false
+          - --kubernetesCollector.includePodLabels
+          - --kubernetesCollector.msgField=log,message,msg,fields.message,log_message
+          - --kubernetesCollector.timeField=time,ts,timestamp
+          - --loggerFormat=json
+          - --remoteWrite.url=https://pluralkit-kubernetes-logs.fly.dev
+          - --remoteWrite.basicAuth.username=fly-804566
+          - --remoteWrite.basicAuth.password=$(INGEST_TOKEN)
+          - -remoteWrite.format=jsonline
+          - --tmpDataPath=/var/lib/vl-collector
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+              readOnly: true
+              # /var/lib is needed in environments like Minikube, where logs may symlink to /var/lib paths.
+            - name: varlib
+              mountPath: /var/lib
+              readOnly: true
+            - name: vl-collector-data
+              mountPath: /var/lib/vl-collector
+          env:
+          - name: INGEST_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: flyio-o11y-ingest-token
+                key: credential
+
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: varlib
+          hostPath:
+            path: /var/lib
+        - name: vl-collector-data
+          hostPath:
+            path: /var/lib/vl-collector

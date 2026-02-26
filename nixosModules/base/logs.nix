@@ -13,20 +13,15 @@
         [sources.journald]
         type = "journald"
 
-        [sinks.opensearch-journald]
-        type = "elasticsearch"
-        api_version = "v8"
-        inputs = ["journald"]
-        bulk.index = "journald"
-        endpoints = ["http://logs.svc.pluralkit.net/insert/elasticsearch/"]
-
-        [sinks.opensearch-journald.healthcheck]
-        enabled = false
-
-        [sinks.opensearch-journald.query]
-        _msg_field = "message"
-        _time_field = "timestamp"
-        _stream_fields = "host,container_name"
+        [sinks.flyio]
+        type = "http"
+        inputs = [ "journald" ]
+        uri = "https://pluralkit-system-logs.fly.dev"
+        auth.strategy = "basic"
+        auth.user = "fly-804566"
+        auth.password = "''${INGEST_TOKEN}"
+        encoding.codec = "json"
+        framing.method = "newline_delimited"
       ''
     ];
 
@@ -37,10 +32,13 @@
       wants  = [ "tailscale-ready.service" ];
       requires = [ "network-online.target" ];
       serviceConfig = {
-        ExecStart = "${pkgs.vector}/bin/vector --config ${pkgs.writeTextFile {
-          name = "vector.conf";
-          text = lib.concatStrings config.pkLogTargets;
-        }}";
+        ExecStart = pkgs.writeShellScript "vector-logs" ''
+          export INGEST_TOKEN=$(cat /etc/pluralkit/metrics-password)
+          exec ${pkgs.vector}/bin/vector --config ${pkgs.writeTextFile {
+            name = "vector.conf";
+            text = lib.concatStrings config.pkLogTargets;
+          }}
+        '';
         DynamicUser = true;
         Group = "docker";
         Restart = "always";

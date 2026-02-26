@@ -23,12 +23,6 @@ var hosts = {
 	"worker-node4-f57b21c7": ["91.208.228.72", "100.68.216.79"],
 };
 
-var serviceHostMap = {
-	"logs": ["o11y-hchil1-054e4c90", "o11y-hchil1-054e6bd7", "o11y-hchil1-054e59e6"],
-	"metrics": ["o11y-hchil1-054e4c90", "o11y-hchil1-054e6bd7", "o11y-hchil1-054e59e6"],
-	"alerts": ["o11y-hchil1-054e4c90", "o11y-hchil1-054e6bd7", "o11y-hchil1-054e59e6"],
-};
-
 D.apply(null, Array.prototype.concat(
 	// meta
 	["pluralkit.net", REG_NONE, DnsProvider(DNS_CLOUDFLARE)],
@@ -41,39 +35,20 @@ D.apply(null, Array.prototype.concat(
 		]
 	}),
 
-	// services
-	Array.prototype.concat(Object.keys(serviceHostMap).map(function (svc) {
-		return serviceHostMap[svc].map(function (target) {
-			var type;
-			var value;
-			if (target.endsWith(".")) {
-				type = CNAME;
-				value = target;
-			} else {
-				type = A;
-				value = hosts[target][1];
-			}
-			return type(svc+".svc.pluralkit.net.", value);
-		})
-	})),
-
 	// manual records
 	[
 		A("anycast.pluralkit.net.", "37.16.30.32"),
 		AAAA("anycast.pluralkit.net.", "2a09:8280:1::6e:4cd4:0"),
-
-		CNAME("r2-avatars.pluralkit.net.", "public.r2.dev.", CF_PROXY_ON),
-		CNAME("packages.pluralkit.net.", "public.r2.dev.", CF_PROXY_ON),
 
 		/// services
 		AAAA("dispatch.svc.pluralkit.net.", "fdaa:9:e856:0:1::3"),
 		AAAA("sjc-k8s.svc.pluralkit.net.", "fdaa:9:e856:0:1::1b"),
 
     // observability
-    AAAA("vm.svc.pluralkit.net.", "fdaa:9:e856:0:1::4"),
-    AAAA("es.svc.pluralkit.net.", "fdaa:9:e856:0:1::6"),
+	AAAA("alertmanager.pluralkit.net.", "fdaa:9:e856:0:1::26"),
+	AAAA("vmalert-metrics.pluralkit.net.", "fdaa:9:e856:0:1::27"),
+	AAAA("vmalert-logs.pluralkit.net.", "fdaa:9:e856:0:1::28"),
 
-    AAAA("grafana.pluralkit.net.", "fdaa:9:e856:0:1::8"),
 
     // oob
     A("node1.oob.pluralkit.net.", "192.168.255.101"),

@@ -4,7 +4,11 @@
   services.vmagent = {
     enable = true;
     extraArgs = [ "-enableTCP6" ];
-    remoteWrite.url = "http://metrics.svc.pluralkit.net/insert/0/prometheus/api/v1/write";
+    remoteWrite = {
+      url = "https://insert.fly-metrics.net/api/v1/write";
+      basicAuthUsername = "fly-804566";
+      basicAuthPasswordFile = "/etc/pluralkit/metrics-password";
+    };
     prometheusConfig = {
       global.scrape_interval = "15s";
       scrape_configs = [

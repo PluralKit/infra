@@ -1,0 +1,23 @@
+app = "pluralkit-alertmanager"
+primary_region = "ewr"
+build.image = "quay.io/prometheus/alertmanager"
+vm.size = "performance-1x"
+http_service.internal_port = 9093
+
+experimental.entrypoint = [
+    "sh",
+    "-c",
+    "alertmanager --cluster.listen-address=[${FLY_PRIVATE_IP}]:9094 --cluster.advertise-address=[${FLY_PRIVATE_IP}]:9094 --cluster.peer=pluralkit-alertmanager.internal:9094 --storage.path=/alertmanager --config.file=/etc/alertmanager/alertmanager.yml",
+]
+
+[mounts]
+source = "data"
+destination = "/alertmanager"
+
+[[files]]
+guest_path = "/etc/alertmanager/alertmanager.yml"
+local_path = "alertmanager.yml"
+
+[[files]]
+  guest_path = "/etc/pluralkit/alertmanager-webhook"
+  secret_name = "DISCORD_WEBHOOK_URL"

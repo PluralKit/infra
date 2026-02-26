@@ -1,0 +1,18 @@
+primary_region = "ewr"
+build.image = "victoriametrics/vmalert"
+vm.size = "performance-1x"
+http_service.internal_port = 8880
+
+experimental.entrypoint = [ "/entrypoint.sh" ]
+
+[[files]]
+guest_path = "/entrypoint.sh"
+local_path = "entrypoint.sh"
+
+[[files]]
+guest_path = "/vmalert-logs.yml"
+local_path = "vmalert-logs.yml"
+
+[[files]]
+guest_path = "/vmalert-metrics.yml"
+local_path = "vmalert-metrics.yml"

@@ -1,0 +1,25 @@
+sources:
+  my_http_server:
+    type: http_server
+    address: 0.0.0.0:8080
+    codec: json
+    auth:
+      username: "fly-804566"
+      password: "${INGEST_TOKEN}"
+transforms:
+  # Merge raw log content into the root object
+  parser:
+    type: remap
+    inputs:
+      - my_http_server
+    source: |
+      log_content = object!(parse_json!(.message))
+      del(.message)
+      . = merge(., log_content)
+sinks:
+  console:
+    type: console
+    encoding:
+      codec: json
+    inputs:
+      - parser

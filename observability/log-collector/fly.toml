@@ -1,0 +1,8 @@
+primary_region = "sjc"
+build.image = "timberio/vector:latest-alpine"
+vm.size = "performance-1x"
+http_service.internal_port = 8080
+
+[[files]]
+guest_path = "/etc/vector/vector.yaml"
+local_path = "vector.yaml"
