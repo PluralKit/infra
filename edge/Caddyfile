@@ -23,10 +23,10 @@ pk.mt:80 {
 (require_iad) {
 	@checkRegion expression {env.FLY_REGION} != "iad"
 
-    handle @checkRegion {
-        header fly-replay "region=iad"
-        respond 200
-    }
+	handle @checkRegion {
+		header fly-replay "region=iad"
+		respond 200
+	}
 }
 
 # main
@@ -43,7 +43,7 @@ www.pluralkit.me:80, beta.pluralkit.me:80 {
 
 api.pluralkit.me:80 {
 	reverse_proxy /* {
-		to http://pluralkit-api.svc.fks-default-5rxvlvnrdx8mnqwj.flycast:5000
+		to http://pluralkit-api.default.svc.sjc.k8s.pluralkit.net
 		header_up X-PluralKit-Client-IP {http.request.header.Fly-Client-Ip}
 		header_up -x-pluralkit-systemid
 	}
@@ -58,16 +58,16 @@ dash.pluralkit.me:80 {
 # beta
 
 api.beta.pluralkit.me:80 {
-    reverse_proxy /* {
-        to http://pluralkit-api.beta.svc.sjc.k8s.pluralkit.net
-        header_up X-PluralKit-Client-IP {remote_host}
-    }
+	reverse_proxy /* {
+		to http://pluralkit-api.beta.svc.sjc.k8s.pluralkit.net
+		header_up X-PluralKit-Client-IP {remote_host}
+	}
 }
 
 dash.beta.pluralkit.me:80 {
-    reverse_proxy /* {
-        to http://pluralkit-dashboard.beta.svc.sjc.k8s.pluralkit.net
-    }
+	reverse_proxy /* {
+		to http://pluralkit-dashboard.beta.svc.sjc.k8s.pluralkit.net
+	}
 }
 
 beta.dash.pluralkit.me:80 {

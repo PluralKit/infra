@@ -13,10 +13,6 @@ var hosts = {
 	"database-hrhel1-251b75a5": [ "37.27.117.165", "100.115.185.127" ],
 	"utils-hcash1-05a12be2": [ "5.161.43.226", "100.79.33.60" ],
 
-	"o11y-hchil1-054e4c90": [ "5.78.76.144", "100.71.144.27" ],
-	"o11y-hchil1-054e6bd7": [ "5.78.107.215", "100.111.221.125" ],
-	"o11y-hchil1-054e59e6": [ "5.78.89.230", "100.119.133.46" ],
-
 	"database-node1-bd9aa148": ["91.208.228.69", "100.123.150.13"],
 	"worker-node2-d13866af": ["91.208.228.70", "100.93.93.55"],
 	"worker-node3-6f0ac4c4": ["91.208.228.71", "100.68.206.85"],
@@ -44,20 +40,18 @@ D.apply(null, Array.prototype.concat(
 		AAAA("dispatch.svc.pluralkit.net.", "fdaa:9:e856:0:1::3"),
 		AAAA("sjc-k8s.svc.pluralkit.net.", "fdaa:9:e856:0:1::1b"),
 
-    // observability
-	AAAA("alertmanager.pluralkit.net.", "fdaa:9:e856:0:1::26"),
-	AAAA("vmalert-metrics.pluralkit.net.", "fdaa:9:e856:0:1::27"),
-	AAAA("vmalert-logs.pluralkit.net.", "fdaa:9:e856:0:1::28"),
+		// observability
+		AAAA("alertmanager.pluralkit.net.", "fdaa:9:e856:0:1::26"),
+		AAAA("vmalert-metrics.pluralkit.net.", "fdaa:9:e856:0:1::27"),
+		AAAA("vmalert-logs.pluralkit.net.", "fdaa:9:e856:0:1::28"),
 
-
-    // oob
-    A("node1.oob.pluralkit.net.", "192.168.255.101"),
-    A("sw01.oob.pluralkit.net.", "192.168.255.102"),
-    A("node2.oob.pluralkit.net.", "192.168.255.103"),
-    A("router1.oob.pluralkit.net.", "192.168.255.104"),
-    A("sw02.oob.pluralkit.net.", "192.168.255.105"),
-    A("node3.oob.pluralkit.net.", "192.168.255.106"),
-    A("node4.oob.pluralkit.net.", "192.168.255.107"),
+		// oob
+		A("node1.oob.pluralkit.net.", "192.168.255.101"),
+		A("sw01.oob.pluralkit.net.", "192.168.255.102"),
+		A("node2.oob.pluralkit.net.", "192.168.255.103"),
+		A("sw02.oob.pluralkit.net.", "192.168.255.105"),
+		A("node3.oob.pluralkit.net.", "192.168.255.106"),
+		A("node4.oob.pluralkit.net.", "192.168.255.107"),
 	],
 	[END]
 ));

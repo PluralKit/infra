@@ -44,34 +44,5 @@ in
     fixed-cidr-v6 = pkWorkerSubnet;
   };
 
-  users.groups.postgres.gid = postgresGid;
-  users.users.postgres = {
-    name = "postgres";
-    uid = postgresUid;
-    group = "postgres";
-    description = "PostgreSQL server user for PluralKit";
-    createHome = false;
-    isSystemUser = true;
-    useDefaultShell = true;
-  };
-
-	systemd.services.pluralkit-db-utils = mkPostgresService "pluralkit-db-utils" {
-		package = pkgs.postgresql_17;
-		dataDir = "/srv/postgres-utils";
-		listenPort = 5432;
-		extraListen = [ "fdaa:9:e856:a7b:8cfe:0:a:2" ];
-		extraPgHba = [ "host all all fdaa:9:e856::/48 md5" ];
-	};
-
-	services.redis.servers.utils = {
-		enable = true;
-		bind = "127.0.0.1 ${config.pkTailscaleIp}";
-		port = 6379;
-		openFirewall = lib.mkForce false;
-		settings = {
-			protected-mode = "no";
-		};
-	};
-
 	virtualisation.docker.enable = true;
 }

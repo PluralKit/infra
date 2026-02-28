@@ -1,0 +1,88 @@
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: premium-sentry-url
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/rarqojkwumhep653nscjy2a55u
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pluralkit-premium
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pluralkit-premium
+  template:
+    metadata:
+      labels:
+        app: pluralkit-premium
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '9000'
+        compute.fly.io/cpu-kind: performance
+    spec:
+      containers:
+      - name: premium
+        image: ghcr.io/pluralkit/premium:08b017c82a519b3ea1fa7857223f7f7c0657a3f3
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: pluralkit__json_log
+          value: "true"
+        - name: pluralkit__run_metrics_server
+          value: "true"
+        - name: pluralkit__sentry_url
+          valueFrom:
+            secretKeyRef:
+              name: premium-sentry-url
+              key: credential
+        - name: pluralkit__db__data_db_uri
+          value: "postgresql://pluralkit@[fdaa:9:e856:a7b:910f:0:a:102]:5432/pluralkit"
+        - name: pluralkit__db__db_password
+          valueFrom:
+            secretKeyRef:
+              name: database-password
+              key: credential
+        - name: pluralkit__db__data_redis_addr
+          value: "redis://[fdaa:9:e856:a7b:910f:0:a:102]:6379"
+        - name: pluralkit__premium__paddle_webhook_secret
+          value: "TODO"
+        - name: pluralkit__premium__paddle_api_key
+          value: "TODO"
+        - name: pluralkit__premium__paddle_client_token
+          value: "TODO"
+        - name: pluralkit__premium__paddle_price_id
+          value: "TODO"
+        - name: pluralkit__premium__postmark_token
+          value: "TODO"
+        - name: pluralkit__premium__from_email
+          value: "TODO"
+        - name: pluralkit__premium__base_url
+          value: "https://premium.pluralkit.me"
+        - name: pluralkit__api__remote_url
+          value: "0"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pluralkit-premium
+  annotations:
+    service.fly.io/api-handlers: http
+    service.fly.io/concurrency-kind: connections
+    service.fly.io/concurrency-limit-soft: "100"
+    service.fly.io/concurrency-limit-hard: "2000"
+spec:
+  ipFamilies:
+  - IPv6
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: api
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: pluralkit-premium
+  type: ClusterIP

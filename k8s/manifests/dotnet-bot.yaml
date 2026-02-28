@@ -57,7 +57,7 @@ spec:
               name: dotnet-bot-sentry-url
               key: credential
         - name: PluralKit__Bot__Cluster__TotalShards
-          value: '976'
+          value: '1056'
           # otherwise the bot crashes
         - name: PluralKit__Bot__Cluster__NodeName
           value: 'whatever-0'
@@ -66,21 +66,19 @@ spec:
         - name: PluralKit__Bot__DisableGateway
           value: 'true'
         - name: PluralKit__Bot__DiscordBaseUrl
-          value: 'http://nirn-proxy.nirn.svc.cluster.local/api/v10'
+          value: 'http://nirn-proxy.nirn.svc.sjc.k8s.pluralkit.net/api/v10'
         - name: PluralKit__Bot__HttpCacheUrl
-          value: 'pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.cluster.local:5000'
+          value: 'pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.sjc.k8s.pluralkit.net:5000'
         - name: PluralKit__Bot__EventAwaiterTarget
           value: 'source-addr'
         - name: PluralKit__Bot__AvatarServiceUrl
-          value: 'http://pluralkit-avatars.svc.fks-default-5rxvlvnrdx8mnqwj.flycast:5000'
+          value: 'http://pluralkit-avatars.default.svc.sjc.k8s.pluralkit.net'
         - name: PluralKit__Database
-          value: "Host=[fdaa:9:e856:a7b:910f:0:a:102];Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+          value: "Host=100.123.150.13;Port=5432;Username=pluralkit;Database=pluralkit;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
         - name: PluralKit__MessagesDatabase
-          value: "Host=[fdaa:9:e856:a7b:910f:0:a:102];Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
+          value: "Host=100.123.150.13;Port=5434;Username=pluralkit;Database=messages;Maximum Pool Size=150;Minimum Pool Size = 50;Max Auto Prepare=50"
         - name: PluralKit__RedisAddr
-          value: "[fdaa:9:e856:a7b:910f:0:a:102]:6379,abortConnect=false"
-        - name: PluralKit__ElasticUrl
-          value: "http://es.svc.pluralkit.net"
+          value: "100.123.150.13:6379,abortConnect=false"
         - name: PluralKit__InfluxUrl
           value: "http://vm.svc.pluralkit.net/insert/0/influx/"
         - name: PluralKit__InfluxDb
@@ -112,24 +110,13 @@ metadata:
     service.fly.io/concurrency-limit-hard: "2000"
 spec:
   ipFamilies:
-  - IPv6
+  - IPv4
   ipFamilyPolicy: SingleStack
   ports:
   - name: bot
-    port: 5002
+    port: 80
     protocol: TCP
     targetPort: 5002
   selector:
     app: pluralkit-dotnet-bot
   type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: pluralkit-dotnet-bot-headless
-spec:
-  clusterIP: None
-  selector:
-    app: pluralkit-dotnet-bot
-  ports:
-  - port: 5002

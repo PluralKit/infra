@@ -35,7 +35,7 @@ in
               "bridge": "br0",
               "isDefaultGateway": true,
               "forceAddress": false,
-              "ipMasq": true,
+              "ipMasq": false,
               "hairpinMode": false,
               "ipam": {
                   "type": "host-local",
@@ -56,6 +56,33 @@ in
     systemd.tmpfiles.rules = [
       "L /var/lib/rancher/k3s/agent/etc/containerd/config-v3.toml.tmpl - - - - ${containerdConfig}"
     ];
+
+    networking.nftables = {
+      enable = true;
+      tables."masquerade-properly" = {
+        family = "ip";
+        content = ''
+          chain postrouting {
+            type nat hook postrouting priority srcnat; policy accept;
+            ip saddr ${cfg.bridgeSubnet} ip daddr != 10.20.0.0/15 counter masquerade
+          }
+        '';
+      };
+    };
+
+    networking.firewall.checkReversePath = "loose";
+
+    networking.firewall.trustedInterfaces = [ "br0" ];
+    networking.firewall.extraForwardRules = ''
+      iifname "br0" ip daddr 10.20.0.0/15 accept
+      oifname "br0" ip saddr 10.20.0.0/15 accept
+    '';
+
+    boot.kernelModules = [ "br_netfilter" ];
+    boot.kernel.sysctl = {
+      "net.bridge.bridge-nf-call-iptables" = 1;
+      "net.bridge.bridge-nf-call-ip6tables" = 1;
+    };
 
     systemd.services.k3s = {
       wantedBy = [ "multi-user.target" ];

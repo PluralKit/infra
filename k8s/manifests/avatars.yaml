@@ -40,7 +40,7 @@ spec:
               name: avatars-sentry-url
               key: credential
         - name: pluralkit__db__data_db_uri
-          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:910f:0:a:102]:5432/pluralkit'
+          value: 'postgresql://pluralkit@100.123.150.13:5432/pluralkit'
         - name: pluralkit__db__db_password
           valueFrom:
             secretKeyRef:
@@ -68,11 +68,11 @@ metadata:
   name: pluralkit-avatars
 spec:
   ipFamilies:
-  - IPv6
+  - IPv4
   ipFamilyPolicy: SingleStack
   ports:
   - name: avatars
-    port: 5000
+    port: 80
     protocol: TCP
     targetPort: 5000
   selector:
@@ -111,7 +111,7 @@ spec:
               name: avatars-sentry-url
               key: credential
         - name: pluralkit__db__data_db_uri
-          value: 'postgresql://pluralkit@[fdaa:9:e856:a7b:910f:0:a:102]:5432/pluralkit'
+          value: 'postgresql://pluralkit@100.123.150.13:5432/pluralkit'
         - name: pluralkit__db__db_password
           valueFrom:
             secretKeyRef:
