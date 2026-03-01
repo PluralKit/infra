@@ -59,14 +59,25 @@ in
 
     networking.nftables = {
       enable = true;
-      tables."masquerade-properly" = {
-        family = "ip";
-        content = ''
-          chain postrouting {
-            type nat hook postrouting priority srcnat; policy accept;
-            ip saddr ${cfg.bridgeSubnet} ip daddr != 10.20.0.0/15 counter masquerade
-          }
-        '';
+      tables = {
+        "masquerade4" = {
+          family = "ip";
+          content = ''
+            chain postrouting {
+              type nat hook postrouting priority srcnat; policy accept;
+              ip saddr ${cfg.bridgeSubnet} ip daddr != 10.20.0.0/15 counter masquerade
+            }
+          '';
+        };
+        "masquerade6" = {
+          family = "ip6";
+          content = ''
+            chain postrouting {
+              type nat hook postrouting priority 100; policy accept;
+              ip6 saddr fdef::/16 ip6 daddr != ${bridge6Subnet} masquerade
+            }
+          '';
+        };
       };
     };
 
