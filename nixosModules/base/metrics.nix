@@ -47,7 +47,10 @@ type = "host_metrics"
 [sinks.victoriametrics]
   type = "prometheus_remote_write"
   inputs = ["host"]
-  endpoint = "http://metrics.svc.pluralkit.net/insert/0/prometheus/api/v1/write"
+  endpoint = "https://insert.fly-metrics.net/api/v1/write"
+  auth.strategy = "basic"
+  auth.user = "fly-804566"
+  auth.password = "''${INGEST_TOKEN}"
   healthcheck.enabled = false
   '';
 
@@ -55,7 +58,10 @@ type = "host_metrics"
     description = "Vector.dev (CPU metrics scrape)";
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      ExecStart = "${pkgs.vector}/bin/vector --config /etc/vector-cpu-metrics.toml";
+      ExecStart = pkgs.writeShellScript "vector-logs" ''
+          export INGEST_TOKEN=$(cat /etc/pluralkit/metrics-password)
+          exec ${pkgs.vector}/bin/vector --config /etc/vector-cpu-metrics.toml
+        '';
       Restart = "always";
       StateDirectory = "vector-metrics";
       ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
