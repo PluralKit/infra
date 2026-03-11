@@ -26,6 +26,13 @@ metadata:
 spec:
   itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/cj4c72qvxajjhak52bh6jw2rfa
 ---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: scheduled-tasks-prometheus-auth-token
+spec:
+  itemPath: vaults/acnop6sxzggtzwha2bulnpjj6i/items/s3ca2fzdslihsldfwzlxtiywgi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,7 +53,7 @@ spec:
     spec:
       containers:
       - name: scheduled-tasks
-        image: ghcr.io/pluralkit/scheduled_tasks:a63cb30a915152bf624d71de6461920316420a41
+        image: ghcr.io/pluralkit/scheduled_tasks:9673f4e203239a32307b82c82e55c130b6b3c218
         env:
         - name: RUST_LOG
           value: info
@@ -82,7 +89,7 @@ spec:
         - name: pluralkit__scheduled_tasks__gateway_url
           value: 'http://pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.sjc.k8s.pluralkit.net:5000/stats'
         - name: pluralkit__scheduled_tasks__prometheus_url
-          value: 'http://vm.svc.pluralkit.net/select/0/prometheus'
+          value: 'https://api.fly.io/prometheus/pluralkit-50'
         - name: pluralkit__scheduled_tasks__walg_s3_bucket
           value: "pluralkit-backups"
         - name: pluralkit__discord__client_id
@@ -117,4 +124,9 @@ spec:
           valueFrom:
             secretKeyRef:
               name: scheduled-tasks-aws-endpoint
+              key: credential
+        - name: pluralkit__scheduled_tasks__prometheus_auth_token
+          valueFrom:
+            secretKeyRef:
+              name: scheduled-tasks-prometheus-auth-token
               key: credential
