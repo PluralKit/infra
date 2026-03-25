@@ -47,10 +47,12 @@ in
       "30-eth0" = {
         matchConfig.Name = "eth0";
         networkConfig.Bond = "bond0";
+        linkConfig.MTUBytes = "9000";
       };
       "30-eth1" = {
         matchConfig.Name = "eth1";
         networkConfig.Bond = "bond0";
+        linkConfig.MTUBytes = "9000";
       };
       "40-bond0" = {
         matchConfig.Name = "bond0";
@@ -67,7 +69,10 @@ in
         ];
 
         networkConfig.LinkLocalAddressing = "no";
-        linkConfig.RequiredForOnline = "carrier";
+        linkConfig = {
+          RequiredForOnline = "carrier";
+          MTUBytes = "9000";
+        };
       };
       "50-vlan10" = {
         matchConfig.Name = "vlan10";
@@ -83,6 +88,7 @@ in
             Metric = 100;
           }
         ];
+        linkConfig.MTUBytes = "1500";
       };
     };
   };
