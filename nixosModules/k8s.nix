@@ -110,6 +110,38 @@ in
     '';
     };
 
+    systemd.network = {
+      netdevs = {
+        "15-br0" = {
+          netdevConfig = {
+            Kind = "bridge";
+            Name = "br0";
+          };
+        };
+      };
+      networks = {
+        "45-br0" = {
+          matchConfig.Name = "br0";
+          linkConfig.ActivationPolicy = "up";
+          networkConfig = {
+            LinkLocalAddressing = "no";
+            IPv4ProxyARP = true;
+          };
+
+          routes = [
+            {
+              Destination = "10.20.0.0/15";
+              Scope = "link";
+            }
+            {
+              Destination = "fdef::/16";
+              Scope = "link";
+            }
+          ];
+        };
+      };
+    };
+
     pkServerChecks = [
 		  { type = "systemd_service_running"; value = "k3s"; }
     ];

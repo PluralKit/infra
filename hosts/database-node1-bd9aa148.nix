@@ -48,69 +48,23 @@ in
       fsType = "ext4";
     };
 
-  networking.usePredictableInterfaceNames = false;
-  systemd.network = {
-    netdevs = {
-      "10-bond0" = {
-        netdevConfig = {
-          Kind = "bond";
-          Name = "bond0";
-        };
-        bondConfig = {
-          Mode = "active-backup";
-          TransmitHashPolicy = "layer3+4";
-        };
-      };
-      "20-vlan10" = {
-        netdevConfig = {
-          Kind = "vlan";
-          Name = "vlan10";
-        };
-        vlanConfig.Id = 10;
-      };
-    };
+  pluralkit.bond-setup = {
+    enable = true;
 
-    networks = {
-      "30-eth0" = {
-        matchConfig.Name = "eth0";
-        networkConfig.Bond = "bond0";
-      };
-      "30-eth1" = {
-        matchConfig.Name = "eth1";
-        networkConfig.Bond = "bond0";
-      };
-      "40-bond0" = {
-        matchConfig.Name = "bond0";
-        vlan = [
-          "vlan10"
-        ];
+    bondAddresses = [ "192.168.20.10/24" ];
+    bondGateway = "192.168.20.254";
 
-        address = [ "192.168.20.10/24" ];
-        routes = [
-          {
-            Gateway = "192.168.20.254";
-            Metric = 200;
-          }
-        ];
-
-        networkConfig.LinkLocalAddressing = "no";
-        linkConfig.RequiredForOnline = "carrier";
-      };
-      "50-vlan10" = {
-        matchConfig.Name = "vlan10";
-        
-        address = [ "91.208.228.69/28" ];
-        routes = [
-          {
-            Gateway = "91.208.228.65";
-            Metric = 100;
-          }
-        ];
+    vlans = {
+      "public" = {
+        id = 10;
+        addresses = [ "91.208.228.69/28" ];
+        gateway4 = "91.208.228.65";
+        metric = 100;
       };
     };
   };
-  networking.firewall.trustedInterfaces = [ "bond0" "fly" ];
 
+  networking.firewall.trustedInterfaces = [ "fly" ];
   networking.wg-quick.interfaces.fly = {
     address = [ "fdaa:9:e856:a7b:910f:0:a:102/120" ];
     privateKeyFile = "/opt/fly-wg-privkey";
@@ -195,6 +149,6 @@ in
   pkServerChecks = [
     { type = "systemd_service_running"; value = "redis-pluralkit"; }
     { type = "systemd_service_running"; value = "pluralkit-db-data"; }
-    # { type = "systemd_service_running"; value = "pluralkit-db-messages"; }
+    { type = "systemd_service_running"; value = "pluralkit-db-messages"; }
   ];
 }

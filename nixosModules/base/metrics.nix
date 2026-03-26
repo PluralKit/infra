@@ -17,6 +17,13 @@
           static_configs = [{
             targets = ["http://${config.networking.hostName}.vpn.pluralkit.net:9100/metrics"];
           }];
+          metric_relabel_configs = [{
+            action = "replace";
+            source_labels = ["__name__"];
+            regex = "node_cpu_seconds_total";
+            target_label = "__name__";
+            replacement = "pluralkit_cpu_seconds_total";
+          }];
         }
       ];
     };

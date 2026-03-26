@@ -48,78 +48,26 @@ in
       fsType = "ext4";
     };
 
-  networking.usePredictableInterfaceNames = false;
-  systemd.network = {
-    netdevs = {
-      "10-bond0" = {
-        netdevConfig = {
-          Kind = "bond";
-          Name = "bond0";
-        };
-        bondConfig = {
-          Mode = "active-backup";
-          TransmitHashPolicy = "layer3+4";
-        };
-      };
-      "20-vlan10" = {
-        netdevConfig = {
-          Kind = "vlan";
-          Name = "vlan10";
-        };
-        vlanConfig.Id = 10;
-      };
-    };
+  pluralkit.bond-setup = {
+    enable = true;
 
-    networks = {
-      "30-eth0" = {
-        matchConfig.Name = "eth0";
-        networkConfig.Bond = "bond0";
-        linkConfig.MTUBytes = "9000";
-      };
-      "30-eth1" = {
-        matchConfig.Name = "eth1";
-        networkConfig.Bond = "bond0";
-        linkConfig.MTUBytes = "9000";
-      };
-      "40-bond0" = {
-        matchConfig.Name = "bond0";
-        vlan = [
-          "vlan10"
-        ];
+    bondAddresses = [ "192.168.20.13/24" ];
+    bondGateway = "192.168.20.254";
 
-        address = [ "192.168.20.13/24" ];
-        routes = [
-          {
-            Gateway = "192.168.20.254";
-            Metric = 200;
-          }
-        ];
-
-        networkConfig.LinkLocalAddressing = "no";
-        linkConfig = {
-          RequiredForOnline = "carrier";
-          MTUBytes = "9000";
-        };
+    vlans = {
+      "public" = {
+        id = 10;
+        addresses = [ "91.208.228.72/28" "2403:b4c0:5b07:4::1/48" ];
+        gateway4 = "91.208.228.65";
+        gateway6 = "2403:b4c0:5b07::1";
+        metric = 100;
       };
-      "50-vlan10" = {
-        matchConfig.Name = "vlan10";
-        
-        address = [ "91.208.228.72/28" "2403:b4c0:5b07:4::1/48" ];
-        routes = [
-          {
-            Gateway = "91.208.228.65";
-            Metric = 100;
-          }
-          {
-            Gateway = "2403:b4c0:5b07::1";
-            Metric = 100;
-          }
-        ];
-        linkConfig.MTUBytes = "1500";
+      "k8s" = {
+        id = 90;
+        bridge = "br0";
       };
     };
   };
-  networking.firewall.trustedInterfaces = [ "bond0" ];
 
   pkTailscaleIp = "100.68.206.85";
   system.stateVersion = "25.05";
