@@ -14,6 +14,7 @@
 		"tag:oob":           [],
 		"tag:o11y":          [],
 		"tag:fly-telemetry": [],
+		"tag:fly-dispatch":  [],
 	},
 
 	"hosts": {},
@@ -63,6 +64,13 @@
 			"src":    ["tag:edge"],
 			"dst":    ["100.64.0.0/10:*", "fdef::/16:*"],
 		}
+
+		// dispatch
+		{
+			"action": "accept",
+			"src":    ["tag:prod"],
+			"dst":    ["tag:fly-dispatch:5000"],
+		},
 	],
 
 	"ssh": [

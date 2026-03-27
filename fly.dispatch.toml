@@ -1,12 +1,43 @@
 app = "pluralkit-dispatch"
-primary_region = "ams"
+primary_region = "sjc"
 
-build.image = "ghcr.io/pluralkit/dispatch:version"
+vm.size = "shared-cpu-1x"
 http_service.internal_port = 5000
-env.RUST_LOG = "debug"
-env.DNS_UPSTREAM = "[fdaa::3]:53"
+build.image = "tailscale/tailscale:latest"
 
-[[vm]]
-  cpu_kind = "shared"
-  cpus = 1
-  memory_mb = 256
+machine_config = '''{
+	"containers": [
+		{
+			"name": "tailscale",
+			"image": "tailscale/tailscale:latest",
+			"env": {
+				"PATH": "/bin:/usr/bin:/sbin:/usr/local/bin",
+				"TS_ACCEPT_DNS": "false",
+				"TS_HOSTNAME": "fly-dispatch",
+        "TS_EXTRA_ARGS": "--advertise-tags=tag:fly-dispatch",
+				"TS_USERSPACE": "false",
+				"TS_ENABLE_HEALTH_CHECK": "true"
+			},
+			"healthchecks": [{
+				"name": "tailscale_up",
+				"timeout": 1,
+				"http": {
+					"method": "GET",
+					"port": 9002,
+					"path": "/healthz"
+				}
+			}],
+			"secrets": [{ "env_var": "TS_AUTHKEY", "name": "TS_AUTHKEY" }]
+		},
+		{
+			"name": "dispatch",
+			"image": "ghcr.io/pluralkit/dispatch:5f86e2b1565db574e8d2f3db6b9f92ec6ea5b54f",
+			"env": {
+				"RUST_LOG": "debug",
+				"DNS_UPSTREAM": "[fdaa::3]:53"
+			},
+      "secrets": [{ "env_var": "HTTP_AUTH_TOKEN", "name": "HTTP_AUTH_TOKEN" }],
+			"depends_on": [{ "name": "tailscale", "condition": "healthy" }]
+		}
+	]
+}'''
