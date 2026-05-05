@@ -80,7 +80,7 @@ spec:
         - name: PluralKit__RedisAddr
           value: "100.123.150.13:6379,abortConnect=false"
         - name: PluralKit__DispatchProxyUrl
-          value: "http://dispatch.svc.pluralkit.net"
+          value: "http://fly-dispatch:5000"
         - name: PluralKit__AvatarServiceUrl
           value: 'http://pluralkit-avatars.default.svc.sjc.k8s.pluralkit.net'
         - name: PluralKit__DispatchProxyToken
