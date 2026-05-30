@@ -114,9 +114,21 @@ in
       listenPort = 5432;
       extraSettings = {
         shared_buffers = "50GB";
-        effective_cache_size = "40GB";
-        min_wal_size = "80MB";
-        max_wal_size = "1GB";
+        effective_cache_size = "65GB";
+        min_wal_size = "1GB";
+        max_wal_size = "4GB";
+
+        maintenance_work_mem = "8GB";
+        wal_buffers = "16MB";
+        autovacuum_max_workers = 4;
+        autovacuum_work_mem = "2GB";
+        max_worker_processes = 14;
+        max_parallel_workers_per_gather = 4;
+        max_parallel_workers = 14;
+        max_parallel_maintenance_workers = 4;
+        random_page_cost = 1.1;
+        effective_io_concurrency = 300;
+        checkpoint_completion_target = 0.9;
       };
       backupSettings = {
         s3dir = "data";
@@ -133,9 +145,21 @@ in
       extraSettings = {
         max_locks_per_transaction = 256;
         shared_buffers = "32GB";
-        effective_cache_size = "16GB";
-        min_wal_size = "80MB";
-        max_wal_size = "1GB";
+        effective_cache_size = "40GB";
+        min_wal_size = "1GB";
+        max_wal_size = "4GB";
+
+        maintenance_work_mem = "8GB";
+        wal_buffers = "16MB";
+        autovacuum_max_workers = 4;
+        autovacuum_work_mem = "2GB";
+        max_worker_processes = 14;
+        max_parallel_workers_per_gather = 4;
+        max_parallel_workers = 14;
+        max_parallel_maintenance_workers = 4;
+        random_page_cost = 1.1;
+        effective_io_concurrency = 300;
+        checkpoint_completion_target = 0.9;
       };
       backupSettings = {
         s3dir = "messages";
