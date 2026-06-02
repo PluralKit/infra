@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-config
+data:
+  vector.toml: |
+    [sources.app_metrics_in]
+    type = "http_server"
+    address = "0.0.0.0:8086"
+    path = "/write"
+    decoding.codec = "influxdb"
+
+    [sinks.prometheus_scrape_endpoint]
+    type = "prometheus_exporter"
+    inputs = ["app_metrics_in"]
+    address = "0.0.0.0:9000"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-bridge
+  labels:
+    app: metrics-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metrics-bridge
+  template:
+    metadata:
+      labels:
+        app: metrics-bridge
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "9000"
+    spec:
+      containers:
+        - name: vector
+          image: timberio/vector:latest-alpine
+          args: ["--config", "/etc/vector/vector.toml"]
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/vector
+              readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: vector-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-bridge
+  labels:
+    app: metrics-bridge
+spec:
+  selector:
+    app: metrics-bridge
+  ports:
+    - name: influx-ingest
+      protocol: TCP
+      port: 8086
+      targetPort: 8086
+    - name: metrics-scrape
+      protocol: TCP
+      port: 9000
+      targetPort: 9000

@@ -80,7 +80,7 @@ spec:
         - name: PluralKit__RedisAddr
           value: "100.123.150.13:6379,abortConnect=false"
         - name: PluralKit__InfluxUrl
-          value: "http://vm.svc.pluralkit.net/insert/0/influx/"
+          value: "http://metrics-bridge.default.svc:8086/"
         - name: PluralKit__InfluxDb
           value: "pluralkit"
         - name: PluralKit__DispatchProxyUrl
