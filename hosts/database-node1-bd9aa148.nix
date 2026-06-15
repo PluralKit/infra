@@ -5,6 +5,7 @@ let
   postgresGid = 418;
 
   mkPostgresService = import ../nixosModules/database.nix { pkgs = pkgs; lib = lib; config = config; };
+  pluralkit-scripts = pkgs.callPackage ../packages/pluralkit-scripts {};
 in
 {
   hardware.cpu.amd.updateMicrocode = true;
@@ -167,6 +168,44 @@ in
       };
       extraListen = [ (builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address))) ];
       extraPgHba = [ "host all all ${builtins.head (builtins.head config.networking.wg-quick.interfaces.fly.peers).allowedIPs} md5" ];
+    };
+
+    "pluralkit-backup" = {
+      script = ''
+        S3_DISABLE_100_CONTINUE=true WALG_NETWORK_RATE_LIMIT=629145600 ${pluralkit-scripts}/bin/pk-walg data 5432 pluralkit backup-push /mnt/appdata/postgres-data
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+        User = "postgres";
+      };
+    };
+    "pluralkit-messages-backup" = {
+      script = ''
+        S3_DISABLE_100_CONTINUE=true WALG_NETWORK_RATE_LIMIT=629145600 ${pluralkit-scripts}/bin/pk-walg messages 5434 messages backup-push /mnt/appdata/messages
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+        User = "postgres";
+      };
+    };
+  };
+
+  systemd.timers = {
+    "pluralkit-backup" = {
+      wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnCalendar = "Sun *-*-* 00:00:00";
+          Persistent = true;
+          Unit = "pluralkit-backup.service";
+        };
+    };
+    "pluralkit-messages-backup" = {
+      wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnCalendar = "Sun *-*-* 01:00:00";
+          Persistent = true;
+          Unit = "pluralkit-messages-backup.service";
+        };
     };
   };
 
