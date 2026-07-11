@@ -98,7 +98,7 @@ spec:
           value: 'true'
 
       - name: rust-api
-        image: ghcr.io/pluralkit/api:2432cbe89a9b1df3fd50552f9e55b15909391155
+        image: ghcr.io/pluralkit/api:4b77edb2791dc2a420cdd197db3c9ea381aac450
         env:
         - name: RUST_LOG
           value: info
@@ -118,6 +118,8 @@ spec:
             secretKeyRef:
               name: database-password
               key: credential
+        - name: pluralkit__db__data_db_max_connections
+          value: "50"
         - name: pluralkit__db__data_redis_addr
           value: "redis://100.123.150.13:6379"
         - name: pluralkit__api__ratelimit_redis_addr
