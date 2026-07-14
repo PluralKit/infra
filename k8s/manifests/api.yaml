@@ -128,6 +128,8 @@ spec:
           value: '[::]:5001'
         - name: pluralkit__api__remote_url
           value: "http://localhost:5000"
+        - name: pluralkit__api__use_ratelimiter
+          value: "true"
         - name: pluralkit__api__temp_token2
           valueFrom:
             secretKeyRef:
