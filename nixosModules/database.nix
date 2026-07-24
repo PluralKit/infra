@@ -82,6 +82,11 @@ in
       cp "${configFile}/postgresql.conf" "${dataDir}/postgresql.conf"
     '';
 
+  # prevent restarting the service on rebuild
+  # so just in case if we accidentally update the package,
+  # we don't potentially break things (at least until next restart)
+  restartIfChanged = false;
+
   serviceConfig = {
     User = "postgres";
     Group = "postgres";

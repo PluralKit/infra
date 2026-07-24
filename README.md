@@ -2,7 +2,10 @@
 
 ## Quick command list
 
-- Updating configs on an existing machine: `nixos-rebuild switch --flake .#hostname --target-host you@hostname.pluralkit.net --build-host you@hostname.pluralkit.net --use-remote-sudo`
+- Updating configs on an existing machine: 
+  - Enable devshell with `nix develop`
+  - Deploy with `just deploy <hostname> [build/switch/boot/test] [user]`
+    - **Only builds by default!**
 
 ## NixOS System configuration
 

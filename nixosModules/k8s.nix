@@ -1,4 +1,4 @@
-{ pkgs, pkgs-unstable, lib, config, ... }:
+{ inputs, pkgs, lib, config, ... }:
 
 with lib;
 let
@@ -15,6 +15,8 @@ let
     [plugins.'io.containerd.cri.v1.runtime'.cni]
       bin_dir = '/var/lib/rancher/k3s/data/cni'
   '';
+
+  pkgs-k3s-pin = inputs.nixpkgs-k3s.legacyPackages.x86_64-linux;
 in
 {
   options.services.pk-k3s = {
@@ -99,8 +101,14 @@ in
       wantedBy = [ "multi-user.target" ];
       after = [ "tailscale-ready.service" ];
       wants  = [ "tailscale-ready.service" ];
+
+      # prevent restarting the service on rebuild
+      # so just in case if we accidentally update the package,
+      # we don't potentially break things (at least until next restart)
+      restartIfChanged = false;
+
       serviceConfig.ExecStart = pkgs.writeShellScript "k3s" ''
-        ${pkgs-unstable.k3s_1_35}/bin/k3s agent \
+        ${pkgs-k3s-pin.k3s_1_35}/bin/k3s agent \
           --server https://sjc-k8s.svc.pluralkit.net:6443 \
           --token $(cat /etc/pluralkit/k3s-token) \
           --debug \

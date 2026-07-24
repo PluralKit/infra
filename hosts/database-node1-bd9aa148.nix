@@ -4,8 +4,16 @@ let
   postgresUid = 418;
   postgresGid = 418;
 
-  mkPostgresService = import ../nixosModules/database.nix { pkgs = pkgs; lib = lib; config = config; };
+  pkgs-postgres-pin = inputs.nixpkgs-postgres.legacyPackages.x86_64-linux;
+
+  mkPostgresService = import ../nixosModules/database.nix { pkgs = pkgs-postgres-pin; lib = lib; config = config; };
   pluralkit-scripts = pkgs.callPackage ../packages/pluralkit-scripts {};
+
+  walg_options = {
+    S3_DISABLE_100_CONTINUE = "true";
+    WALG_NETWORK_RATE_LIMIT = "329145600";
+    WALG_UPLOAD_CONCURRENCY = "8";
+  };
 in
 {
   hardware.cpu.amd.updateMicrocode = true;
@@ -40,7 +48,7 @@ in
     { device = "/dev/disk/by-label/NIXROOT";
       fsType = "ext4";
     };
-  fileSystems."/boot" = 
+  fileSystems."/boot" =
     { device = "/dev/disk/by-label/NIXBOOT";
       fsType = "vfat";
     };
@@ -172,8 +180,9 @@ in
 
     "pluralkit-backup" = {
       script = ''
-        S3_DISABLE_100_CONTINUE=true WALG_NETWORK_RATE_LIMIT=629145600 ${pluralkit-scripts}/bin/pk-walg data 5432 pluralkit backup-push /mnt/appdata/postgres-data
+        ${pluralkit-scripts}/bin/pk-walg data 5432 pluralkit backup-push /mnt/appdata/postgres-data
       '';
+      environment = walg_options;
       serviceConfig = {
         Type = "oneshot";
         User = "postgres";
@@ -181,8 +190,9 @@ in
     };
     "pluralkit-messages-backup" = {
       script = ''
-        S3_DISABLE_100_CONTINUE=true WALG_NETWORK_RATE_LIMIT=629145600 ${pluralkit-scripts}/bin/pk-walg messages 5434 messages backup-push /mnt/appdata/messages
+        ${pluralkit-scripts}/bin/pk-walg messages 5434 messages backup-push /mnt/appdata/messages
       '';
+      environment = walg_options;
       serviceConfig = {
         Type = "oneshot";
         User = "postgres";
