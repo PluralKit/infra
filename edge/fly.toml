@@ -1,5 +1,5 @@
 app = "pluralkit-http-edge"
-primary_region = "arn"
+primary_region = "sjc"
 vm.size = "shared-cpu-4x"
 deploy.strategy = "canary"
 http_service.internal_port = 80

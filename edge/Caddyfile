@@ -41,7 +41,36 @@ www.pluralkit.me:80, beta.pluralkit.me:80 {
 	redir https://pluralkit.me{uri}
 }
 
+(block_api) {
+	header Access-Control-Allow-Credentials "true"
+    header Access-Control-Allow-Headers "Content-Type, Authorization, sentry-trace, User-Agent"
+    header Access-Control-Allow-Methods "*"
+    header Access-Control-Allow-Origin "*"
+    header Access-Control-Expose-Headers "X-PluralKit-Version, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-RateLimit-Scope"
+
+	header Content-Type application/json
+
+	respond `{"error":"This application and/or version is blocked from accessing the PluralKit API due to repeated abuse. Please try upgrading, or ask the application developer for more details."}` 403
+}
+
 api.pluralkit.me:80 {
+	@reject_old_ourcana {
+		header User-Agent "Ourcana/2026.1.1 (+https://ourcana.space; dev@ourcana.space)"
+	}
+
+	@reject_unknown_ourcana {
+		header User-Agent *Mozilla*
+		header Origin "https://ourcana.space*"
+	}
+
+	handle @reject_old_ourcana {
+		import block_api
+	}
+
+	handle @reject_unknown_ourcana {
+		import block_api
+	}
+
 	reverse_proxy /* {
 		to http://pluralkit-api.default.svc.sjc.k8s.pluralkit.net
 		header_up X-PluralKit-Client-IP {http.request.header.Fly-Client-Ip}
