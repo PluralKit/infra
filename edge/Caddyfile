@@ -56,6 +56,7 @@ www.pluralkit.me:80, beta.pluralkit.me:80 {
 api.pluralkit.me:80 {
 	@reject_old_ourcana {
 		header User-Agent "Ourcana/2026.1.1 (+https://ourcana.space; dev@ourcana.space)"
+		header User-Agent "Ourcana/0.4.24 (+https://ourcana.space; dev@ourcana.space)"
 	}
 
 	@reject_unknown_ourcana {
