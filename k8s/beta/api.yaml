@@ -22,7 +22,7 @@ spec:
         resources:
           requests:
             cpu: 1
-        image: ghcr.io/pluralkit/pluralkit:85b2b77730146d80c0943eb35f2d11674256ff28
+        image: ghcr.io/pluralkit/pluralkit:feat-aliases
         command: [ "dotnet", "bin/PluralKit.API.dll" ]
         env:
         - name: PluralKit__Api__ClientId
@@ -65,7 +65,7 @@ spec:
           value: 'true'
 
       - name: rust-api
-        image: ghcr.io/pluralkit/api:2e3172df35dc3c20767bee849997f65966d951fe
+        image: ghcr.io/pluralkit/api:feat-aliases
         env:
         - name: RUST_LOG
           value: info
