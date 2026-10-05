@@ -21,14 +21,14 @@
     };
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # yeah i hate this
     # but k3s and postgres are the hardest packages to update, they tend to break things
     # pin them so we can somewhat safely update other packages without bringing PK down
-    nixpkgs-postgres.url = "github:nixos/nixpkgs/09eb77e94fa25202af8f3e81ddc7353d9970ac1b";
-    nixpkgs-k3s.url = "github:nixos/nixpkgs/ffbc9f8cbaacfb331b6017d5a5abb21a492c9a38";
+    nixpkgs-postgres.url = "github:nixos/nixpkgs/0d9e9b832d03ac387417e16ce1febf73b2e631e1";
+    nixpkgs-k3s.url = "github:nixos/nixpkgs/0d9e9b832d03ac387417e16ce1febf73b2e631e1";
 
     flake-utils.url = "github:numtide/flake-utils";
     flake-parts = {
