@@ -11,7 +11,7 @@ metadata:
   name: pluralkit-gateway
 spec:
   serviceName: pluralkit-gateway
-  replicas: 66
+  replicas: 80
   selector:
     matchLabels:
       app: pluralkit-gateway
@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: gateway
-        image: ghcr.io/pluralkit/gateway:2432cbe89a9b1df3fd50552f9e55b15909391155
+        image: ghcr.io/pluralkit/gateway:fc025be2000135528f0870a5c8e824b2f623250d
         env:
         - name: RUST_LOG
           value: info
@@ -37,9 +37,9 @@ spec:
         - name: pluralkit__discord__client_id
           value: "466378653216014359"
         - name: pluralkit__discord__cluster__total_shards
-          value: "1056"
+          value: "1280"
         - name: pluralkit__discord__cluster__total_nodes
-          value: "66"
+          value: "80"
         - name: pluralkit__discord__max_concurrency
           value: "16"
         - name: pluralkit__runtime_config_key

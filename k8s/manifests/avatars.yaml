@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: avatars
-        image: ghcr.io/pluralkit/avatars:049f06d9b1f75d4ab73323120287703607d3c86a
+        image: ghcr.io/pluralkit/avatars:fc025be2000135528f0870a5c8e824b2f623250d
         env:
         - name: RUST_LOG
           value: info
@@ -98,7 +98,7 @@ spec:
         resources:
           requests:
             cpu: 2
-        image: ghcr.io/pluralkit/avatars:049f06d9b1f75d4ab73323120287703607d3c86a
+        image: ghcr.io/pluralkit/avatars:fc025be2000135528f0870a5c8e824b2f623250d
         command: [ "/bin/avatar_cleanup" ]
         env:
         - name: RUST_LOG

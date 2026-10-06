@@ -28,7 +28,7 @@ spec:
             cpu: 2
         ports:
         - containerPort: 5002
-        image: ghcr.io/pluralkit/pluralkit:0d8faea82a363faee8238908dfd71ac7e8127e0a
+        image: ghcr.io/pluralkit/pluralkit:fc025be2000135528f0870a5c8e824b2f623250d
         command: [ "dotnet", "bin/PluralKit.Bot.dll" ]
         readinessProbe:
           httpGet:
@@ -57,7 +57,7 @@ spec:
               name: dotnet-bot-sentry-url
               key: credential
         - name: PluralKit__Bot__Cluster__TotalShards
-          value: '1056'
+          value: '1280'
           # otherwise the bot crashes
         - name: PluralKit__Bot__Cluster__NodeName
           value: 'whatever-0'

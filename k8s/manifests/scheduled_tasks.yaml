@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
       - name: scheduled-tasks
-        image: ghcr.io/pluralkit/scheduled_tasks:9673f4e203239a32307b82c82e55c130b6b3c218
+        image: ghcr.io/pluralkit/scheduled_tasks:fc025be2000135528f0870a5c8e824b2f623250d
         env:
         - name: RUST_LOG
           value: info
@@ -85,7 +85,7 @@ spec:
         - name: pluralkit__scheduled_tasks__set_guild_count
           value: 'true'
         - name: pluralkit__scheduled_tasks__expected_gateway_count
-          value: '66'
+          value: '80'
         - name: pluralkit__scheduled_tasks__gateway_url
           value: 'http://pluralkit-gateway-{clusterid}.pluralkit-gateway.default.svc.sjc.k8s.pluralkit.net:5000/stats'
         - name: pluralkit__scheduled_tasks__prometheus_url
