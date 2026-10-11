@@ -10,6 +10,11 @@
   config = {
     pkLogTargets = [
       ''
+        [secret.pk]
+        type = "directory"
+        path = "/etc/pluralkit"
+        remove_trailing_whitespace = true
+
         [sources.journald]
         type = "journald"
 
@@ -19,7 +24,7 @@
         uri = "https://pluralkit-system-logs.fly.dev"
         auth.strategy = "basic"
         auth.user = "fly-804566"
-        auth.password = "''${INGEST_TOKEN}"
+        auth.password = "SECRET[pk.metrics-password]"
         encoding.codec = "json"
         framing.method = "newline_delimited"
       ''
@@ -33,7 +38,6 @@
       requires = [ "network-online.target" ];
       serviceConfig = {
         ExecStart = pkgs.writeShellScript "vector-logs" ''
-          export INGEST_TOKEN=$(cat /etc/pluralkit/metrics-password)
           exec ${pkgs.vector}/bin/vector --config ${pkgs.writeTextFile {
             name = "vector.conf";
             text = lib.concatStrings config.pkLogTargets;
