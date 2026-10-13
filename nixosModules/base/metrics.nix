@@ -48,6 +48,11 @@
   # so we set up an entirely separate exporter just to get a single host_logical_cpus metric
   # maybe see if we can fix this at some point?
   environment.etc."vector-cpu-metrics.toml".text = ''
+[secret.pk]
+type = "directory"
+path = "/etc/pluralkit"
+remove_trailing_whitespace = true
+
 [sources.host]
 type = "host_metrics"
 
@@ -57,7 +62,7 @@ type = "host_metrics"
   endpoint = "https://insert.fly-metrics.net/api/v1/write"
   auth.strategy = "basic"
   auth.user = "fly-804566"
-  auth.password = "''${INGEST_TOKEN}"
+  auth.password = "SECRET[pk.metrics-password]"
   healthcheck.enabled = false
   '';
 
@@ -66,7 +71,6 @@ type = "host_metrics"
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       ExecStart = pkgs.writeShellScript "vector-logs" ''
-          export INGEST_TOKEN=$(cat /etc/pluralkit/metrics-password)
           exec ${pkgs.vector}/bin/vector --config /etc/vector-cpu-metrics.toml
         '';
       Restart = "always";
