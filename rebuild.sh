@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S nix shell nixpkgs#nixos-rebuild nixpkgs#parallel --command bash
 
 export NIX_SSHOPTS="-i ~/.ssh/provisioner"
 
@@ -11,13 +11,12 @@ if [ "$1" == "do_rebuild" ]; then
   exec > >(trap "" INT TERM; sed "s/^/$hostname(stdout): /")
   exec 2> >(trap "" INT TERM; sed "s/^/$hostname(stderr): /" | grep -v 'evaluating file' >&2)
 
-  ip=$(nix eval -v -L ".#nixosConfigurations.$hostname.config.systemd.network.networks.50-vlan10.address" --apply builtins.head | jq -r | sed 's/\// /' | awk '{print $1}')
-  echo $hostname at $ip
+  echo $hostname
   if [ "$wait" == "true" ]; then
     echo "tap enter to run build"
     read
   fi
-  nixos-rebuild $action --flake .#$hostname --target-host $user@$ip --build-host $user@$ip --use-remote-sudo --show-trace
+  nixos-rebuild $action --flake .#$hostname --target-host $user@$hostname --build-host $user@$hostname --use-remote-sudo --show-trace
   exit 0
 fi
 
@@ -46,8 +45,8 @@ read
 
 if [ "$parallel" == "true" ]; then
   # shut up
-  echo 'will cite' | nix run nixpkgs#parallel -- --citation >/dev/null 2>/dev/null
-  nix run nixpkgs#parallel -- --ungroup "$0 do_rebuild $action {}" ::: ${hosts[@]}
+  echo 'will cite' | parallel -- --citation >/dev/null 2>/dev/null
+  parallel -- --ungroup "$0 do_rebuild $action {}" ::: ${hosts[@]}
 else
   for hostname in ${hosts[@]}; do
     $0 do_rebuild $action $hostname
