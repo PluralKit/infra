@@ -178,6 +178,65 @@ in
         "net.core.wmem_max" = 8388608;
       };
     })
+
+    # temp(?) debugging stuff
+    {
+      services.netdata = {
+        enable = true;
+        config.web."bind to" = config.pkTailscaleIp;
+        configDir."go.d/ping.conf" = pkgs.writeText "ping.conf" ''
+          jobs:
+          - name: utils-hcash1-05a12be2_public
+            hosts: [ "5.161.43.226" ]
+            update_every: 1
+          - name: utils-hcash1-05a12be2_tailscale
+            hosts: [ "100.79.33.60" ]
+            update_every: 1
+
+          - name: database-node1-bd9aa148_public
+            hosts: [ "91.208.228.69" ]
+            update_every: 1
+          - name: database-node1-bd9aa148_tailscale
+            hosts: [ "100.123.150.13" ]
+            update_every: 1
+
+          - name: worker-node2-d13866af_public
+            hosts: [ "91.208.228.70" ]
+            update_every: 1
+          - name: worker-node2-d13866af_tailscale
+            hosts: [ "100.93.93.55" ]
+            update_every: 1
+
+          - name: worker-node3-6f0ac4c4_public
+            hosts: [ "91.208.228.71" ]
+            update_every: 1
+          - name: worker-node3-6f0ac4c4_tailscale
+            hosts: [ "100.68.206.85" ]
+            update_every: 1
+
+          - name: worker-node4-f57b21c7_public
+            hosts: [ "91.208.228.72" ]
+            update_every: 1
+          - name: worker-node4-f57b21c7_tailscale
+            hosts: [ "100.68.216.79" ]
+            update_every: 1
+        '';
+      };
+
+      services.vmagent.prometheusConfig.scrape_configs = [{
+        job_name = "netdata";
+        static_configs = [{
+          targets = ["http://${config.networking.hostName}.vpn.pluralkit.net:19999/api/v1/allmetrics?format=prometheus"];
+        }];
+      }];
+
+      systemd.services.netdata = {
+        serviceConfig = {
+          CapabilityBoundingSet = [ "CAP_NET_RAW" ];
+          AmbientCapabilities = [ "CAP_NET_RAW" ];
+        };
+      };
+    }
   ];
     
 
