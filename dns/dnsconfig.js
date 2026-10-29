@@ -10,7 +10,6 @@ String.prototype.endsWith = function(search) {
 }
 
 var hosts = {
-	"database-hrhel1-251b75a5": [ "37.27.117.165", "100.115.185.127" ],
 	"utils-hcash1-05a12be2": [ "5.161.43.226", "100.79.33.60" ],
 
 	"database-node1-bd9aa148": ["91.208.228.69", "100.123.150.13"],
