@@ -20,6 +20,10 @@ in
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "ahci" "usb_storage" "usbhid" "sr_mod" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelParams = [
+    "hugepagesz=2M"
+    "hugepages=44000"
+  ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
@@ -122,6 +126,7 @@ in
       dataDir = "/mnt/appdata/postgres-data";
       listenPort = 5432;
       extraSettings = {
+        huge_pages = "on";
         shared_buffers = "50GB";
         effective_cache_size = "65GB";
         min_wal_size = "1GB";
@@ -152,6 +157,7 @@ in
       dataDir = "/mnt/appdata/messages";
       listenPort = 5434;
       extraSettings = {
+        huge_pages = "on";
         max_locks_per_transaction = 256;
         shared_buffers = "32GB";
         effective_cache_size = "40GB";

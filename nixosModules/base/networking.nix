@@ -1,11 +1,10 @@
 { pkgs
 , config
 , lib
-, inputs
 , pkgs-unstable
 , ...
 }:
-let 
+let
   cfg_bond = config.pluralkit.bond-setup;
 
   vlan = lib.types.submodule {
@@ -64,6 +63,9 @@ in
 
       networking.firewall = {
         trustedInterfaces = [ "tailscale0" ];
+        interfaces."bond0" = {
+          allowedTCPPorts = [ 22 ];
+        };
         checkReversePath = "loose";
       };
 
@@ -98,7 +100,7 @@ in
             };
             bondConfig = {
               Mode = "active-backup";
-              MIIMonitorSec = "100ms"; 
+              MIIMonitorSec = "100ms";
               PrimaryReselectPolicy = "always";
             };
           };
@@ -168,7 +170,7 @@ in
         script = ''
           INTERFACES="bond0 eth0 eth1"
           for INT in $INTERFACES; do
-              ${pkgs.ethtool}/bin/ethtool -K $INT rx on tx on gso on gro on rx-udp-gro-forwarding on rx-gro-list off 
+              ${pkgs.ethtool}/bin/ethtool -K $INT rx on tx on gso on gro on rx-udp-gro-forwarding on rx-gro-list off
           done
         '';
       };
@@ -238,7 +240,4 @@ in
       };
     }
   ];
-    
-
-  
 }

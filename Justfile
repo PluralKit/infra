@@ -25,6 +25,6 @@ op-default := "build"
 [arg('user', help="The user to use for deployment.")]
 deploy target operation=op-default user="root":
   nh os {{ operation }} . -t \
-    --build-host {{ user }}@{{ target }}.prod.pluralkit.net \
-    --target-host {{ user }}@{{ target }}.prod.pluralkit.net \
+    --build-host {{ user }}@{{ target }}.vpn.pluralkit.net \
+    --target-host {{ user }}@{{ target }}.vpn.pluralkit.net \
     --hostname {{ target }}

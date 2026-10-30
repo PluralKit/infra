@@ -36,6 +36,7 @@
 
   services.openssh = {
     enable = true;
+    openFirewall = false;
     settings = {
       UseDns = false;
       PermitRootLogin = "prohibit-password";
