@@ -24,9 +24,6 @@
     mle
     helix
 
-    # this is here for the client tools
-    postgresql_17
-
     (pkgs.callPackage ../../packages/pluralkit-scripts/default.nix {})
     (pkgs.callPackage ../../packages/server-checks/default.nix {})
   ];

@@ -7,6 +7,7 @@ let
   pkgs-postgres-pin = inputs.nixpkgs-postgres.legacyPackages.x86_64-linux;
 
   mkPostgresService = import ../nixosModules/database.nix { pkgs = pkgs-postgres-pin; lib = lib; config = config; };
+  mkPostgresExporter = import ../nixosModules/pgexporter.nix { pkgs = pkgs-postgres-pin; lib = lib; };
   pluralkit-scripts = pkgs.callPackage ../packages/pluralkit-scripts {};
 
   walg_options = {
@@ -115,6 +116,23 @@ in
     useDefaultShell = true;
   };
 
+  users.groups.postgres_exporter = { };
+  users.users.postgres_exporter = {
+    isSystemUser = true;
+    group = "postgres_exporter";
+  };
+  services.vmagent.prometheusConfig.scrape_configs = [{
+    job_name = "postgres-exporter";
+    static_configs = [
+      { targets = [ "127.0.0.1:9432" ]; labels.pg_instance = "pluralkit"; }
+      { targets = [ "127.0.0.1:9434" ]; labels.pg_instance = "messages"; }
+    ];
+  }];
+
+  environment.systemPackages = [
+    pkgs-postgres-pin.postgresql_18
+  ];
+
   systemd.services = {
     redis-pluralkit = {
       after = [ "tailscale-ready.service" ];
@@ -151,6 +169,11 @@ in
       extraListen = [ (builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address))) ];
       extraPgHba = [ "host all all ${builtins.head (builtins.head config.networking.wg-quick.interfaces.fly.peers).allowedIPs} md5" ];
     };
+    pg-exporter-data = mkPostgresExporter "pluralkit-db-data" {
+      dbName = "pluralkit";
+      pgPort = 5432;
+      listenPort = 9432;
+    };
 
     pluralkit-db-messages = mkPostgresService "pluralkit-db-messages" {
       package = pkgs.postgresql_18;
@@ -182,6 +205,11 @@ in
       };
       extraListen = [ (builtins.head (lib.splitString "/" (builtins.head config.networking.wg-quick.interfaces.fly.address))) ];
       extraPgHba = [ "host all all ${builtins.head (builtins.head config.networking.wg-quick.interfaces.fly.peers).allowedIPs} md5" ];
+    };
+    pg-exporter-messages = mkPostgresExporter "pluralkit-db-messages" {
+      dbName = "messages";
+      pgPort = 5434;
+      listenPort = 9434;
     };
 
     "pluralkit-backup" = {
@@ -229,5 +257,7 @@ in
     { type = "systemd_service_running"; value = "redis-pluralkit"; }
     { type = "systemd_service_running"; value = "pluralkit-db-data"; }
     { type = "systemd_service_running"; value = "pluralkit-db-messages"; }
+    { type = "systemd_service_running"; value = "pg-exporter-data"; }
+    { type = "systemd_service_running"; value = "pg-exporter-messages"; }
   ];
 }
