@@ -1,0 +1,22 @@
+app = "pluralkit-http-edge"
+primary_region = "sjc"
+vm.size = "shared-cpu-4x"
+deploy.strategy = "canary"
+http_service.internal_port = 80
+http_service.force_https = true
+
+machine_config = '''{
+  "containers": []
+}
+'''
+
+[[http_service.checks]]
+  grace_period = "15s"
+  interval = "30s"
+  method = "GET"
+  timeout = "5s"
+  path = "/"
+
+[metrics]
+  port = 9091
+  path = "/metrics"
